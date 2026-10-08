@@ -9,13 +9,18 @@
   border-block-start: 1px solid var(--color-line);
 }
 
-/* Interlineado suficiente para que el descendente de «¿» no toque la línea siguiente */
 .contact-title {
   max-inline-size: 12ch;
   margin-block-start: var(--space-4);
   font-size: clamp(4rem, 2rem + 9vw, 10rem);
-  line-height: 0.96;
+  line-height: 0.85;
   text-transform: uppercase;
+}
+
+/* «¿» sube hasta la línea base de las mayúsculas: estilo cartel, y no invade la línea siguiente */
+.contact-qmark {
+  display: inline-block;
+  transform: translateY(-0.18em);
 }
 
 .contact-actions {
