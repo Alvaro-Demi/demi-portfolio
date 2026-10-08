@@ -1,0 +1,96 @@
+/* El header flota sobre el hero: sin fondo ni sombra de "navbar". */
+:host {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 10;
+}
+
+.site-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  min-block-size: var(--header-height);
+  padding-inline: var(--page-gutter);
+}
+
+.brand {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-decoration: none;
+}
+
+.menu-button,
+.nav-link {
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.menu-button {
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-2);
+  border: 0;
+  background: none;
+}
+
+.nav-link {
+  display: inline-block;
+  padding-block: var(--space-2);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+.nav-link:hover {
+  text-decoration-color: var(--color-accent);
+}
+
+/* --- Mobile: DEMI + MENU; la navegación se despliega bajo el header --- */
+
+.nav {
+  display: none;
+}
+
+.nav.is-open {
+  display: block;
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline: 0;
+  padding: var(--space-4) var(--page-gutter) var(--space-8);
+  background-color: var(--color-bg);
+  border-block-end: 1px solid var(--color-line);
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* --- Desktop: navegación en línea, MENU oculto --- */
+
+@media (min-width: 48rem) {
+  .menu-button {
+    display: none;
+  }
+
+  .nav,
+  .nav.is-open {
+    display: block;
+    position: static;
+    padding: 0;
+    background: none;
+    border: 0;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    gap: var(--space-8);
+  }
+}

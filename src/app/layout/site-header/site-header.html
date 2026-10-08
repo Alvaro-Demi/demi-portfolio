@@ -1,0 +1,26 @@
+<header class="site-header">
+  <a class="brand" routerLink="/" (click)="closeMenu()">DEMI</a>
+
+  <button
+    #menuButton
+    type="button"
+    class="menu-button"
+    aria-controls="site-nav"
+    [attr.aria-expanded]="menuOpen()"
+    (click)="toggleMenu()"
+  >
+    Menu
+  </button>
+
+  <nav id="site-nav" class="nav" [class.is-open]="menuOpen()" aria-label="Principal">
+    <ul class="nav-list" role="list" lang="en">
+      @for (item of navItems; track item.fragment) {
+        <li>
+          <a class="nav-link" routerLink="/" [fragment]="item.fragment" (click)="closeMenu()">
+            {{ item.label }}
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+</header>
