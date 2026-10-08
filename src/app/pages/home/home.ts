@@ -4,7 +4,7 @@ import { Component, signal } from '@angular/core';
   selector: 'app-home',
   imports: [],
   templateUrl: './home.html',
-  styleUrl: './home.scss',
+  styleUrl: './home.css',
 })
 export class Home {
   /** Placeholder until STAGE BLEED lands on this page. */
