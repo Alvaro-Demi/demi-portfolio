@@ -17,15 +17,17 @@
 }
 
 .brand {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  letter-spacing: var(--tracking-wide);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  letter-spacing: 0.04em;
+  line-height: 1;
   text-decoration: none;
 }
 
 .menu-button,
 .nav-link {
   font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }

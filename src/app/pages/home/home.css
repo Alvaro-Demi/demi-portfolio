@@ -8,8 +8,7 @@
 }
 
 .section h2 {
-  font-size: var(--text-xl);
-  letter-spacing: var(--tracking-wide);
+  font-size: var(--text-heading);
   text-transform: uppercase;
 }
 

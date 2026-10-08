@@ -4,6 +4,26 @@
    vive en el CSS de su componente.
    ========================================================================== */
 
+/* --- Fuentes (alojadas en public/fonts, licencia SIL OFL 1.1) ---------- */
+
+/* Display: un único peso (400). Subconjunto latino: cubre español, €, —, “ ”… */
+@font-face {
+  font-family: 'League Gothic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/league-gothic-latin.woff2') format('woff2');
+}
+
+/* Texto/UI: fuente variable, un solo archivo para todos los pesos de 400 a 700 */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/schibsted-grotesk-latin.woff2') format('woff2');
+}
+
 /* --- Variables de diseño ------------------------------------------------ */
 
 :root {
@@ -17,20 +37,26 @@
   --color-accent: #e10600; /* 4:1 sobre --color-bg → solo texto grande, bordes y foco */
   --color-line: #2a2a2a;
 
-  /* Tipografía (fuentes del sistema hasta elegir una tipografía web) */
-  --font-sans: 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;
-  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  /* Tipografía */
+  --font-display: 'League Gothic', 'Arial Narrow', sans-serif;
+  --font-body: 'Schibsted Grotesk', 'Helvetica Neue', Arial, system-ui, sans-serif;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.25rem;
   --text-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+  --text-heading: clamp(2.5rem, 1.75rem + 3.5vw, 5rem);
   --text-display: clamp(3rem, 1.5rem + 8vw, 9rem);
 
   --leading-tight: 0.95;
   --leading-normal: 1.6;
 
+  --tracking-display: 0.02em;
   --tracking-wide: 0.18em;
 
   /* Espaciado */
@@ -67,13 +93,16 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* League Gothic solo tiene un peso: evita negritas y cursivas "falsas" generadas por el navegador */
+  font-synthesis: none;
 }
 
 body {
   min-block-size: 100svh;
   background-color: var(--color-bg);
   color: var(--color-text);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
@@ -104,7 +133,9 @@ h1,
 h2,
 h3,
 h4 {
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-display);
   line-height: var(--leading-tight);
   text-wrap: balance;
 }

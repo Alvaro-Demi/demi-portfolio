@@ -20,6 +20,8 @@ yarn-error.log
 .settings/
 *.sublime-workspace
 
+.playwright-mcp/
+
 # Visual Studio Code
 .vscode/*
 !.vscode/settings.json
