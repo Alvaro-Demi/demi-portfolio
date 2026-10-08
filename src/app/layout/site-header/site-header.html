@@ -1,15 +1,16 @@
-<header class="site-header">
+<header class="site-header" [class.is-solid]="solid() || menuOpen()">
   <a class="brand" routerLink="/" (click)="closeMenu()">DEMI</a>
 
   <button
     #menuButton
     type="button"
     class="menu-button"
+    lang="en"
     aria-controls="site-nav"
     [attr.aria-expanded]="menuOpen()"
     (click)="toggleMenu()"
   >
-    Menu
+    {{ menuOpen() ? 'Close' : 'Menu' }}
   </button>
 
   <nav id="site-nav" class="nav" [class.is-open]="menuOpen()" aria-label="Principal">

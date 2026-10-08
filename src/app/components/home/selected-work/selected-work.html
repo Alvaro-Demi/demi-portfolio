@@ -1,0 +1,20 @@
+<section id="work" class="work" aria-labelledby="work-title">
+  <div class="work-header">
+    <div appReveal>
+      <p class="eyebrow">01 — Videoclip</p>
+      <h2 id="work-title" class="work-title" lang="en">Selected work</h2>
+    </div>
+    <div class="work-intro" appReveal [revealDelay]="120">
+      <p>Rodajes, videoclips, sesiones de fotos, redes, conciertos y festivales.</p>
+      <p>Da un salto de imagen como artista.</p>
+    </div>
+  </div>
+
+  <ol class="work-grid" role="list">
+    @for (entry of entries(); track entry.id; let i = $index) {
+      <li class="work-item" [attr.data-layout]="entry.layout">
+        <app-work-piece [entry]="entry" [index]="i + 1" />
+      </li>
+    }
+  </ol>
+</section>

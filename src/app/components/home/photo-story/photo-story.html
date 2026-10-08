@@ -1,0 +1,55 @@
+<section
+  class="story"
+  [id]="story().id"
+  [attr.aria-labelledby]="eyebrowId() + ' ' + titleId()"
+  [appScrollTrack]="strip"
+  #track="scrollTrack"
+>
+  <div class="story-pin">
+    <header class="story-header" appReveal>
+      <p class="eyebrow" [id]="eyebrowId()">{{ chapter() }} — <span lang="en">conciertos</span></p>
+      <div class="story-heading">
+        <h2 class="story-artist" [id]="titleId()">{{ story().artist }}</h2>
+        <p class="story-meta">{{ meta() }}</p>
+      </div>
+    </header>
+
+    <!-- Escritorio: la composición completa en una tira -->
+    <div
+      class="story-window"
+      [attr.role]="track.active() ? null : 'region'"
+      [attr.aria-label]="track.active() ? null : regionLabel()"
+      [attr.tabindex]="track.active() ? null : 0"
+    >
+      <div class="story-strip" #strip>
+        <img
+          [ngSrc]="story().photo.src"
+          [alt]="story().photo.alt"
+          [width]="story().photo.width"
+          [height]="story().photo.height"
+          ngSrcset="1600w, 3456w, 5184w, 6480w"
+          sizes="(max-height: 32rem) calc((100vh - 6.5rem) * 4.8), calc((100vh - 17rem) * 4.8)"
+        />
+      </div>
+    </div>
+
+    <div class="story-progress" aria-hidden="true"><span></span></div>
+  </div>
+
+  <!-- Móvil y tablet: los paneles clave, apilados -->
+  <ol class="story-crops" role="list">
+    @for (crop of crops(); track crop.src) {
+      <li class="story-crop" [attr.data-shape]="crop.shape" [attr.data-placement]="crop.placement">
+        <img
+          [ngSrc]="crop.src"
+          [alt]="crop.alt"
+          [width]="crop.width"
+          [height]="crop.height"
+          appReveal="clip"
+          [revealDelay]="crop.shape === 'tall' && crop.placement === 'end' ? 120 : 0"
+          sizes="(min-width: 48rem) 50vw, 100vw"
+        />
+      </li>
+    }
+  </ol>
+</section>

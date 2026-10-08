@@ -1,0 +1,129 @@
+:host {
+  display: block;
+}
+
+.work {
+  padding: var(--space-24) var(--page-gutter);
+}
+
+/* --- Cabecera ------------------------------------------------------------ */
+
+.work-header {
+  display: grid;
+  gap: var(--space-6);
+  margin-block-end: var(--space-16);
+}
+
+.work-title {
+  margin-block-start: var(--space-4);
+  font-size: clamp(4rem, 2rem + 10vw, 11rem);
+  line-height: 0.85;
+  text-transform: uppercase;
+}
+
+.work-intro {
+  display: grid;
+  gap: var(--space-3);
+  max-inline-size: 34ch;
+  color: var(--color-text-muted);
+}
+
+/*
+ * Piezas en zigzag: las pantallas a sangre por la derecha y el rodaje a sangre
+ * por la izquierda. La separación entre piezas no depende de su papel.
+ */
+
+/* --- Móvil --------------------------------------------------------------- */
+
+.work-grid {
+  display: grid;
+}
+
+.work-item + .work-item {
+  margin-block-start: var(--space-16);
+}
+
+.work-item[data-layout='screen'] {
+  margin-inline: calc(var(--page-gutter) * -1);
+  --caption-inset-start: var(--page-gutter);
+  --caption-inset-end: var(--page-gutter);
+}
+.work-item[data-layout='wide'] {
+  inline-size: 88%;
+  justify-self: end;
+}
+.work-item[data-layout='coda'] {
+  inline-size: 84%;
+}
+
+/* --- Tablet: 8 columnas -------------------------------------------------- */
+
+@media (min-width: 48rem) {
+  .work-header {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+
+  .work-grid {
+    grid-template-columns: repeat(8, 1fr);
+    column-gap: var(--space-6);
+  }
+
+  .work-item[data-layout] {
+    inline-size: auto;
+    justify-self: stretch;
+    margin-inline: 0;
+    --caption-inset-start: 0;
+    --caption-inset-end: 0;
+  }
+
+  .work-item + .work-item {
+    margin-block-start: var(--space-24);
+  }
+
+  .work-item[data-layout='screen'] {
+    grid-column: 2 / -1;
+    margin-inline-end: calc(var(--page-gutter) * -1);
+    --caption-inset-end: var(--page-gutter);
+  }
+  .work-item[data-layout='wide'] {
+    grid-column: 1 / span 7;
+    margin-inline-start: calc(var(--page-gutter) * -1);
+    --caption-inset-start: var(--page-gutter);
+  }
+  .work-item[data-layout='coda'] {
+    grid-column: 4 / -1;
+  }
+}
+
+/* --- Escritorio: 12 columnas --------------------------------------------- */
+
+@media (min-width: 64rem) {
+  .work-header,
+  .work-grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  .work-header {
+    column-gap: var(--space-6);
+  }
+
+  .work-header > :first-child {
+    grid-column: 1 / span 9;
+  }
+
+  .work-intro {
+    grid-column: 10 / span 3;
+  }
+
+  .work-item + .work-item {
+    margin-block-start: clamp(6rem, 10vw, 10rem);
+  }
+
+  .work-item[data-layout='wide'] {
+    grid-column: 1 / span 9;
+  }
+  .work-item[data-layout='coda'] {
+    grid-column: 7 / span 5;
+  }
+}

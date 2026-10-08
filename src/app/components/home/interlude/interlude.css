@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.interlude-media {
+  position: relative;
+  block-size: max(70svh, 22rem);
+}
+
+.interlude-media img {
+  object-fit: cover;
+}
+
+.interlude-caption {
+  padding: var(--space-3) var(--page-gutter) 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-align: end;
+  text-transform: uppercase;
+}
+
+@media (min-width: 48rem) {
+  .interlude-media {
+    block-size: max(85svh, 28rem);
+  }
+}

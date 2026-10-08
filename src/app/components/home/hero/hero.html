@@ -1,0 +1,30 @@
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-media">
+    <img
+      [ngSrc]="photo().src"
+      [alt]="photo().alt"
+      fill
+      priority
+      sizes="(max-aspect-ratio: 1/1) 210vw, 100vw"
+      [style.--focus]="photo().focus ?? null"
+      [style.--focus-mobile]="photo().mobile?.focus ?? null"
+    />
+  </div>
+
+  <!-- data-header-edge: el header se vuelve sólido cuando este bloque llega a él -->
+  <div class="hero-content" data-header-edge>
+    <div class="hero-meta">
+      <p>Fotografía & Videografía</p>
+      <a class="hero-scroll" routerLink="/" fragment="work">
+        Ver trabajo <span aria-hidden="true">↓</span>
+      </a>
+    </div>
+
+    <h1 id="hero-title" class="hero-title">
+      <span class="hero-brand">DEMI</span>
+      <span class="hero-concept" lang="en">
+        Stage <span class="hero-slash" aria-hidden="true">/</span> Bleed
+      </span>
+    </h1>
+  </div>
+</section>

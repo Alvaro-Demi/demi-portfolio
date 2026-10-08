@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   template: `
     <footer class="site-footer">
       <p class="brand">DEMI</p>
-      <p class="tagline">Fotografía de conciertos y artistas</p>
+      <p class="tagline">Fotografía & Videografía</p>
       <p class="legal"><small>© {{ year }} DEMI</small></p>
     </footer>
   `,

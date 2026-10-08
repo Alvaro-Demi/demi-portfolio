@@ -1,0 +1,153 @@
+:host {
+  display: block;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-content: end;
+  /* Una pantalla; si el titular no cabe (pantallas muy bajas), el hero crece con él */
+  min-block-size: 100svh;
+  padding-inline: var(--page-gutter);
+  padding-block: calc(var(--header-height) + env(safe-area-inset-top, 0px))
+    calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
+}
+
+/* --- Fotografía a sangre ------------------------------------------------ */
+
+.hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.hero-media img {
+  object-fit: cover;
+  object-position: var(--focus, 50% 50%);
+}
+
+/* Pantallas verticales: se ve menos de la mitad del ancho, cambia el encuadre */
+@media (max-aspect-ratio: 1/1) {
+  .hero-media img {
+    object-position: var(--focus-mobile, var(--focus, 50% 50%));
+  }
+}
+
+/* Velos: arriba para la navegación, abajo para el titular */
+.hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(10 10 10 / 0.7) 0%,
+    rgb(10 10 10 / 0) 22%,
+    rgb(10 10 10 / 0) 35%,
+    rgb(10 10 10 / 0.6) 55%,
+    rgb(10 10 10 / 0.92) 100%
+  );
+}
+
+/*
+ * Móvil: la foto a pantalla completa solo enseñaría un tercio del ancho y
+ * dejaría fuera a DEMI o a los artistas. Se convierte en un bloque superior
+ * y el titular se superpone a su base, sobre el escenario.
+ */
+@media (max-width: 47.99rem) {
+  /* Máximo 136vw (≈ la mitad del ancho de la foto); en pantallas bajas se acorta
+     para que el titular quepa entero: entonces se ve aún más ancho de la foto. */
+  .hero-media {
+    inset: 0 0 auto;
+    block-size: clamp(18rem, calc(100svh - 20rem), 136vw);
+  }
+
+  .hero-media::after {
+    background: linear-gradient(
+      to bottom,
+      rgb(10 10 10 / 0.7) 0%,
+      rgb(10 10 10 / 0) 20%,
+      rgb(10 10 10 / 0) 62%,
+      rgb(10 10 10 / 0.75) 85%,
+      rgb(10 10 10 / 1) 100%
+    );
+  }
+}
+
+/* --- Texto --------------------------------------------------------------- */
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-6);
+  padding-block-end: var(--space-3);
+  border-block-end: 1px solid rgb(242 237 230 / 0.3);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* Área táctil de 2.5rem sin mover la línea del texto */
+.hero-scroll {
+  padding-block: var(--space-2);
+  margin-block: calc(var(--space-2) * -1);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+}
+
+.hero-title {
+  display: grid;
+  margin-block-start: var(--space-4);
+  line-height: 0.8;
+}
+
+/* Móvil: DEMI ocupa el ancho como la cabecera de un cartel */
+.hero-brand {
+  font-size: 58vw;
+  letter-spacing: 0.01em;
+  margin-inline-start: -0.03em;
+}
+
+.hero-concept {
+  justify-self: end;
+  margin-block-start: var(--space-3);
+  font-size: clamp(2rem, 9vw, 3rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-slash {
+  color: var(--color-accent);
+}
+
+/* Tablet y escritorio: DEMI abajo a la izquierda, el concepto a su lado */
+@media (min-width: 48rem) {
+  .hero-title {
+    grid-template-columns: auto 1fr;
+    align-items: end;
+    column-gap: var(--space-8);
+  }
+
+  /* Limitado también por el alto: en pantallas bajas (móvil apaisado) cabe en la primera vista */
+  .hero-brand {
+    font-size: clamp(8rem, min(30vw, 55svh), 34rem);
+  }
+
+  .hero-concept {
+    margin-block: 0 0.08em;
+    font-size: clamp(2.5rem, 5vw, 5.5rem);
+  }
+}
+
+/* Tablet vertical: la foto ocupa más alto que ancho y DEMI necesita más presencia */
+@media (min-width: 48rem) and (max-aspect-ratio: 4/5) {
+  .hero-brand {
+    font-size: 42vw;
+  }
+}

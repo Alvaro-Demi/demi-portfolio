@@ -1,0 +1,80 @@
+:host {
+  display: block;
+}
+
+/* Móvil: dos verticales al 72 %, una a cada lado, la segunda algo más abajo */
+.portraits {
+  display: grid;
+  padding: var(--space-24) var(--page-gutter);
+}
+
+.portraits-header {
+  margin-block-end: var(--space-12);
+}
+
+.portraits-title {
+  margin-block-start: var(--space-4);
+  font-size: var(--text-heading);
+  text-transform: uppercase;
+}
+
+.portraits-item {
+  inline-size: 72%;
+}
+
+.portraits-item[data-layout='pair-end'] {
+  justify-self: end;
+  margin-block-start: var(--space-12);
+}
+
+/* Tablet: dos columnas con desfase vertical */
+@media (min-width: 48rem) {
+  .portraits {
+    grid-template-columns: repeat(8, 1fr);
+    column-gap: var(--space-6);
+  }
+
+  .portraits-header {
+    grid-column: 1 / -1;
+  }
+
+  .portraits-item {
+    inline-size: auto;
+  }
+
+  .portraits-item[data-layout='pair-start'] {
+    grid-column: 1 / span 4;
+  }
+
+  .portraits-item[data-layout='pair-end'] {
+    grid-column: 5 / span 4;
+    justify-self: stretch;
+    margin-block-start: var(--space-24);
+  }
+}
+
+/* Escritorio: el título junto al primer retrato; el segundo, desplazado debajo */
+@media (min-width: 64rem) {
+  .portraits {
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+
+  .portraits-header {
+    grid-column: 8 / span 5;
+    grid-row: 1;
+    align-self: start;
+    margin-block-end: 0;
+  }
+
+  .portraits-item[data-layout='pair-start'] {
+    grid-column: 2 / span 4;
+    grid-row: 1 / span 2;
+  }
+
+  .portraits-item[data-layout='pair-end'] {
+    grid-column: 8 / span 4;
+    grid-row: 2;
+    margin-block-start: var(--space-16);
+  }
+}

@@ -1,0 +1,81 @@
+:host {
+  display: block;
+}
+
+.contact {
+  display: grid;
+  gap: var(--space-12);
+  padding: var(--space-24) var(--page-gutter);
+  border-block-start: 1px solid var(--color-line);
+}
+
+/* Interlineado suficiente para que el descendente de «¿» no toque la línea siguiente */
+.contact-title {
+  max-inline-size: 12ch;
+  margin-block-start: var(--space-4);
+  font-size: clamp(4rem, 2rem + 9vw, 10rem);
+  line-height: 0.96;
+  text-transform: uppercase;
+}
+
+.contact-actions {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-6);
+}
+
+.contact-text {
+  max-inline-size: 34ch;
+  color: var(--color-text-muted);
+}
+
+/* El único bloque rojo de la página: blanco sobre #E10600 = 5:1 */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-block-size: 3.5rem;
+  padding-inline: var(--space-8);
+  background-color: var(--color-accent);
+  color: #ffffff;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background-color var(--duration-base) ease,
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.cta:active {
+  transform: scale(0.97);
+}
+
+.cta-arrow {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta:hover {
+    background-color: #b80500;
+  }
+
+  .cta:hover .cta-arrow {
+    transform: translateX(0.25rem);
+  }
+}
+
+.contact-email {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+}
+
+@media (min-width: 64rem) {
+  .contact {
+    grid-template-columns: 7fr 4fr;
+    align-items: end;
+    column-gap: var(--space-16);
+  }
+}

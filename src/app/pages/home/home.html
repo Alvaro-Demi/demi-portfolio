@@ -1,23 +1,16 @@
-<!-- Estructura base de la Home. Cada sección se convertirá en su propio componente. -->
+<!-- Impacto → trabajo audiovisual → inmersión → detalle → inmersión → quién → acción -->
+<app-hero [photo]="heroPhoto" />
 
-<!-- Hero -->
-<section class="section hero" aria-labelledby="hero-title">
-  <h1 id="hero-title">DEMI / STAGE BLEED</h1>
-</section>
+<app-selected-work [entries]="videoclips" />
 
-<!-- Selected work -->
-<section id="work" class="section" aria-labelledby="work-title">
-  <h2 id="work-title" lang="en">Selected work</h2>
-</section>
+<app-interlude [photo]="interludePhoto" [caption]="interludeCaption" />
 
-<!-- Full-bleed image: imagen a sangre, se añadirá en la siguiente fase -->
+<app-photo-story [story]="stories[0]" chapter="02" />
 
-<!-- About -->
-<section id="about" class="section" aria-labelledby="about-title">
-  <h2 id="about-title" lang="en">About</h2>
-</section>
+<app-portraits [entries]="portraits" />
 
-<!-- Contact -->
-<section id="contact" class="section" aria-labelledby="contact-title">
-  <h2 id="contact-title" lang="en">Contact</h2>
-</section>
+<app-photo-story [story]="stories[1]" chapter="04" />
+
+<app-about [photo]="aboutPhoto" />
+
+<app-contact [email]="contactEmail" />

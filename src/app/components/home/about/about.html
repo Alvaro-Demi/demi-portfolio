@@ -1,0 +1,28 @@
+<section id="about" class="about" aria-labelledby="about-title">
+  <div class="about-media" appReveal="clip">
+    <img
+      [ngSrc]="photo().src"
+      [alt]="photo().alt"
+      [width]="photo().width"
+      [height]="photo().height"
+      sizes="(min-width: 64rem) 30vw, (min-width: 48rem) 55vw, 80vw"
+    />
+  </div>
+
+  <div class="about-body" appReveal>
+    <p class="eyebrow">05 — <span lang="en">About</span></p>
+    <h2 id="about-title" class="about-title">Fotografía & Videografía</h2>
+    <p class="about-lead">
+      "Plasmar ideas sin perder la esencia"
+    </p>
+    <p class="about-text">
+      
+    </p>
+
+    <ul class="about-services" role="list">
+      @for (service of services; track service) {
+        <li>{{ service }}</li>
+      }
+    </ul>
+  </div>
+</section>

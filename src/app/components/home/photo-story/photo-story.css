@@ -1,0 +1,179 @@
+:host {
+  display: block;
+}
+
+.story {
+  padding-block: var(--space-24);
+}
+
+/* --- Cabecera de la historia --------------------------------------------- */
+
+.story-header {
+  margin-block-end: var(--space-8);
+  padding-inline: var(--page-gutter);
+}
+
+.story-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-8);
+  margin-block-start: var(--space-4);
+}
+
+.story-artist {
+  font-size: clamp(3rem, 2rem + 4vw, 6rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.story-meta {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* --- Móvil: paneles apilados, como una hoja de contactos ----------------- */
+
+.story-window,
+.story-progress {
+  display: none;
+}
+
+/* 6 columnas: a sangre (6), verticales (4) alternando lados, estrechas en pareja (3 + 3) */
+.story-crops {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-4) var(--space-3);
+  padding-inline: var(--page-gutter);
+}
+
+.story-crop[data-shape='full'] {
+  grid-column: 1 / -1;
+  margin-inline: calc(var(--page-gutter) * -1);
+}
+.story-crop[data-shape='portrait'][data-placement='start'] {
+  grid-column: 1 / span 4;
+}
+.story-crop[data-shape='portrait'][data-placement='end'] {
+  grid-column: 3 / span 4;
+}
+.story-crop[data-shape='tall'][data-placement='start'] {
+  grid-column: 1 / span 3;
+}
+.story-crop[data-shape='tall'][data-placement='end'] {
+  grid-column: 4 / span 3;
+}
+
+.story-crop img {
+  inline-size: 100%;
+  background-color: var(--color-surface);
+}
+
+/* Tablet: los paneles no llenan el ancho, para que no se hagan altísimos */
+@media (min-width: 48rem) {
+  .story-crop[data-shape='full'] {
+    grid-column: 2 / span 4;
+    margin-inline: 0;
+  }
+  .story-crop[data-shape='portrait'][data-placement='start'] {
+    grid-column: 1 / span 3;
+  }
+  .story-crop[data-shape='portrait'][data-placement='end'] {
+    grid-column: 4 / span 3;
+  }
+  .story-crop[data-shape='tall'][data-placement='start'] {
+    grid-column: 2 / span 2;
+  }
+  .story-crop[data-shape='tall'][data-placement='end'] {
+    grid-column: 4 / span 2;
+  }
+}
+
+/* --- Escritorio y móvil apaisado: la composición completa en una tira ----- */
+
+/* En apaisado los paneles sueltos serían más altos que la pantalla: la tira encaja mejor */
+@media (min-width: 64rem), (min-width: 40rem) and (max-height: 32rem) and (orientation: landscape) {
+  .story-crops {
+    display: none;
+  }
+
+  /* Sin efecto (movimiento reducido, pantalla baja): scroll horizontal nativo */
+  .story-window {
+    display: block;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-color: var(--color-line) transparent;
+  }
+
+  .story-strip {
+    inline-size: max-content;
+    padding-inline: var(--page-gutter);
+  }
+
+  .story-strip img {
+    block-size: clamp(20rem, 70svh, 1350px);
+    inline-size: auto;
+    max-inline-size: none;
+  }
+}
+
+@media (min-width: 40rem) and (max-height: 32rem) and (orientation: landscape) {
+  .story-strip img {
+    block-size: calc(100svh - var(--header-height) - var(--space-8));
+  }
+}
+
+/* --- Con efecto (directiva appScrollTrack): sticky + desplazamiento horizontal --- */
+
+/* La sección crece en alto lo que la tira sobresale en ancho */
+.story.is-tracking {
+  block-size: calc(100svh + var(--travel, 0px));
+  padding-block: 0;
+}
+
+.story.is-tracking .story-pin {
+  position: sticky;
+  inset-block-start: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  block-size: 100svh;
+  padding-block: calc(var(--header-height) + var(--space-6)) var(--space-8);
+}
+
+.story.is-tracking .story-header {
+  margin-block-end: var(--space-6);
+}
+
+.story.is-tracking .story-window {
+  overflow: hidden;
+}
+
+.story.is-tracking .story-strip {
+  block-size: 100%;
+  transform: translate3d(calc(var(--progress, 0) * var(--travel, 0px) * -1), 0, 0);
+  will-change: transform;
+}
+
+.story.is-tracking .story-strip img {
+  block-size: 100%;
+}
+
+/* Progreso: una línea de 1 px que se llena en blanco roto; sin contadores */
+.story.is-tracking .story-progress {
+  display: block;
+  block-size: 1px;
+  margin: var(--space-4) var(--page-gutter) 0;
+  background-color: var(--color-line);
+}
+
+.story-progress span {
+  display: block;
+  block-size: 100%;
+  background-color: var(--color-text);
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;
+}

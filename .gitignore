@@ -44,3 +44,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Originales de fotos (solo se versiona la salida en public/images/photos)
+/images-src/*
+!/images-src/README.md

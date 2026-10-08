@@ -1,6 +1,6 @@
 /* El header flota sobre el hero: sin fondo ni sombra de "navbar". */
 :host {
-  position: absolute;
+  position: fixed;
   inset-block-start: 0;
   inset-inline: 0;
   z-index: 10;
@@ -12,8 +12,19 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-6);
-  min-block-size: var(--header-height);
+  min-block-size: calc(var(--header-height) + env(safe-area-inset-top, 0px));
+  padding-block-start: env(safe-area-inset-top, 0px);
   padding-inline: var(--page-gutter);
+  border-block-end: 1px solid transparent;
+  transition:
+    background-color var(--duration-base) ease,
+    border-color var(--duration-base) ease;
+}
+
+/* Fuera del hero (o con el menú abierto) el header necesita su propio fondo */
+.site-header.is-solid {
+  background-color: var(--color-bg);
+  border-block-end-color: var(--color-line);
 }
 
 .brand {
@@ -34,9 +45,18 @@
 
 .menu-button {
   min-block-size: 2.75rem;
+  /* Ancho fijo: "Menu" y "Close" no desplazan nada al alternar */
+  min-inline-size: 4.5rem;
   padding-inline: var(--space-2);
+  margin-inline-end: calc(var(--space-2) * -1);
   border: 0;
   background: none;
+  text-align: end;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.menu-button:active {
+  transform: scale(0.97);
 }
 
 .nav-link {
@@ -49,8 +69,10 @@
   transition: text-decoration-color var(--duration-fast) var(--ease-out);
 }
 
-.nav-link:hover {
-  text-decoration-color: var(--color-accent);
+@media (hover: hover) and (pointer: fine) {
+  .nav-link:hover {
+    text-decoration-color: var(--color-accent);
+  }
 }
 
 /* --- Mobile: DEMI + MENU; la navegación se despliega bajo el header --- */
@@ -67,6 +89,17 @@
   padding: var(--space-4) var(--page-gutter) var(--space-8);
   background-color: var(--color-bg);
   border-block-end: 1px solid var(--color-line);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+/* Entrada del panel: aparece desde 8px más arriba (el cierre es instantáneo) */
+@starting-style {
+  .nav.is-open {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
 }
 
 .nav-list {
@@ -89,6 +122,7 @@
     padding: 0;
     background: none;
     border: 0;
+    transition: none;
   }
 
   .nav-list {

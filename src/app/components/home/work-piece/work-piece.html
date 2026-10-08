@@ -1,0 +1,27 @@
+<figure class="work-piece">
+  <div
+    class="work-media"
+    [style.--ratio]="entry().photo.width + ' / ' + entry().photo.height"
+    [style.--ratio-mobile]="entry().photo.mobile?.aspectRatio ?? null"
+    [style.--focus]="entry().photo.focus ?? null"
+    [style.--focus-mobile]="entry().photo.mobile?.focus ?? null"
+  >
+    <div class="work-frame" [appReveal]="layout().reveal">
+      <img [ngSrc]="entry().photo.src" [alt]="entry().photo.alt" fill [sizes]="layout().sizes" />
+    </div>
+    @if (entry().youtubeUrl; as url) {
+      <a class="work-link" [href]="url" target="_blank" rel="noopener noreferrer">
+        <span class="visually-hidden">{{ linkLabel() }}</span>
+      </a>
+    }
+  </div>
+
+  <figcaption class="work-caption" appReveal [revealDelay]="120">
+    <span class="work-index">{{ number() }}</span>
+    <span class="work-name">{{ heading() }}</span>
+    <span class="work-meta">{{ meta() }}</span>
+    @if (entry().youtubeUrl) {
+      <span class="work-watch" aria-hidden="true" lang="en">&#x25B6;&#xFE0E; Watch</span>
+    }
+  </figcaption>
+</figure>
