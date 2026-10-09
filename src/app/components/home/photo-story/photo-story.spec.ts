@@ -50,15 +50,12 @@ describe('PhotoStory', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('coloca los paneles de móvil según su forma y empareja los estrechos', async () => {
-    const crops = [...(await render()).querySelectorAll<HTMLElement>('.story-crop')];
+  it('muestra la composición entera en una sola tira, sin partirla', async () => {
+    const element = await render();
 
-    expect(crops.map((c) => `${c.dataset['shape']}:${c.dataset['placement']}`)).toEqual([
-      'full:full',
-      'portrait:start',
-      'tall:start',
-      'tall:end',
-    ]);
+    expect(element.querySelectorAll('.story-strip img').length).toBe(1);
+    expect(element.querySelector('.story-crop')).toBeNull();
+    expect(element.querySelector('.story-progress span')).not.toBeNull();
   });
 
   it('sin el efecto activo, la tira es una región con scroll accesible por teclado', async () => {

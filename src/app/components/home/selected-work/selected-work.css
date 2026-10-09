@@ -43,14 +43,12 @@
   margin-block-start: var(--space-16);
 }
 
-.work-item[data-layout='screen'] {
+/* Móvil: los videoclips van todos a sangre y enteros, al mismo tamaño */
+.work-item[data-layout='screen'],
+.work-item[data-layout='wide'] {
   margin-inline: calc(var(--page-gutter) * -1);
   --caption-inset-start: var(--page-gutter);
   --caption-inset-end: var(--page-gutter);
-}
-.work-item[data-layout='wide'] {
-  inline-size: 88%;
-  justify-self: end;
 }
 .work-item[data-layout='coda'] {
   inline-size: 84%;

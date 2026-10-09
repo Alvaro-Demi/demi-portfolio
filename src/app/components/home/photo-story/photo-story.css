@@ -36,88 +36,57 @@
   text-transform: uppercase;
 }
 
-/* --- Móvil: paneles apilados, como una hoja de contactos ----------------- */
+/* --- La composición completa en una tira ---------------------------------- */
 
-.story-window,
-.story-progress {
-  display: none;
+/* Base (movimiento reducido, pantallas bajas): scroll horizontal nativo */
+.story-window {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-color: var(--color-line) transparent;
 }
 
-/* 6 columnas: a sangre (6), verticales (4) alternando lados, estrechas en pareja (3 + 3) */
-.story-crops {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: var(--space-4) var(--space-3);
+.story-strip {
+  inline-size: max-content;
   padding-inline: var(--page-gutter);
 }
 
-.story-crop[data-shape='full'] {
-  grid-column: 1 / -1;
-  margin-inline: calc(var(--page-gutter) * -1);
-}
-.story-crop[data-shape='portrait'][data-placement='start'] {
-  grid-column: 1 / span 4;
-}
-.story-crop[data-shape='portrait'][data-placement='end'] {
-  grid-column: 3 / span 4;
-}
-.story-crop[data-shape='tall'][data-placement='start'] {
-  grid-column: 1 / span 3;
-}
-.story-crop[data-shape='tall'][data-placement='end'] {
-  grid-column: 4 / span 3;
+.story-strip img {
+  block-size: clamp(20rem, 70svh, 1350px);
+  inline-size: auto;
+  max-inline-size: none;
 }
 
-.story-crop img {
-  inline-size: 100%;
-  background-color: var(--color-surface);
+/* Progreso: una línea de 1 px que se llena en blanco roto; sin contadores */
+.story-progress {
+  display: none;
+  block-size: 1px;
+  margin: var(--space-4) var(--page-gutter) 0;
+  background-color: var(--color-line);
 }
 
-/* Tablet: los paneles no llenan el ancho, para que no se hagan altísimos */
-@media (min-width: 48rem) {
-  .story-crop[data-shape='full'] {
-    grid-column: 2 / span 4;
-    margin-inline: 0;
-  }
-  .story-crop[data-shape='portrait'][data-placement='start'] {
-    grid-column: 1 / span 3;
-  }
-  .story-crop[data-shape='portrait'][data-placement='end'] {
-    grid-column: 4 / span 3;
-  }
-  .story-crop[data-shape='tall'][data-placement='start'] {
-    grid-column: 2 / span 2;
-  }
-  .story-crop[data-shape='tall'][data-placement='end'] {
-    grid-column: 4 / span 2;
-  }
+.story-progress span {
+  display: block;
+  block-size: 100%;
+  background-color: var(--color-text);
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;
 }
 
-/* --- Escritorio y móvil apaisado: la composición completa en una tira ----- */
-
-/* En apaisado los paneles sueltos serían más altos que la pantalla: la tira encaja mejor */
-@media (min-width: 64rem), (min-width: 40rem) and (max-height: 32rem) and (orientation: landscape) {
-  .story-crops {
-    display: none;
-  }
-
-  /* Sin efecto (movimiento reducido, pantalla baja): scroll horizontal nativo */
+/*
+ * Móvil y tablet: la tira ocupa media pantalla y la directiva appGlide la recorre con
+ * el scroll vertical. La línea de progreso sustituye a la barra de scroll.
+ */
+@media (max-width: 63.99rem) {
   .story-window {
-    display: block;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scrollbar-color: var(--color-line) transparent;
-  }
-
-  .story-strip {
-    inline-size: max-content;
-    padding-inline: var(--page-gutter);
+    scrollbar-width: none;
   }
 
   .story-strip img {
-    block-size: clamp(20rem, 70svh, 1350px);
-    inline-size: auto;
-    max-inline-size: none;
+    block-size: clamp(18rem, 55svh, 36rem);
+  }
+
+  .story-progress {
+    display: block;
   }
 }
 
@@ -162,18 +131,6 @@
   block-size: 100%;
 }
 
-/* Progreso: una línea de 1 px que se llena en blanco roto; sin contadores */
 .story.is-tracking .story-progress {
   display: block;
-  block-size: 1px;
-  margin: var(--space-4) var(--page-gutter) 0;
-  background-color: var(--color-line);
-}
-
-.story-progress span {
-  display: block;
-  block-size: 100%;
-  background-color: var(--color-text);
-  transform: scaleX(var(--progress, 0));
-  transform-origin: left;
 }

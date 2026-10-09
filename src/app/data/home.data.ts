@@ -47,8 +47,6 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
       alt: 'Tríptico del videoclip «Mírame»: una mujer, una pareja a contraluz al atardecer y un retrato del artista',
       width: 3546,
       height: 1566,
-      // En móvil solo el panel central: la pareja a contraluz con el título.
-      mobile: { aspectRatio: '9 / 10', focus: '49% 50%' },
     },
   },
   {
@@ -65,8 +63,6 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
       alt: 'Tríptico de rodaje: un grupo posa en una nave, dos artistas junto a una mujer mayor sentada en un trono y una escena en un interior',
       width: 3546,
       height: 1566,
-      // En móvil solo el panel central: los dos artistas con la mujer en el trono.
-      mobile: { aspectRatio: '4 / 5', focus: '52% 50%' },
     },
   },
   {

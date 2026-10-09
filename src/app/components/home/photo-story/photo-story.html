@@ -14,9 +14,11 @@
       </div>
     </header>
 
-    <!-- Escritorio: la composición completa en una tira -->
+    <!-- La composición completa en una tira: sticky en escritorio, paneo en móvil y tablet -->
     <div
       class="story-window"
+      appGlide
+      [glideProgress]="progress"
       [attr.role]="track.active() ? null : 'region'"
       [attr.aria-label]="track.active() ? null : regionLabel()"
       [attr.tabindex]="track.active() ? null : 0"
@@ -28,28 +30,11 @@
           [width]="story().photo.width"
           [height]="story().photo.height"
           ngSrcset="1600w, 3456w, 5184w, 6480w"
-          sizes="(max-height: 32rem) calc((100vh - 6.5rem) * 4.8), calc((100vh - 17rem) * 4.8)"
+          sizes="(max-height: 32rem) calc((100vh - 6.5rem) * 4.8), (max-width: 63.99rem) calc(55vh * 4.8), calc((100vh - 17rem) * 4.8)"
         />
       </div>
     </div>
 
-    <div class="story-progress" aria-hidden="true"><span></span></div>
+    <div class="story-progress" aria-hidden="true"><span #progress></span></div>
   </div>
-
-  <!-- Móvil y tablet: los paneles clave, apilados -->
-  <ol class="story-crops" role="list">
-    @for (crop of crops(); track crop.src) {
-      <li class="story-crop" [attr.data-shape]="crop.shape" [attr.data-placement]="crop.placement">
-        <img
-          [ngSrc]="crop.src"
-          [alt]="crop.alt"
-          [width]="crop.width"
-          [height]="crop.height"
-          appReveal="clip"
-          [revealDelay]="crop.shape === 'tall' && crop.placement === 'end' ? 120 : 0"
-          sizes="(min-width: 48rem) 50vw, 100vw"
-        />
-      </li>
-    }
-  </ol>
 </section>
