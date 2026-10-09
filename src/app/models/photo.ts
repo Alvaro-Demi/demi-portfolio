@@ -21,9 +21,9 @@ export interface MobileCrop {
 /**
  * Papel de cada pieza dentro de su sección.
  *   Videoclip: screen (pantalla a sangre) · wide (panorámica secundaria) · coda (cierre)
- *   Retrato:   pair-start / pair-end (las dos mitades del díptico)
+ *   Retrato:   lead (el grande) · pair-start / pair-end (los dos pequeños, escalonados)
  */
-export type WorkLayout = 'screen' | 'wide' | 'coda' | 'pair-start' | 'pair-end';
+export type WorkLayout = 'screen' | 'wide' | 'coda' | 'lead' | 'pair-start' | 'pair-end';
 
 export type WorkType = 'photo' | 'video';
 

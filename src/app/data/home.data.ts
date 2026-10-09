@@ -182,8 +182,11 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
 ];
 
 /*
- * 03 — Retrato. Díptico de la misma sesión y el mismo fondo: nítido y mirando a cámara
- * frente a desenfocado con el arma enfocada. Respiración en color entre los dos directos.
+ * 03 — Retrato. Tres fotos de la misma sesión y el mismo fondo: respiración en color
+ * entre los dos directos. Composición de doble página:
+ *   lead       → el retrato grande, junto al título.
+ *   pair-start → primero de los dos pequeños, bajo el título.
+ *   pair-end   → segundo pequeño, algo más abajo (escalonado).
  * (El directo con humo ya no va suelto: está dentro de la primera composición.)
  */
 export const PORTRAITS: readonly WorkEntry[] = [
@@ -195,7 +198,7 @@ export const PORTRAITS: readonly WorkEntry[] = [
     type: 'photo',
     year: 2026,
     youtubeUrl: null,
-    layout: 'pair-start',
+    layout: 'lead',
     photo: {
       src: 'work-04',
       alt: 'Retrato de un artista con sudadera negra y un águila dorada, sobre fondo verde oscuro',
@@ -211,12 +214,28 @@ export const PORTRAITS: readonly WorkEntry[] = [
     type: 'photo',
     year: 2026,
     youtubeUrl: null,
-    layout: 'pair-end',
+    layout: 'pair-start',
     photo: {
       src: 'work-06',
       alt: 'Artista desenfocado apunta con una pistola a cámara, que enfoca el arma en primer plano',
       width: 2449,
       height: 3674,
+    },
+  },
+  {
+    id: 'portrait-otro',
+    artist: 'AL SAFIR',
+    title: null,
+    context: 'SESION DE FOTOS',
+    type: 'photo',
+    year: 2026,
+    youtubeUrl: null,
+    layout: 'pair-end',
+    photo: {
+      src: 'otro-retrato',
+      alt: 'Retrato del artista mirando a cámara, con camiseta negra, una bufanda estampada al cuello y reloj dorado, sobre fondo oscuro',
+      width: 2624,
+      height: 3936,
     },
   },
 ];

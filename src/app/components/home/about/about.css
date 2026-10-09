@@ -55,10 +55,11 @@
 }
 
 @media (min-width: 64rem) {
+  /* El texto se centra en la altura de la foto: acompaña a la imagen en vez de caer a su pie */
   .about {
     grid-template-columns: repeat(12, 1fr);
     column-gap: var(--space-6);
-    align-items: end;
+    align-items: center;
   }
 
   .about-media {

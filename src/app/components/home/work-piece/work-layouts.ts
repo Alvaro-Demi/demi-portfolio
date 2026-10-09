@@ -14,6 +14,7 @@ export const WORK_LAYOUTS: Record<WorkLayout, { readonly sizes: string; readonly
   screen: { sizes: '(min-width: 64rem) 93vw, (min-width: 48rem) 94vw, 252vw', reveal: 'wipe' },
   wide: { sizes: '(min-width: 64rem) 93vw, (min-width: 48rem) 94vw, 252vw', reveal: 'wipe' },
   coda: { sizes: '(min-width: 64rem) 40vw, (min-width: 48rem) 62vw, 84vw', reveal: 'wipe' },
-  'pair-start': { sizes: '(min-width: 64rem) 30vw, (min-width: 48rem) 46vw, 72vw', reveal: 'clip' },
-  'pair-end': { sizes: '(min-width: 64rem) 30vw, (min-width: 48rem) 46vw, 72vw', reveal: 'clip' },
+  lead: { sizes: '(min-width: 64rem) 38vw, (min-width: 48rem) 58vw, 84vw', reveal: 'clip' },
+  'pair-start': { sizes: '(min-width: 64rem) 22vw, (min-width: 48rem) 34vw, 70vw', reveal: 'clip' },
+  'pair-end': { sizes: '(min-width: 64rem) 22vw, (min-width: 48rem) 46vw, 70vw', reveal: 'clip' },
 };

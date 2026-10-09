@@ -2,7 +2,10 @@
   display: block;
 }
 
-/* Móvil: dos verticales al 72 %, una a cada lado, la segunda algo más abajo */
+/*
+ * Tres retratos: uno grande (lead) y dos pequeños escalonados (pair-start, pair-end).
+ * Móvil: zigzag izquierda → derecha → izquierda.
+ */
 .portraits {
   display: grid;
   padding: var(--space-24) var(--page-gutter);
@@ -18,16 +21,22 @@
   text-transform: uppercase;
 }
 
-.portraits-item {
-  inline-size: 72%;
+.portraits-item[data-layout='lead'] {
+  inline-size: 84%;
 }
 
+.portraits-item[data-layout='pair-start'],
 .portraits-item[data-layout='pair-end'] {
-  justify-self: end;
+  /* Lo mínimo para que el pie ("Sesion de fotos · 2026") quepa en una línea */
+  inline-size: max(70%, 15.5rem);
   margin-block-start: var(--space-12);
 }
 
-/* Tablet: dos columnas con desfase vertical */
+.portraits-item[data-layout='pair-start'] {
+  justify-self: end;
+}
+
+/* Tablet: el grande a la izquierda con un pequeño a su pie; el otro debajo, hacia el centro */
 @media (min-width: 48rem) {
   .portraits {
     grid-template-columns: repeat(8, 1fr);
@@ -38,22 +47,28 @@
     grid-column: 1 / -1;
   }
 
-  .portraits-item {
+  .portraits-item[data-layout] {
     inline-size: auto;
+    justify-self: stretch;
+  }
+
+  .portraits-item[data-layout='lead'] {
+    grid-column: 1 / span 5;
   }
 
   .portraits-item[data-layout='pair-start'] {
-    grid-column: 1 / span 4;
+    grid-column: 6 / span 3;
+    align-self: end;
+    margin-block-start: 0;
   }
 
   .portraits-item[data-layout='pair-end'] {
-    grid-column: 5 / span 4;
-    justify-self: stretch;
-    margin-block-start: var(--space-24);
+    grid-column: 3 / span 4;
+    margin-block-start: var(--space-16);
   }
 }
 
-/* Escritorio: el título junto al primer retrato; el segundo, desplazado debajo */
+/* Escritorio: el grande ocupa toda la altura; a su lado, el título y los dos pequeños escalonados */
 @media (min-width: 64rem) {
   .portraits {
     grid-template-columns: repeat(12, 1fr);
@@ -61,20 +76,29 @@
   }
 
   .portraits-header {
-    grid-column: 8 / span 5;
+    grid-column: 7 / span 6;
     grid-row: 1;
     align-self: start;
-    margin-block-end: 0;
   }
 
-  .portraits-item[data-layout='pair-start'] {
-    grid-column: 2 / span 4;
+  .portraits-item[data-layout='lead'] {
+    grid-column: 1 / span 5;
     grid-row: 1 / span 2;
   }
 
+  .portraits-item[data-layout='pair-start'],
   .portraits-item[data-layout='pair-end'] {
-    grid-column: 8 / span 4;
     grid-row: 2;
+    align-self: start;
+  }
+
+  .portraits-item[data-layout='pair-start'] {
+    grid-column: 7 / span 3;
+    margin-block-start: 0;
+  }
+
+  .portraits-item[data-layout='pair-end'] {
+    grid-column: 10 / span 3;
     margin-block-start: var(--space-16);
   }
 }
