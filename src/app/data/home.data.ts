@@ -87,8 +87,7 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
 /*
  * 02 y 04 — Live. Dos composiciones panorámicas, una por artista. Van separadas por
  * los retratos: dos secuencias seguidas en B/N con el mismo mecanismo cansarían.
- * Los recortes (`crops`) son los paneles que se ven sueltos en móvil; se saltan los
- * marcos interiores de la composición para no enseñar bordes cortados.
+ * Se ven siempre enteras, en una tira que se recorre en horizontal.
  */
 export const PHOTO_STORIES: readonly PhotoStory[] = [
   {
@@ -103,38 +102,6 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
       width: 6480,
       height: 1350,
     },
-    crops: [
-      {
-        src: 'composicion1-1',
-        left: 0,
-        width: 14,
-        alt: 'El artista canta a contraluz con el micrófono en alto',
-      },
-      {
-        src: 'composicion1-2',
-        left: 13.5,
-        width: 16.7,
-        alt: 'De espaldas, con el brazo en alto entre dos columnas de humo frente al público',
-      },
-      {
-        src: 'composicion1-3',
-        left: 30,
-        width: 13.5,
-        alt: 'El artista, con camiseta de tirantes, canta al micrófono',
-      },
-      {
-        src: 'composicion1-4',
-        left: 69.6,
-        width: 9.2,
-        alt: 'Un artista a hombros de otro, los dos sonriendo sobre el escenario',
-      },
-      {
-        src: 'composicion1-5',
-        left: 90.6,
-        width: 9.4,
-        alt: 'Perfil del artista en penumbra, con el auricular de escenario',
-      },
-    ],
   },
   {
     id: 'live-02',
@@ -148,32 +115,6 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
       width: 6480,
       height: 1350,
     },
-    crops: [
-      {
-        src: 'composicion2-1',
-        left: 0,
-        width: 18.5,
-        alt: 'Perfil del artista con gorra, cantando con el micrófono pegado a la boca',
-      },
-      {
-        src: 'composicion2-2',
-        left: 32.5,
-        width: 15.5,
-        alt: 'Primer plano del artista cantando de perfil',
-      },
-      {
-        src: 'composicion2-3',
-        left: 48.5,
-        width: 10.4,
-        alt: 'El artista, con sudadera, canta girado hacia un lado',
-      },
-      {
-        src: 'composicion2-4',
-        left: 73.4,
-        width: 10.4,
-        alt: 'De espaldas, con gorra, saluda al público',
-      },
-    ],
   },
 ];
 

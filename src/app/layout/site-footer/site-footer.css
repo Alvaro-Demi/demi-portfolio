@@ -1,13 +1,19 @@
+/*
+ * Una sola fila: marca, lema y copyright. En móvil y tablet, el lema queda en el centro
+ * exacto de la pantalla: las dos columnas laterales miden lo mismo (1fr).
+ */
 .site-footer {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: baseline;
-  gap: var(--space-2) var(--space-8);
+  gap: var(--space-2);
   padding: var(--space-12) var(--page-gutter);
   border-block-start: 1px solid var(--color-line);
   font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
+  /* Más apretado en móvil para que la fila quepa entera incluso a 360 px */
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .brand {
@@ -23,9 +29,27 @@
 }
 
 .legal {
-  margin-inline-start: auto;
+  justify-self: end;
 }
 
 .legal small {
   font-size: inherit;
+}
+
+@media (min-width: 48rem) {
+  .site-footer {
+    letter-spacing: var(--tracking-wide);
+  }
+}
+
+/* Escritorio: el lema junto a la marca y el copyright al extremo derecho */
+@media (min-width: 64rem) {
+  .site-footer {
+    display: flex;
+    gap: var(--space-8);
+  }
+
+  .legal {
+    margin-inline-start: auto;
+  }
 }

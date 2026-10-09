@@ -44,18 +44,6 @@ export interface WorkEntry {
   readonly photo: Photo;
 }
 
-/**
- * Panel de una photo story que se muestra suelto en móvil. Se recorta a todo el alto
- * de la composición; `left` y `width` son porcentajes de su ancho.
- * `npm run images` genera el archivo `{src}-{ancho}.webp` a partir de la composición.
- */
-export interface StoryCrop {
-  readonly src: string;
-  readonly left: number;
-  readonly width: number;
-  readonly alt: string;
-}
-
 /** Composición panorámica de un directo: en escritorio se recorre en horizontal con el scroll. */
 export interface PhotoStory {
   /** También es el ancla de la sección (#live-01). */
@@ -67,5 +55,4 @@ export interface PhotoStory {
   readonly place: string | null;
   readonly year: number | null;
   readonly photo: Photo;
-  readonly crops: readonly StoryCrop[];
 }

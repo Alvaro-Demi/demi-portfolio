@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
     <footer class="site-footer">
       <p class="brand">DEMI</p>
       <p class="tagline">Fotografía & Videografía</p>
-      <p class="legal"><small>© {{ year }} DEMI</small></p>
+      <p class="legal"><small>© {{ year }}</small></p>
     </footer>
   `,
   styleUrl: './site-footer.css',

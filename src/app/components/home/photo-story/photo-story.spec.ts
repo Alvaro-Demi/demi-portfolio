@@ -4,7 +4,6 @@ import { PhotoStory as Story } from '../../../models/photo';
 import { photoLoader } from '../../../shared/image-loader';
 import { PhotoStory } from './photo-story';
 
-// Composición de 1000 × 100: un 10 % de ancho son 100 px → proporción 1:1.
 const STORY: Story = {
   id: 'live-test',
   artist: 'Artista',
@@ -12,12 +11,6 @@ const STORY: Story = {
   place: null,
   year: 2026,
   photo: { src: 'test', alt: 'Secuencia de prueba', width: 1000, height: 100 },
-  crops: [
-    { src: 'c1', left: 0, width: 10, alt: 'ancho' }, //  1:1   → a sangre
-    { src: 'c2', left: 10, width: 6, alt: 'vertical' }, // 0,6 → vertical
-    { src: 'c3', left: 20, width: 4, alt: 'estrecho 1' }, // 0,4 → estrecho
-    { src: 'c4', left: 30, width: 4, alt: 'estrecho 2' }, // 0,4 → estrecho
-  ],
 };
 
 describe('PhotoStory', () => {
@@ -54,7 +47,6 @@ describe('PhotoStory', () => {
     const element = await render();
 
     expect(element.querySelectorAll('.story-strip img').length).toBe(1);
-    expect(element.querySelector('.story-crop')).toBeNull();
     expect(element.querySelector('.story-progress span')).not.toBeNull();
   });
 

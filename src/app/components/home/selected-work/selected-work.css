@@ -79,13 +79,14 @@
     margin-block-start: var(--space-24);
   }
 
+  /* Las tres piezas, del mismo ancho: 6 de 8 columnas más el margen hasta el borde */
   .work-item[data-layout='screen'] {
-    grid-column: 2 / -1;
+    grid-column: 3 / -1;
     margin-inline-end: calc(var(--page-gutter) * -1);
     --caption-inset-end: var(--page-gutter);
   }
   .work-item[data-layout='wide'] {
-    grid-column: 1 / span 7;
+    grid-column: 1 / span 6;
     margin-inline-start: calc(var(--page-gutter) * -1);
     --caption-inset-start: var(--page-gutter);
   }
@@ -118,8 +119,12 @@
     margin-block-start: clamp(6rem, 10vw, 10rem);
   }
 
+  /* 8 de 12 columnas más el margen: presencia sin ocupar toda la pantalla */
+  .work-item[data-layout='screen'] {
+    grid-column: 5 / -1;
+  }
   .work-item[data-layout='wide'] {
-    grid-column: 1 / span 9;
+    grid-column: 1 / span 8;
   }
   .work-item[data-layout='coda'] {
     grid-column: 7 / span 5;

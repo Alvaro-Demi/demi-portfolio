@@ -3,9 +3,8 @@
  *
  *   images-src/{id}.{jpg,png,…}  →  public/images/photos/{id}-{ancho}.webp
  *
- * Lee src/app/data/home.data.ts (Node ejecuta TypeScript sin compilar) para saber:
- *   - qué fotos se usan: los originales que no aparecen ahí no se publican;
- *   - qué paneles recortar de cada photo story (`crops`), para móvil.
+ * Lee src/app/data/home.data.ts (Node ejecuta TypeScript sin compilar) para saber qué
+ * fotos se usan: los originales que no aparecen ahí no se publican.
  * Los anchos vienen de src/app/shared/image-loader.ts, el mismo archivo que usa Angular.
  *
  * Uso: npm run images
@@ -15,7 +14,6 @@ import { basename, extname, join } from 'node:path';
 import sharp from 'sharp';
 import * as data from '../src/app/data/home.data.ts';
 import { PANORAMA_MIN_RATIO, PANORAMA_WIDTHS, PHOTO_WIDTHS } from '../src/app/shared/image-loader.ts';
-import { cropBox } from '../src/app/shared/story-crop.ts';
 
 const SRC_DIR = 'images-src';
 const OUT_DIR = 'public/images/photos';
@@ -25,16 +23,12 @@ const INPUT_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.tif', '.tiff', '.we
 /* --- Qué hay que generar, según home.data.ts ------------------------------ */
 
 const photos = new Map(); // id → Photo
-const crops = []; // { crop, parent }
 
 (function collect(value) {
   if (Array.isArray(value)) return value.forEach(collect);
   if (value === null || typeof value !== 'object') return;
   if (typeof value.src === 'string' && typeof value.width === 'number' && typeof value.alt === 'string') {
-    if (!('left' in value)) photos.set(value.src, value);
-  }
-  if (value.photo && Array.isArray(value.crops)) {
-    value.crops.forEach((crop) => crops.push({ crop, parent: value.photo }));
+    photos.set(value.src, value);
   }
   Object.values(value).forEach(collect);
 })(Object.values(data));
@@ -98,15 +92,6 @@ for (const [id, photo] of photos) {
     KB: kb,
     aviso: mismatch ? `home.data.ts dice ${photo.width}×${photo.height}` : '',
   });
-}
-
-for (const { crop, parent } of crops) {
-  const box = cropBox(parent, crop);
-  const input = originals.get(parent.src);
-  const kb = await writeVariants(crop.src, () => sharp(input).rotate().extract(box), [
-    ...PHOTO_WIDTHS,
-  ]);
-  report.push({ id: crop.src, width: box.width, height: box.height, KB: kb, aviso: '' });
 }
 
 // Borra variantes de fotos que ya no se usan.
