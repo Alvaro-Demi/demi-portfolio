@@ -116,15 +116,15 @@
   }
 
   .work-item + .work-item {
-    margin-block-start: clamp(6rem, 10vw, 10rem);
+    margin-block-start: clamp(2rem, 3vw, 2rem);
   }
 
   /* 8 de 12 columnas más el margen: presencia sin ocupar toda la pantalla */
   .work-item[data-layout='screen'] {
-    grid-column: 5 / -1;
+    grid-column: 6 / -1;
   }
   .work-item[data-layout='wide'] {
-    grid-column: 1 / span 8;
+    grid-column: 1 / span 7;
   }
   .work-item[data-layout='coda'] {
     grid-column: 7 / span 5;
