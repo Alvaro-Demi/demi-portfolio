@@ -1,4 +1,4 @@
-import type { Photo, PhotoStory, WorkEntry } from '../models/photo';
+import type { Photo, PhotoStory, SequenceFrame, WorkEntry } from '../models/photo';
 
 /*
  * Contenido de la Home. `src` es el id de la foto, no una ruta.
@@ -186,7 +186,80 @@ export const INTERLUDE_PHOTO: Photo = {
   focus: '65% 70%',
 };
 
+/** Sin uso por ahora: el interludio es la secuencia de abajo. */
 export const INTERLUDE_CAPTION = 'Cabo Sunión · Grecia';
+
+/*
+ * Interludio — secuencia «detrás de las cámaras»: rodajes, BTS, DEMI trabajando con la
+ * cámara y preparación. Las fotos pasan solas (5 s cada una) con un wipe de cine.
+ *
+ * Para cambiar o añadir una foto:
+ *   1. Copia la foto a images-src/ con un id (p. ej. images-src/bts-01.jpg).
+ *   2. Ejecuta `npm run images`.
+ *   3. En su línea: `src` → el id ('bts-01'); `width`/`height` → los de la tabla que imprime;
+ *      `alt` → qué se ve en la foto. Opcional: `focus` (y `mobile.focus`) si el recorte
+ *      corta lo importante, y `fit: 'contain'` para que se vea siempre entera.
+ * Para incluir la foto de Grecia, añade `INTERLUDE_PHOTO` como una posición más.
+ * Puedes añadir, quitar o reordenar posiciones: la animación se adapta sola.
+ */
+export const INTERLUDE_SEQUENCE: readonly SequenceFrame[] = [
+  // 01 · BTS1 · rodaje de videoclip (horizontal 3:2)
+  {
+    src: 'BTS1',
+    alt: 'Rodaje de un videoclip en una nave: dos artistas sentados en tronos dorados mientras un operador los graba con un estabilizador',
+    width: 6000,
+    height: 4000,
+  },
+  // 02 · BTS2 · fotografía en un estadio (vertical 3:4)
+  {
+    src: 'BTS2',
+    alt: 'Fotógrafo con chaleco de prensa disparando a pie de campo en un estadio de fútbol lleno de público',
+    width: 3024,
+    height: 4032,
+  },
+  // 03 · BTS3 · rodaje en la montaña (horizontal 4:3)
+  {
+    src: 'BTS3',
+    alt: 'Rodaje al atardecer en lo alto de una montaña: un operador graba con un estabilizador sobre las rocas mientras dos personas miran el valle',
+    width: 1600,
+    height: 1200,
+  },
+  // 04 · BTS4 · DEMI con el dron (vertical 2:3). Es la misma foto que la del About.
+  {
+    src: 'BTS4',
+    alt: 'DEMI de espaldas, con sudadera y gafas de sol en la cabeza, pilotando un dron en la calle',
+    width: 4506,
+    height: 6759,
+  },
+  // 05 · BTS5 · cámara de vídeo en una plaza de toros (horizontal 4:3)
+  {
+    src: 'BTS5',
+    alt: 'Operador con una cámara de vídeo grabando desde la barrera en una plaza de toros iluminada de noche',
+    width: 1600,
+    height: 1200,
+  },
+  // 06 · BTS6 · control de realización en plató (horizontal 3:2)
+  {
+    src: 'BTS6',
+    alt: 'Control de realización durante una grabación en plató: monitores, mesa de vídeo y un presentador al fondo',
+    width: 6720,
+    height: 4480,
+  },
+  // 07 · BTS7 · preparando el estabilizador en una nave (vertical 2:3)
+  {
+    src: 'BTS7',
+    alt: 'Rodaje en una nave: un operador prepara la cámara en el estabilizador junto a otro miembro del equipo',
+    width: 4000,
+    height: 6000,
+  },
+  // 08 · BTS8 · sesión de producto en el monte (vertical 3:4)
+  {
+    src: 'BTS8',
+    alt: 'Fotógrafo con sudadera gris fotografiando una sudadera blanca extendida sobre una roca en el monte',
+    width: 3024,
+    height: 4032,
+  },
+];
 
 export const ABOUT_PHOTO: Photo = {
   src: 'about',

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" width="1200" height="1500">
+  <rect width="1200" height="1500" fill="#111111"/>
+  <rect x="48" y="48" width="1104" height="1404" fill="none" stroke="#2A2A2A" stroke-width="3.6"/>
+  <text x="50%" y="50%" fill="#8A8580" font-family="Arial Narrow, Arial, sans-serif" font-size="84.00000000000001" letter-spacing="14.4" text-anchor="middle" dominant-baseline="middle">FOTO 04</text>
+  <text x="50%" y="846" fill="#5A5652" font-family="Arial, sans-serif" font-size="36" letter-spacing="7.2" text-anchor="middle" dominant-baseline="middle">4:5</text>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1000" width="1500" height="1000">
+  <rect width="1500" height="1000" fill="#111111"/>
+  <rect x="40" y="40" width="1420" height="920" fill="none" stroke="#2A2A2A" stroke-width="3"/>
+  <text x="50%" y="50%" fill="#8A8580" font-family="Arial Narrow, Arial, sans-serif" font-size="70" letter-spacing="12" text-anchor="middle" dominant-baseline="middle">FOTO 03</text>
+  <text x="50%" y="580" fill="#5A5652" font-family="Arial, sans-serif" font-size="30" letter-spacing="6" text-anchor="middle" dominant-baseline="middle">3:2</text>
+</svg>

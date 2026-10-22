@@ -10,8 +10,7 @@ import {
   ABOUT_PHOTO,
   CONTACT_EMAIL,
   HERO_PHOTO,
-  INTERLUDE_CAPTION,
-  INTERLUDE_PHOTO,
+  INTERLUDE_SEQUENCE,
   PHOTO_STORIES,
   PORTRAITS,
   VIDEOCLIPS,
@@ -26,8 +25,7 @@ import {
 export class Home {
   protected readonly heroPhoto = HERO_PHOTO;
   protected readonly videoclips = VIDEOCLIPS;
-  protected readonly interludePhoto = INTERLUDE_PHOTO;
-  protected readonly interludeCaption = INTERLUDE_CAPTION;
+  protected readonly interludeFrames = INTERLUDE_SEQUENCE;
   protected readonly stories = PHOTO_STORIES;
   protected readonly portraits = PORTRAITS;
   protected readonly aboutPhoto = ABOUT_PHOTO;

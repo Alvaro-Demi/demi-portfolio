@@ -1,0 +1,66 @@
+<section
+  class="sequence"
+  aria-labelledby="sequence-title"
+  aria-roledescription="secuencia"
+  [attr.data-playing]="playing() ? '' : null"
+>
+  <h2 id="sequence-title" class="visually-hidden">Detrás de las cámaras</h2>
+
+  <!-- Marco estable: las fotos se apilan dentro y el CSS anima el wipe según su estado -->
+  <div
+    class="sequence-stage"
+    #stage
+    appReveal="clip"
+    (pointerenter)="hover($event, true)"
+    (pointerleave)="hover($event, false)"
+  >
+    @for (slide of slides(); track slide.i) {
+      <figure
+        class="sequence-slide"
+        [attr.data-state]="slide.state"
+        [attr.data-fit]="slide.fit"
+        [attr.aria-hidden]="slide.state === 'active' ? null : 'true'"
+        [style.--focus]="slide.frame.focus ?? null"
+        [style.--focus-mobile]="slide.frame.mobile?.focus ?? null"
+      >
+        <div class="sequence-pan">
+          <img [ngSrc]="slide.frame.src" [alt]="slide.frame.alt" fill sizes="100vw" loading="eager" />
+        </div>
+      </figure>
+    }
+  </div>
+
+  @if (count() > 1) {
+    <div class="sequence-controls">
+      <p class="sequence-count" aria-hidden="true">
+        {{ label(index()) }} <span>/ {{ label(count() - 1) }}</span>
+      </p>
+
+      <!-- Un segmento por foto: se llena mientras se ve; al llenarse, pasa a la siguiente -->
+      <ol class="sequence-steps" role="list">
+        @for (frame of frames(); track $index; let i = $index) {
+          <li>
+            <button
+              type="button"
+              class="sequence-step"
+              [attr.aria-label]="'Foto ' + (i + 1) + ' de ' + count()"
+              [attr.aria-current]="i === index() ? 'true' : null"
+              [attr.data-done]="i < index() ? '' : null"
+              (click)="go(i)"
+            >
+              <span class="sequence-fill" (animationend)="advance()"></span>
+            </button>
+          </li>
+        }
+      </ol>
+
+      @if (!reducedMotion()) {
+        <button type="button" class="sequence-toggle" (click)="toggle()">
+          {{ userPaused() ? 'Reproducir' : 'Pausar' }}
+        </button>
+      }
+    </div>
+  }
+
+  <p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>
+</section>

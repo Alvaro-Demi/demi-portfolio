@@ -11,6 +11,15 @@ export interface Photo {
   readonly mobile?: MobileCrop;
 }
 
+/** Fotograma de una secuencia animada: una foto y cómo encaja en el marco. */
+export interface SequenceFrame extends Photo {
+  /**
+   * 'cover' llena el marco y recorta según `focus`; 'contain' la muestra entera sobre negro.
+   * Sin indicarlo se decide sola: si su proporción se parece a la del marco, 'cover'.
+   */
+  readonly fit?: 'cover' | 'contain';
+}
+
 export interface MobileCrop {
   /** Proporción del recorte en móvil (`aspect-ratio`), p. ej. '4 / 5'. Sin ella se respeta la original. */
   readonly aspectRatio?: string;

@@ -91,6 +91,35 @@
   text-transform: uppercase;
 }
 
+/*
+ * Móvil y tablet: bloque centrado, cada parte en su línea y la disciplina algo mayor
+ * que los oficios. Escritorio: una sola línea, alineada a la izquierda.
+ */
+.hero-roles span {
+  display: block;
+}
+
+@media (max-width: 63.99rem) {
+  .hero-meta {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .hero-roles {
+    flex-basis: 100%;
+  }
+
+  .hero-roles span:first-child {
+    font-size: var(--text-sm);
+  }
+}
+
+@media (min-width: 64rem) {
+  .hero-roles span {
+    display: inline;
+  }
+}
+
 /* Área táctil de 2.5rem sin mover la línea del texto */
 .hero-scroll {
   padding-block: var(--space-2);

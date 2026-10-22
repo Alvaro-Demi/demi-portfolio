@@ -23,9 +23,10 @@ function snap(width: number): number {
 /**
  * Convierte el id de una foto (`ngSrc="hero"`) en la URL de la variante adecuada.
  * NgOptimizedImage lo llama una vez por cada ancho del `srcset`.
+ * Los `.svg` (placeholders) no tienen variantes: se sirven tal cual.
  */
 export const photoLoader: ImageLoader = ({ src, width }) =>
-  `images/photos/${src}-${snap(width ?? FALLBACK_WIDTH)}.webp`;
+  src.endsWith('.svg') ? src : `images/photos/${src}-${snap(width ?? FALLBACK_WIDTH)}.webp`;
 
 /** Limita el `srcset` automático a los anchos que existen para todas las fotos. */
 export const photoImageConfig: ImageConfig = { breakpoints: [...PHOTO_WIDTHS] };

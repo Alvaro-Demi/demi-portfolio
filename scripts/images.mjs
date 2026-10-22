@@ -28,7 +28,8 @@ const photos = new Map(); // id → Photo
   if (Array.isArray(value)) return value.forEach(collect);
   if (value === null || typeof value !== 'object') return;
   if (typeof value.src === 'string' && typeof value.width === 'number' && typeof value.alt === 'string') {
-    photos.set(value.src, value);
+    // Los placeholders .svg se sirven tal cual desde public/: no tienen original que procesar.
+    if (!value.src.endsWith('.svg')) photos.set(value.src, value);
   }
   Object.values(value).forEach(collect);
 })(Object.values(data));

@@ -17,6 +17,6 @@ export class About {
     'Videoclips y rodajes',
     'Sesiones de fotos',
     'Dron',
-    'Conciertos y festivales',
+    'Conciertos y EVENTOS',
   ] as const;
 }

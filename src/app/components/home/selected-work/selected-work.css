@@ -98,21 +98,24 @@
 /* --- Escritorio: 12 columnas --------------------------------------------- */
 
 @media (min-width: 64rem) {
-  .work-header,
   .work-grid {
     grid-template-columns: repeat(12, 1fr);
   }
 
+  /* El texto, justo a la derecha del título: su última línea comparte la línea base
+     de «SELECTED WORK», sea cual sea el tamaño del título */
   .work-header {
-    column-gap: var(--space-6);
+    display: flex;
+    align-items: last baseline;
+    column-gap: var(--space-12);
   }
 
   .work-header > :first-child {
-    grid-column: 1 / span 9;
+    flex: none;
   }
 
   .work-intro {
-    grid-column: 10 / span 3;
+    min-inline-size: 0;
   }
 
   .work-item + .work-item {

@@ -2,26 +2,238 @@
   display: block;
 }
 
-.interlude-media {
+/* --- Marco ---------------------------------------------------------------- */
+
+/* Dimensiones estables: cambiar de foto nunca mueve la página.
+   Móvil: vertical 4:5, para no reducirlo todo a una franja. Tablet y escritorio: a sangre. */
+.sequence-stage {
   position: relative;
-  block-size: max(70svh, 22rem);
-}
-
-.interlude-media img {
-  object-fit: cover;
-}
-
-.interlude-caption {
-  padding: var(--space-3) var(--page-gutter) 0;
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
-  letter-spacing: 0.12em;
-  text-align: end;
-  text-transform: uppercase;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background-color: var(--color-bg);
 }
 
 @media (min-width: 48rem) {
-  .interlude-media {
-    block-size: max(85svh, 28rem);
+  .sequence-stage {
+    aspect-ratio: auto;
+    block-size: clamp(26rem, 80svh, 56rem);
+  }
+}
+
+/* --- Fotogramas y transición ---------------------------------------------- */
+
+/*
+ * Wipe de cine: la foto entrante se descubre de derecha a izquierda (clip-path) mientras
+ * su imagen llega desde un 8 % a la derecha; la saliente, ya tapándose, se desplaza un 8 %
+ * a la izquierda. Las dos se mueven en el mismo sentido: un paneo de cámara.
+ */
+.sequence-slide {
+  position: absolute;
+  inset: 0;
+  /* Opaco: con 'contain', las franjas negras también tapan la foto saliente */
+  background-color: var(--color-bg);
+  clip-path: inset(0 0 0 0);
+  transition: clip-path var(--sequence-transition) var(--ease-in-out);
+}
+
+.sequence-slide[data-state='active'] {
+  z-index: 2;
+}
+
+.sequence-slide[data-state='leaving'] {
+  z-index: 1;
+}
+
+/* Preparada y oculta: así la imagen ya está cargada cuando le toca */
+.sequence-slide[data-state='next'] {
+  z-index: 0;
+  clip-path: inset(0 0 0 100%);
+  transition: none;
+}
+
+.sequence-pan {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--sequence-transition) var(--ease-in-out);
+}
+
+[data-state='next'] > .sequence-pan {
+  transform: translateX(8%);
+  transition: none;
+}
+
+[data-state='leaving'] > .sequence-pan {
+  transform: translateX(-8%);
+}
+
+/* Encaje: 'cover' llena el marco; 'contain' muestra la foto entera sobre negro */
+.sequence-slide img {
+  object-fit: cover;
+  object-position: var(--focus-mobile, var(--focus, 50% 50%));
+}
+
+.sequence-slide[data-fit='contain'] img {
+  object-fit: contain;
+}
+
+@media (min-width: 48rem) {
+  .sequence-slide img {
+    object-position: var(--focus, 50% 50%);
+  }
+}
+
+/* Empuje de cámara: mientras se ve (y mientras sale), la foto se acerca un 4 %, muy despacio */
+@keyframes sequence-push {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.04);
+  }
+}
+
+.sequence-slide:is([data-state='active'], [data-state='leaving']) img {
+  animation: sequence-push calc(var(--sequence-hold) + var(--sequence-transition) * 2) linear both;
+  animation-play-state: paused;
+}
+
+.sequence[data-playing] .sequence-slide img {
+  animation-play-state: running;
+}
+
+/* --- Controles: contador, progreso y pausa --------------------------------- */
+
+.sequence-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--space-6);
+  padding: var(--space-2) var(--page-gutter) 0;
+}
+
+.sequence-count {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+}
+
+.sequence-count span {
+  color: var(--color-text-muted);
+}
+
+/* Móvil: los segmentos ocupan su propia fila, para que cada uno sea fácil de pulsar */
+.sequence-steps {
+  display: flex;
+  flex-basis: 100%;
+  order: -1;
+  gap: var(--space-1);
+}
+
+.sequence-steps li {
+  flex: 1;
+}
+
+.sequence-step {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  min-block-size: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.sequence-step::before,
+.sequence-fill {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 50%;
+  block-size: 1px;
+}
+
+.sequence-step::before {
+  content: '';
+  background-color: var(--color-line);
+  transition: background-color var(--duration-fast) ease;
+}
+
+.sequence-fill {
+  background-color: var(--color-text);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.sequence-step[data-done] .sequence-fill {
+  background-color: var(--color-text-muted);
+  transform: scaleX(1);
+}
+
+/* El segmento de la foto activa marca el ritmo: al llenarse, pasa a la siguiente */
+@keyframes sequence-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.sequence-step[aria-current='true'] .sequence-fill {
+  animation: sequence-progress var(--sequence-hold) linear forwards;
+  animation-play-state: paused;
+}
+
+.sequence[data-playing] .sequence-step[aria-current='true'] .sequence-fill {
+  animation-play-state: running;
+}
+
+.sequence-toggle {
+  min-block-size: 2.75rem;
+  min-inline-size: 6.5rem;
+  padding-inline: var(--space-2);
+  margin-inline-end: calc(var(--space-2) * -1);
+  border: 0;
+  background: none;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-align: end;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sequence-step:hover::before {
+    background-color: var(--color-text-muted);
+  }
+
+  .sequence-toggle:hover {
+    text-decoration-color: var(--color-accent);
+  }
+}
+
+/* Escritorio y tablet: contador, progreso y pausa en una sola línea */
+@media (min-width: 48rem) {
+  .sequence-steps {
+    flex: 1;
+    order: 0;
+  }
+}
+
+/* Sin movimiento: ni avance automático ni empuje; la foto activa marca su segmento entero */
+@media (prefers-reduced-motion: reduce) {
+  .sequence-slide:is([data-state='active'], [data-state='leaving']) img {
+    animation: none;
+  }
+
+  .sequence-step[aria-current='true'] .sequence-fill {
+    animation: none;
+    transform: scaleX(1);
   }
 }
