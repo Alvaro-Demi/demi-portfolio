@@ -20,7 +20,7 @@
     </p>
 
     <ul class="about-services" role="list">
-      @for (service of services; track service) {
+      @for (service of services(); track service) {
         <li>{{ service }}</li>
       }
     </ul>

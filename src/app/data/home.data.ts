@@ -268,5 +268,17 @@ export const ABOUT_PHOTO: Photo = {
   height: 6759,
 };
 
-/** Placeholder: sustituir por el email real. */
-export const CONTACT_EMAIL = 'info@demi.com';
+/** Servicios: se listan en el About y son las opciones de «Tipo de proyecto» del formulario. */
+export const SERVICES: readonly string[] = [
+  'Imagen corporativa',
+  'Videoclips y rodajes',
+  'Sesiones de fotos',
+  'Dron',
+  'Conciertos y eventos',
+];
+
+/** Dirección a la que llegan los mensajes del formulario de contacto. */
+export const CONTACT_EMAIL = 'alvarodemiguel1997@gmail.com';
+
+/** Usuario de Instagram, sin la @. */
+export const INSTAGRAM_HANDLE = 'alvaro.demi';

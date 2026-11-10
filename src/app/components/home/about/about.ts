@@ -11,12 +11,5 @@ import { Reveal } from '../../../shared/reveal';
 })
 export class About {
   readonly photo = input.required<Photo>();
-
-  protected readonly services = [
-    'Imagen corporativa',
-    'Videoclips y rodajes',
-    'Sesiones de fotos',
-    'Dron',
-    'Conciertos y EVENTOS',
-  ] as const;
+  readonly services = input.required<readonly string[]>();
 }

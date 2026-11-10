@@ -9,10 +9,12 @@ import { SelectedWork } from '../../components/home/selected-work/selected-work'
 import {
   ABOUT_PHOTO,
   CONTACT_EMAIL,
+  INSTAGRAM_HANDLE,
   HERO_PHOTO,
   INTERLUDE_SEQUENCE,
   PHOTO_STORIES,
   PORTRAITS,
+  SERVICES,
   VIDEOCLIPS,
 } from '../../data/home.data';
 
@@ -30,4 +32,6 @@ export class Home {
   protected readonly portraits = PORTRAITS;
   protected readonly aboutPhoto = ABOUT_PHOTO;
   protected readonly contactEmail = CONTACT_EMAIL;
+  protected readonly instagram = INSTAGRAM_HANDLE;
+  protected readonly services = SERVICES;
 }
