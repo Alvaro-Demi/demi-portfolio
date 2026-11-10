@@ -1,0 +1,280 @@
+:host {
+  display: block;
+}
+
+/*
+ * Texto y animación. Móvil y tablet: uno sobre otra, la animación a sangre en móvil.
+ * Escritorio: el texto a la izquierda y la animación a la derecha (el About, justo después,
+ * va al revés: foto a la izquierda).
+ */
+.reel {
+  display: grid;
+  gap: var(--space-8);
+  padding: var(--space-24) var(--page-gutter);
+}
+
+/* --- Cabecera ------------------------------------------------------------ */
+
+.reel-title {
+  margin-block-start: var(--space-4);
+  font-size: var(--text-heading);
+  text-transform: uppercase;
+}
+
+.reel-intro {
+  max-inline-size: 34ch;
+  margin-block-start: var(--space-6);
+  color: var(--color-text-muted);
+}
+
+/* --- Escenario ----------------------------------------------------------- */
+
+.reel-stage {
+  margin-inline: calc(var(--page-gutter) * -1);
+}
+
+/*
+ * Cuadrado. Todas las medidas de dentro van en cqi (% del ancho del escenario): la
+ * composición es idéntica a cualquier tamaño. Los bordes se funden con el fondo, así las
+ * tarjetas se desvanecen al salir en vez de cortarse en seco.
+ */
+.reel-track {
+  --fade: 10%;
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  container-type: inline-size;
+  mask-image:
+    linear-gradient(to right, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent),
+    linear-gradient(to bottom, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+  mask-composite: intersect;
+}
+
+/* --- Tarjetas ------------------------------------------------------------ */
+
+/* Animables (se interpolan como número/longitud, no a saltos). Se animan en la tarjeta y
+   los hereda la foto, que es la que lleva el filtro. */
+@property --reel-dim {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --reel-blur {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+/*
+ * Vista isométrica: tarjeta vertical 4:5 inclinada (el borde superior baja hacia la
+ * derecha). Centrada en el escenario; cada posición la desplaza por la diagonal.
+ */
+.reel-card {
+  --w: 32cqi;
+  --x: 0cqi;
+  --y: 0cqi;
+  position: absolute;
+  inset-inline-start: calc(50% - var(--w) / 2);
+  inset-block-start: calc(50% - var(--w) * 0.625);
+  inline-size: var(--w);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 2.5cqi;
+  background-color: var(--color-surface);
+  box-shadow: 0 2cqi 5cqi rgb(0 0 0 / 0.6);
+  transform: skewY(14deg);
+  translate: var(--x) var(--y);
+  transition:
+    translate var(--reel-move) var(--ease-in-out),
+    opacity var(--reel-move) var(--ease-in-out),
+    --reel-dim var(--reel-move) var(--ease-in-out);
+}
+
+/* El filtro va en la foto y no en la tarjeta: así no afecta a la sombra y la tarjeta
+   recorta sus bordes (sin costuras de 1 px alrededor) */
+.reel-card img {
+  object-fit: cover;
+  filter: brightness(var(--reel-dim)) blur(var(--reel-blur));
+}
+
+/*
+ * Posiciones. Las de abajo a la izquierda están más cerca de la cámara: tapan a las
+ * anteriores. El montón se va comprimiendo y oscureciendo hasta salir.
+ */
+.reel-card[data-slot='2'],
+.reel-card[data-slot='rest'] {
+  --x: 72cqi;
+  --y: -52cqi;
+  z-index: 1;
+  opacity: 0;
+  /* Llegan desde el otro extremo, ya invisibles: sin viaje */
+  transition: none;
+}
+
+.reel-card[data-slot='1'] {
+  --x: 36cqi;
+  --y: -26cqi;
+  z-index: 2;
+}
+
+.reel-card[data-slot='0'] {
+  z-index: 3;
+}
+
+.reel-card[data-slot='-1'] {
+  --x: -36cqi;
+  --y: 26cqi;
+  --reel-dim: 0.8;
+  z-index: 4;
+}
+
+.reel-card[data-slot='-2'] {
+  --x: -42cqi;
+  --y: 30.5cqi;
+  --reel-dim: 0.62;
+  z-index: 5;
+}
+
+.reel-card[data-slot='-3'] {
+  --x: -48cqi;
+  --y: 35cqi;
+  --reel-dim: 0.48;
+  z-index: 6;
+}
+
+.reel-card[data-slot='-4'] {
+  --x: -54cqi;
+  --y: 39.5cqi;
+  --reel-dim: 0.38;
+  z-index: 7;
+}
+
+.reel-card[data-slot='-5'] {
+  --x: -66cqi;
+  --y: 48cqi;
+  --reel-dim: 0.3;
+  z-index: 8;
+  opacity: 0;
+}
+
+/*
+ * Desenfoque de movimiento: en cada paso, las tarjetas se desenfocan un instante a mitad
+ * del desplazamiento. Dos animaciones iguales que se alternan para reiniciarla.
+ */
+@keyframes reel-motion-a {
+  0%,
+  100% {
+    --reel-blur: 0px;
+  }
+  45% {
+    --reel-blur: 0.5cqi;
+  }
+}
+
+@keyframes reel-motion-b {
+  0%,
+  100% {
+    --reel-blur: 0px;
+  }
+  45% {
+    --reel-blur: 0.5cqi;
+  }
+}
+
+.reel-track[data-phase='a'] .reel-card {
+  animation: reel-motion-a var(--reel-move) var(--ease-in-out);
+}
+
+.reel-track[data-phase='b'] .reel-card {
+  animation: reel-motion-b var(--reel-move) var(--ease-in-out);
+}
+
+/* --- Pie: contador y pausa ----------------------------------------------- */
+
+.reel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  min-block-size: 2.75rem;
+  margin-inline: var(--page-gutter);
+  border-block-start: 1px solid var(--color-line);
+}
+
+.reel-count {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+}
+
+.reel-count span {
+  color: var(--color-text-muted);
+}
+
+.reel-toggle {
+  min-block-size: 2.75rem;
+  min-inline-size: 6.5rem;
+  padding-inline: var(--space-2);
+  margin-inline-end: calc(var(--space-2) * -1);
+  border: 0;
+  background: none;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-align: end;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .reel-toggle:hover {
+    text-decoration-color: var(--color-accent);
+  }
+}
+
+/* --- Tablet: ya no va a sangre, alineada a la derecha -------------------- */
+
+@media (min-width: 48rem) {
+  .reel-stage {
+    justify-self: end;
+    inline-size: min(80%, 75svh);
+    margin-inline: 0;
+  }
+
+  .reel-controls {
+    margin-inline: 0;
+  }
+}
+
+/* --- Escritorio: texto | animación -------------------------------------- */
+
+@media (min-width: 64rem) {
+  .reel {
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--space-6);
+    align-items: center;
+  }
+
+  .reel-header {
+    grid-column: 1 / span 5;
+  }
+
+  /* Cabe entera en pantalla (por debajo del header fijo) */
+  .reel-stage {
+    grid-column: 6 / -1;
+    inline-size: min(100%, calc(100svh - var(--header-height) - var(--space-24)), 52rem);
+  }
+}
+
+/* Sin movimiento: la composición queda quieta, sin desenfoques */
+@media (prefers-reduced-motion: reduce) {
+  .reel-track .reel-card {
+    animation: none;
+  }
+}

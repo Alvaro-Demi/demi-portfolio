@@ -1,0 +1,193 @@
+:host {
+  display: block;
+}
+
+/* --- Escenario ------------------------------------------------------------ */
+
+/*
+ * Dimensiones estables (sin saltos de layout mientras cargan las fotos). Todo lo de dentro
+ * se mide en --film-u, el alto de la película, que es una fracción del ancho del escenario.
+ * Los lados se funden con el fondo: las fotos se pierden en la oscuridad al girar.
+ */
+.film-stage {
+  --film-u: 62cqi;
+  position: relative;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  container-type: inline-size;
+  mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+}
+
+@media (min-width: 48rem) {
+  .film-stage {
+    --film-u: 40cqi;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+@media (min-width: 64rem) {
+  .film-stage {
+    /* En pantallas anchas pero bajas, manda el alto: la tira siempre cabe */
+    --film-u: min(28cqi, 48svh);
+    aspect-ratio: auto;
+    /* Mismo valor que --film-u, en unidades de la ventana: el escenario va a sangre */
+    block-size: calc(min(28vw, 48svh) * 1.45);
+  }
+}
+
+/* Cámara: un poco por encima del centro, así el borde inferior dibuja el arco */
+.film-scene {
+  position: absolute;
+  inset: 0;
+  perspective: calc(var(--film-u) * 4.5);
+  perspective-origin: 50% 40%;
+}
+
+/* Luz frontal: un foco suave sobre la foto que pasa por el centro */
+.film-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse calc(var(--film-u) * 1.1) calc(var(--film-u) * 0.75) at 50% 50%,
+    rgb(255 255 255 / 0.07),
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/*
+ * El anillo. Su centro se lleva hacia atrás un radio (el frente queda en el plano de la
+ * pantalla), gira con --spin y se inclina con --tilt alrededor de ese frente.
+ */
+.film-ring {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tilt, 0deg)) translateZ(calc(var(--film-r) * var(--film-u) * -1))
+    rotateY(var(--spin, 0deg));
+}
+
+/* --- Fotogramas ---------------------------------------------------------- */
+
+/*
+ * Cada fotograma: un trozo de película (bandas perforadas arriba y abajo) con la foto.
+ * Los fotogramas se tocan, así la película es continua; la separación está en la foto.
+ */
+.film-frame {
+  --film-hole: calc(var(--film-u) * 0.075);
+  --film-lift: 0px;
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  inline-size: calc(var(--w) * var(--film-u) + 1px); /* +1 px: sin rendijas entre fotogramas */
+  block-size: var(--film-u);
+  margin-inline-start: calc(var(--w) * var(--film-u) / -2);
+  margin-block-start: calc(var(--film-u) / -2);
+  transform: rotateY(var(--a)) translateZ(calc(var(--film-r) * var(--film-u) + var(--film-lift)));
+  backface-visibility: hidden;
+  /* Perforaciones: rectángulos del color del fondo, repetidos sin cortarse en los bordes */
+  background:
+    linear-gradient(to right, transparent 28%, var(--color-bg) 28% 72%, transparent 72%) 0
+      calc(var(--film-u) * 0.03) / var(--film-hole) calc(var(--film-u) * 0.045) round no-repeat,
+    linear-gradient(to right, transparent 28%, var(--color-bg) 28% 72%, transparent 72%) 0
+      calc(100% - var(--film-u) * 0.03) / var(--film-hole) calc(var(--film-u) * 0.045) round no-repeat,
+    #151515;
+  transition: transform 500ms var(--ease-out);
+}
+
+.film-photo {
+  position: absolute;
+  inset: 16% calc(var(--film-u) * 0.025);
+  overflow: hidden;
+  border-radius: calc(var(--film-u) * 0.02);
+  background-color: var(--color-surface);
+}
+
+.film-photo img {
+  object-fit: cover;
+  transition:
+    filter 400ms var(--ease-out),
+    scale 600ms var(--ease-out);
+}
+
+/* Marcas del borde de la película, junto a la foto: «DEMI 03A» */
+.film-print {
+  position: absolute;
+  inset-inline-start: calc(var(--film-u) * 0.03);
+  inset-block-end: calc(var(--film-u) * 0.083);
+  color: var(--color-text-muted);
+  font-size: calc(var(--film-u) * 0.042);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  transition: color 300ms var(--ease-out);
+}
+
+.film-print span {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Hover: la foto señalada se adelanta; las demás se apagan ------------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .film-frame:hover {
+    --film-lift: calc(var(--film-u) * 0.14);
+  }
+
+  .film-frame:hover img {
+    scale: 1.06;
+  }
+
+  .film-frame:hover .film-print {
+    color: var(--color-accent);
+  }
+
+  .film-ring:has(.film-frame:hover) .film-frame:not(:hover) img {
+    filter: brightness(0.4) saturate(0.5);
+  }
+}
+
+/* --- Pie: título y pausa --------------------------------------------------- */
+
+.film-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-2) var(--page-gutter) 0;
+}
+
+/* El h2 hereda la tipografía de títulos: aquí es una etiqueta, como la del resto de secciones */
+.film-title {
+  font-family: var(--font-body);
+  line-height: var(--leading-normal);
+}
+
+.film-toggle {
+  min-block-size: 2.75rem;
+  min-inline-size: 6.5rem;
+  padding-inline: var(--space-2);
+  margin-inline-end: calc(var(--space-2) * -1);
+  border: 0;
+  background: none;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-align: end;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .film-toggle:hover {
+    text-decoration-color: var(--color-accent);
+  }
+}

@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { About } from '../../components/home/about/about';
+import { ArchiveReel } from '../../components/home/archive-reel/archive-reel';
 import { Contact } from '../../components/home/contact/contact';
+import { FilmStrip } from '../../components/home/film-strip/film-strip';
 import { Hero } from '../../components/home/hero/hero';
-import { Interlude } from '../../components/home/interlude/interlude';
 import { PhotoStory } from '../../components/home/photo-story/photo-story';
 import { Portraits } from '../../components/home/portraits/portraits';
 import { SelectedWork } from '../../components/home/selected-work/selected-work';
 import {
   ABOUT_PHOTO,
+  ARCHIVE_CARDS,
   CONTACT_EMAIL,
   INSTAGRAM_HANDLE,
   HERO_PHOTO,
@@ -21,15 +23,16 @@ import {
 /** Página contenedora: reúne los datos y se los pasa a cada sección. */
 @Component({
   selector: 'app-home',
-  imports: [Hero, SelectedWork, Interlude, PhotoStory, Portraits, About, Contact],
+  imports: [Hero, SelectedWork, FilmStrip, PhotoStory, Portraits, ArchiveReel, About, Contact],
   templateUrl: './home.html',
 })
 export class Home {
   protected readonly heroPhoto = HERO_PHOTO;
   protected readonly videoclips = VIDEOCLIPS;
-  protected readonly interludeFrames = INTERLUDE_SEQUENCE;
+  protected readonly backstageFrames = INTERLUDE_SEQUENCE;
   protected readonly stories = PHOTO_STORIES;
   protected readonly portraits = PORTRAITS;
+  protected readonly archiveCards = ARCHIVE_CARDS;
   protected readonly aboutPhoto = ABOUT_PHOTO;
   protected readonly contactEmail = CONTACT_EMAIL;
   protected readonly instagram = INSTAGRAM_HANDLE;

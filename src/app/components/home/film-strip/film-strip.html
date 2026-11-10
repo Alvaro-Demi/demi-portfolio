@@ -1,0 +1,45 @@
+<section class="film" aria-labelledby="film-title">
+  <!-- Escenario: la tira gira dentro; su radio y su giro llegan como variables CSS -->
+  <div
+    class="film-stage"
+    #stage
+    (pointerenter)="hover($event, true)"
+    (pointerleave)="hover($event, false)"
+  >
+    <div class="film-scene">
+      <div class="film-ring" #ring [style.--film-r]="layout().radius">
+        @if (near()) {
+          @for (card of layout().cards; track $index) {
+            <div
+              class="film-frame"
+              [style.--a.deg]="card.angle"
+              [style.--w]="card.width"
+              [attr.aria-hidden]="card.copy > 0 ? 'true' : null"
+            >
+              <div class="film-photo">
+                <img
+                  [ngSrc]="card.frame.src"
+                  [alt]="card.copy === 0 ? card.frame.alt : ''"
+                  fill
+                  sizes="(min-width: 64rem) 30vw, (min-width: 48rem) 42vw, 64vw"
+                  loading="eager"
+                  [style.object-position]="card.frame.focus ?? null"
+                />
+              </div>
+              <span class="film-print" aria-hidden="true">DEMI <span>{{ label(card.index) }}A</span></span>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="film-controls">
+    <h2 id="film-title" class="eyebrow film-title">Detrás de las cámaras</h2>
+    @if (!reducedMotion()) {
+      <button type="button" class="film-toggle" (click)="toggle()">
+        {{ userPaused() ? 'Reproducir' : 'Pausar' }}<span class="visually-hidden"> la tira de fotos</span>
+      </button>
+    }
+  </div>
+</section>

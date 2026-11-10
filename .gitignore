@@ -45,6 +45,9 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
+# Vídeos de referencia (p. ej. plantillas de Animos) para recrear animaciones en código
+/reference/
+
 # Originales de fotos (solo se versiona la salida en public/images/photos)
 /images-src/*
 !/images-src/README.md

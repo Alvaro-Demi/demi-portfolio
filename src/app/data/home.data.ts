@@ -9,7 +9,8 @@ import type { Photo, PhotoStory, SequenceFrame, WorkEntry } from '../models/phot
  *   3. Copia aquí `width` y `height` de la tabla que imprime, y escribe el `alt`.
  *   4. Ajusta `focus` (y `mobile`) si el recorte corta lo importante.
  *
- * Orden de la Home: Hero → 01 Videoclip → Interludio → 02 Live → 03 Retrato → 04 Live → About → Contact.
+ * Orden de la Home: Hero → 01 Videoclip → Interludio → 02 Live → 03 Retrato → 04 Live → 05 Archivo
+ * → 06 About → 07 Contact.
  */
 
 /** Marca visible de dato pendiente: búscala para completar el contenido. */
@@ -105,12 +106,12 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
   },
   {
     id: 'live-02',
-    artist: 'JAVI BAMBINI EN CONCIERTO',
+    artist: 'COMBATE DE DOMÍNGUEZ SEVILLANO',
     context: 'Live',
     place: null, // Pendiente: ciudad o sala.
     year: null,
     photo: {
-      src: 'composicion2',
+      src: 'composicion3',
       alt: 'Secuencia en blanco y negro de un directo: el artista canta de perfil con gorra, posa con su equipo frente al público y saluda de espaldas a la multitud',
       width: 6480,
       height: 1350,
@@ -190,17 +191,17 @@ export const INTERLUDE_PHOTO: Photo = {
 export const INTERLUDE_CAPTION = 'Cabo Sunión · Grecia';
 
 /*
- * Interludio — secuencia «detrás de las cámaras»: rodajes, BTS, DEMI trabajando con la
- * cámara y preparación. Las fotos pasan solas (5 s cada una) con un wipe de cine.
+ * Interludio — «detrás de las cámaras»: rodajes, BTS, DEMI trabajando con la cámara y
+ * preparación. Van montadas en una tira de película curvada que gira sin parar (film-strip).
+ * Cada foto conserva su orientación; las muy panorámicas o muy verticales se recortan un poco.
  *
  * Para cambiar o añadir una foto:
  *   1. Copia la foto a images-src/ con un id (p. ej. images-src/bts-01.jpg).
  *   2. Ejecuta `npm run images`.
  *   3. En su línea: `src` → el id ('bts-01'); `width`/`height` → los de la tabla que imprime;
- *      `alt` → qué se ve en la foto. Opcional: `focus` (y `mobile.focus`) si el recorte
- *      corta lo importante, y `fit: 'contain'` para que se vea siempre entera.
+ *      `alt` → qué se ve en la foto. Opcional: `focus` si el recorte corta lo importante.
  * Para incluir la foto de Grecia, añade `INTERLUDE_PHOTO` como una posición más.
- * Puedes añadir, quitar o reordenar posiciones: la animación se adapta sola.
+ * Puedes añadir, quitar o reordenar posiciones: la tira se adapta sola.
  */
 export const INTERLUDE_SEQUENCE: readonly SequenceFrame[] = [
   // 01 · BTS1 · rodaje de videoclip (horizontal 3:2)
@@ -259,6 +260,35 @@ export const INTERLUDE_SEQUENCE: readonly SequenceFrame[] = [
     width: 3024,
     height: 4032,
   },
+];
+
+/** Fotograma del interludio por su id (falla al arrancar si se renombra). */
+function interludeFrame(src: string): Photo {
+  const frame = INTERLUDE_SEQUENCE.find((f) => f.src === src);
+  if (!frame) throw new Error(`No hay ninguna foto "${src}" en INTERLUDE_SEQUENCE`);
+  return frame;
+}
+
+/*
+ * 05 — Archivo. Animación isométrica: las fotos pasan en diagonal como tarjetas, de arriba
+ * a la derecha hacia un montón abajo a la izquierda. Cierra el recorrido antes del About.
+ *
+ * Son fotos que ya están en la web (se reutilizan sus archivos). Las tarjetas son verticales
+ * (4:5): para las horizontales, `focus` decide qué parte se ve.
+ * Hacen falta al menos 8 fotos; puedes añadir, quitar o reordenar libremente.
+ * Alterna color y blanco y negro para que el paso de una a otra se note.
+ */
+export const ARCHIVE_CARDS: readonly Photo[] = [
+  PORTRAITS[0].photo, // retrato del águila
+  PORTRAITS[2].photo, // retrato con la bufanda
+  { ...HERO_PHOTO, focus: '26% 50%' }, // DEMI grabando el concierto (B/N)
+  PORTRAITS[1].photo, // la pistola
+  INTERLUDE_PHOTO, // Cabo Sunión
+  interludeFrame('BTS2'), // estadio
+  interludeFrame('BTS7'), // preparando el estabilizador
+  interludeFrame('BTS3'), // rodaje en la montaña
+  interludeFrame('BTS5'), // plaza de toros
+  interludeFrame('BTS8'), // sesión de producto en el monte
 ];
 
 export const ABOUT_PHOTO: Photo = {
