@@ -270,31 +270,39 @@
   }
 }
 
-/* --- Escritorio: título y pie | composición -------------------------------- */
+/*
+ * --- Escritorio: título | composición, y el pie bajo la composición ---------
+ * El título se centra en la altura de las fotos (como en el About). El pie ocupa el mismo
+ * ancho que la composición, justo debajo. Composición y pie caben juntos en pantalla.
+ */
 
 @media (min-width: 64rem) {
   .portraits {
+    --stage-size: min(100%, calc(100svh - var(--header-height) - 9rem));
     grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: auto 1fr;
     column-gap: var(--space-6);
+    row-gap: var(--space-6);
   }
 
   .portraits-header {
     grid-column: 1 / span 4;
+    grid-row: 1;
+    align-self: top;
+  }
+
+  .portraits-stage,
+  .portraits-info {
+    grid-column: 6 / -1;
+    justify-self: end;
+    inline-size: var(--stage-size);
+  }
+
+  .portraits-stage {
+    grid-row: 1;
   }
 
   .portraits-info {
-    grid-column: 1 / span 4;
     grid-row: 2;
-    align-self: end;
-  }
-
-  /* Cabe entera en pantalla, por debajo del header fijo */
-  .portraits-stage {
-    grid-column: 6 / -1;
-    grid-row: 1 / span 2;
-    justify-self: end;
-    inline-size: min(100%, calc(100svh - var(--header-height) - var(--space-16)));
   }
 }
 

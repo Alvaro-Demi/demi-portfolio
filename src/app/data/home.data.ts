@@ -166,14 +166,14 @@ export const PORTRAITS: readonly Portrait[] = [
     // Pendiente: cuarta foto. Copia el original a images-src/, ejecuta `npm run images`
     // y cambia `src` (por su id), `width`, `height`, `alt`, `artist` y `year`.
     id: 'portrait-pendiente',
-    artist: PENDING_ARTIST,
+    artist: 'AL SAFIR',
     context: 'Sesión de fotos',
-    year: null,
+    year: 2026,
     photo: {
-      src: 'images/placeholders/foto-04.svg',
-      alt: 'Foto pendiente',
-      width: 1200,
-      height: 1500,
+      src: 'work-07',
+      alt: 'Retrato del artista con sudadera negra y un águila dorada, sobre fondo verde oscuro',
+      width: 2216,
+      height: 3936,
     },
   },
 ];
