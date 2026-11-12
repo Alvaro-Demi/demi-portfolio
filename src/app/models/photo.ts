@@ -28,11 +28,10 @@ export interface MobileCrop {
 }
 
 /**
- * Papel de cada pieza dentro de su sección.
- *   Videoclip: screen (pantalla a sangre) · wide (panorámica secundaria) · coda (cierre)
- *   Retrato:   lead (el grande) · pair-start / pair-end (los dos pequeños, escalonados)
+ * Papel de cada pieza de videoclip dentro de su sección:
+ * screen (pantalla a sangre) · wide (panorámica secundaria) · coda (cierre).
  */
-export type WorkLayout = 'screen' | 'wide' | 'coda' | 'lead' | 'pair-start' | 'pair-end';
+export type WorkLayout = 'screen' | 'wide' | 'coda';
 
 export type WorkType = 'photo' | 'video';
 
@@ -50,6 +49,18 @@ export interface WorkEntry {
   /** Solo para `type: 'video'`. `null` mientras no exista el enlace. */
   readonly youtubeUrl: string | null;
   readonly layout: WorkLayout;
+  readonly photo: Photo;
+}
+
+/** Retrato de una sesión de fotos (sección 03). */
+export interface Portrait {
+  readonly id: string;
+  /** Artista retratado. */
+  readonly artist: string;
+  /** 'Sesión de fotos', 'Editorial'… */
+  readonly context: string;
+  /** `null` mientras no se confirme. */
+  readonly year: number | null;
   readonly photo: Photo;
 }
 

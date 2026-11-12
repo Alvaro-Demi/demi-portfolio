@@ -1,4 +1,4 @@
-import type { Photo, PhotoStory, SequenceFrame, WorkEntry } from '../models/photo';
+import type { Photo, PhotoStory, Portrait, SequenceFrame, WorkEntry } from '../models/photo';
 
 /*
  * Contenido de la Home. `src` es el id de la foto, no una ruta.
@@ -9,7 +9,7 @@ import type { Photo, PhotoStory, SequenceFrame, WorkEntry } from '../models/phot
  *   3. Copia aquí `width` y `height` de la tabla que imprime, y escribe el `alt`.
  *   4. Ajusta `focus` (y `mobile`) si el recorte corta lo importante.
  *
- * Orden de la Home: Hero → 01 Videoclip → Interludio → 02 Live → 03 Retrato → 04 Live → 05 Archivo
+ * Orden de la Home: Hero → 01 Videoclip → Detrás de las cámaras → 02 Live → 03 Retrato → 04 Live → 05 Archivo
  * → 06 About → 07 Contact.
  */
 
@@ -120,23 +120,17 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
 ];
 
 /*
- * 03 — Retrato. Tres fotos de la misma sesión y el mismo fondo: respiración en color
- * entre los dos directos. Composición de doble página:
- *   lead       → el retrato grande, junto al título.
- *   pair-start → primero de los dos pequeños, bajo el título.
- *   pair-end   → segundo pequeño, algo más abajo (escalonado).
- * (El directo con humo ya no va suelto: está dentro de la primera composición.)
+ * 03 — Retrato. Respiración en color entre los dos directos. Una foto grande y el resto en
+ * una columna de miniaturas; cada pocos segundos la primera miniatura pasa a ser la grande
+ * (portraits). Funciona con 3 o más; está pensada para 4.
+ * Las fotos verticales encajan mejor (la grande es casi 3:4 y las miniaturas casi 5:6).
  */
-export const PORTRAITS: readonly WorkEntry[] = [
+export const PORTRAITS: readonly Portrait[] = [
   {
     id: 'portrait-eagle',
     artist: 'AL SAFIR',
-    title: null,
-    context: 'SESION DE FOTOS',
-    type: 'photo',
+    context: 'Sesión de fotos',
     year: 2026,
-    youtubeUrl: null,
-    layout: 'lead',
     photo: {
       src: 'work-04',
       alt: 'Retrato de un artista con sudadera negra y un águila dorada, sobre fondo verde oscuro',
@@ -147,12 +141,8 @@ export const PORTRAITS: readonly WorkEntry[] = [
   {
     id: 'portrait-gun',
     artist: 'AL SAFIR',
-    title: null,
-    context: 'SESION DE FOTOS',
-    type: 'photo',
+    context: 'Sesión de fotos',
     year: 2026,
-    youtubeUrl: null,
-    layout: 'pair-start',
     photo: {
       src: 'work-06',
       alt: 'Artista desenfocado apunta con una pistola a cámara, que enfoca el arma en primer plano',
@@ -163,17 +153,27 @@ export const PORTRAITS: readonly WorkEntry[] = [
   {
     id: 'portrait-otro',
     artist: 'AL SAFIR',
-    title: null,
-    context: 'SESION DE FOTOS',
-    type: 'photo',
+    context: 'Sesión de fotos',
     year: 2026,
-    youtubeUrl: null,
-    layout: 'pair-end',
     photo: {
       src: 'otro-retrato',
       alt: 'Retrato del artista mirando a cámara, con camiseta negra, una bufanda estampada al cuello y reloj dorado, sobre fondo oscuro',
       width: 2624,
       height: 3936,
+    },
+  },
+  {
+    // Pendiente: cuarta foto. Copia el original a images-src/, ejecuta `npm run images`
+    // y cambia `src` (por su id), `width`, `height`, `alt`, `artist` y `year`.
+    id: 'portrait-pendiente',
+    artist: PENDING_ARTIST,
+    context: 'Sesión de fotos',
+    year: null,
+    photo: {
+      src: 'images/placeholders/foto-04.svg',
+      alt: 'Foto pendiente',
+      width: 1200,
+      height: 1500,
     },
   },
 ];

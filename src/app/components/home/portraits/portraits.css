@@ -3,16 +3,13 @@
 }
 
 /*
- * Tres retratos: uno grande (lead) y dos pequeños escalonados (pair-start, pair-end).
- * Móvil: zigzag izquierda → derecha → izquierda.
+ * Móvil y tablet: título, composición y pie, uno bajo otro.
+ * Escritorio: título y pie a la izquierda; la composición a la derecha.
  */
 .portraits {
   display: grid;
+  gap: var(--space-8);
   padding: var(--space-24) var(--page-gutter);
-}
-
-.portraits-header {
-  margin-block-end: var(--space-12);
 }
 
 .portraits-title {
@@ -21,84 +18,294 @@
   text-transform: uppercase;
 }
 
-.portraits-item[data-layout='lead'] {
-  inline-size: 84%;
+/* --- Composición ------------------------------------------------------------ */
+
+/*
+ * Cuadrado: la grande ocupa el 71 % del ancho y todo el alto; las miniaturas se reparten
+ * la columna de la derecha. El ancho y el alto miden lo mismo, así que --gap sirve igual
+ * en horizontal y en vertical.
+ */
+.portraits-stage {
+  --gap: 2.5%;
+  --main: 71%;
+  position: relative;
+  aspect-ratio: 1;
 }
 
-.portraits-item[data-layout='pair-start'],
-.portraits-item[data-layout='pair-end'] {
-  /* Lo mínimo para que el pie ("Sesion de fotos · 2026") quepa en una línea */
-  inline-size: max(70%, 15.5rem);
-  margin-block-start: var(--space-12);
+.portraits-card {
+  position: absolute;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  background-color: var(--color-surface);
+  transition:
+    inset-inline-start var(--portraits-move) var(--ease-in-out),
+    inset-block-start var(--portraits-move) var(--ease-in-out),
+    inline-size var(--portraits-move) var(--ease-in-out),
+    block-size var(--portraits-move) var(--ease-in-out),
+    scale 400ms var(--ease-out);
 }
 
-.portraits-item[data-layout='pair-start'] {
-  justify-self: end;
+/* La que crece pasa por encima de las demás */
+.portraits-card[data-slot='main'] {
+  z-index: 2;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  inline-size: var(--main);
+  block-size: 100%;
+  cursor: default;
 }
 
-/* Tablet: el grande a la izquierda con un pequeño a su pie; el otro debajo, hacia el centro */
-@media (min-width: 48rem) {
-  .portraits {
-    grid-template-columns: repeat(8, 1fr);
-    column-gap: var(--space-6);
-  }
+.portraits-card[data-slot='thumb'] {
+  --thumb: calc((100% - (var(--count) - 2) * var(--gap)) / (var(--count) - 1));
+  z-index: 1;
+  inset-inline-start: calc(var(--main) + var(--gap));
+  inset-block-start: calc(var(--k) * (var(--thumb) + var(--gap)));
+  inline-size: calc(100% - var(--main) - var(--gap));
+  block-size: var(--thumb);
+}
 
-  .portraits-header {
-    grid-column: 1 / -1;
-  }
+.portraits-card img {
+  object-fit: cover;
+  transition:
+    filter 500ms var(--ease-out),
+    scale 600ms var(--ease-out);
+}
 
-  .portraits-item[data-layout] {
-    inline-size: auto;
-    justify-self: stretch;
-  }
+/* Miniaturas en segundo plano: algo apagadas */
+.portraits-card[data-slot='thumb'] img {
+  filter: brightness(0.55) saturate(0.7);
+}
 
-  .portraits-item[data-layout='lead'] {
-    grid-column: 1 / span 5;
+/*
+ * La grande: llega desenfocada y enfoca (cambio de foco) y, mientras se ve, la cámara se
+ * acerca muy despacio. El acercamiento se congela con la pausa; el enfoque, no.
+ */
+@keyframes portraits-focus {
+  from {
+    filter: blur(10px) brightness(0.8);
   }
-
-  .portraits-item[data-layout='pair-start'] {
-    grid-column: 6 / span 3;
-    align-self: end;
-    margin-block-start: 0;
-  }
-
-  .portraits-item[data-layout='pair-end'] {
-    grid-column: 3 / span 4;
-    margin-block-start: var(--space-16);
+  to {
+    filter: blur(0) brightness(1);
   }
 }
 
-/* Escritorio: el grande ocupa toda la altura; a su lado, el título y los dos pequeños escalonados */
+@keyframes portraits-push {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+.portraits-card[data-slot='main'] img {
+  animation:
+    portraits-focus 900ms var(--ease-out) both,
+    portraits-push calc(var(--portraits-hold) + var(--portraits-move)) linear both;
+  animation-play-state: running, paused;
+}
+
+.portraits[data-playing] .portraits-card[data-slot='main'] img {
+  animation-play-state: running, running;
+}
+
+/* --- Visor de cámara ------------------------------------------------------- */
+
+/* Cuatro esquinas de enfoque y una cruz en el centro, dibujadas con degradados */
+.portraits-viewfinder {
+  --line: 2px;
+  --arm: 1.75rem;
+  --ink: rgb(242 237 230 / 0.9);
+  position: absolute;
+  inset: 7%;
+  z-index: 1;
+  background:
+    linear-gradient(var(--ink), var(--ink)) top left / var(--arm) var(--line),
+    linear-gradient(var(--ink), var(--ink)) top left / var(--line) var(--arm),
+    linear-gradient(var(--ink), var(--ink)) top right / var(--arm) var(--line),
+    linear-gradient(var(--ink), var(--ink)) top right / var(--line) var(--arm),
+    linear-gradient(var(--ink), var(--ink)) bottom left / var(--arm) var(--line),
+    linear-gradient(var(--ink), var(--ink)) bottom left / var(--line) var(--arm),
+    linear-gradient(var(--ink), var(--ink)) bottom right / var(--arm) var(--line),
+    linear-gradient(var(--ink), var(--ink)) bottom right / var(--line) var(--arm),
+    linear-gradient(var(--color-accent), var(--color-accent)) center / 1.25rem 1px,
+    linear-gradient(var(--color-accent), var(--color-accent)) center / 1px 1.25rem;
+  background-repeat: no-repeat;
+  opacity: 0;
+  scale: 1.08;
+  pointer-events: none;
+  transition:
+    opacity 300ms var(--ease-out),
+    scale 450ms var(--ease-out);
+}
+
+/* --- Hover ------------------------------------------------------------------ */
+
+@media (hover: hover) and (pointer: fine) {
+  /* La grande: aparece el visor (se «bloquea» el enfoque) y la foto se acerca un poco */
+  .portraits-card[data-slot='main']:hover .portraits-viewfinder {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .portraits-card[data-slot='main']:hover img {
+    scale: 1.03;
+  }
+
+  /* Miniaturas: se iluminan y se adelantan; al pulsar pasan a la grande */
+  .portraits-card[data-slot='thumb']:hover {
+    z-index: 3;
+    scale: 1.06;
+  }
+
+  .portraits-card[data-slot='thumb']:hover img {
+    filter: none;
+  }
+}
+
+.portraits-card[data-slot='thumb']:focus-visible img {
+  filter: none;
+}
+
+/* --- Pie: progreso, contador, retrato actual y pausa ----------------------- */
+
+.portraits-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-6);
+}
+
+.portraits-progress {
+  position: relative;
+  flex-basis: 100%;
+  block-size: 1px;
+  margin-block-end: var(--space-2);
+  background-color: var(--color-line);
+}
+
+.portraits-progress span {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-text);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: portraits-progress var(--portraits-hold) linear forwards;
+  animation-play-state: paused;
+}
+
+.portraits[data-playing] .portraits-progress span {
+  animation-play-state: running;
+}
+
+@keyframes portraits-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.portraits-count {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+}
+
+.portraits-count span {
+  color: var(--color-text-muted);
+}
+
+/* El retrato actual: entra con un fundido corto cada vez que cambia */
+.portraits-caption {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 0 var(--space-3);
+  min-inline-size: 0;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  animation: portraits-caption 500ms var(--ease-out) both;
+}
+
+.portraits-meta {
+  color: var(--color-text-muted);
+}
+
+@keyframes portraits-caption {
+  from {
+    opacity: 0;
+    translate: 0 0.4rem;
+  }
+}
+
+.portraits-toggle {
+  min-block-size: 2.75rem;
+  min-inline-size: 6.5rem;
+  padding-inline: var(--space-2);
+  margin-inline-end: calc(var(--space-2) * -1);
+  border: 0;
+  background: none;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-align: end;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .portraits-toggle:hover {
+    text-decoration-color: var(--color-accent);
+  }
+}
+
+/* --- Escritorio: título y pie | composición -------------------------------- */
+
 @media (min-width: 64rem) {
   .portraits {
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: auto 1fr;
+    column-gap: var(--space-6);
   }
 
   .portraits-header {
-    grid-column: 7 / span 6;
-    grid-row: 1;
-    align-self: start;
+    grid-column: 1 / span 4;
   }
 
-  .portraits-item[data-layout='lead'] {
-    grid-column: 1 / span 5;
-    grid-row: 1 / span 2;
-  }
-
-  .portraits-item[data-layout='pair-start'],
-  .portraits-item[data-layout='pair-end'] {
+  .portraits-info {
+    grid-column: 1 / span 4;
     grid-row: 2;
-    align-self: start;
+    align-self: end;
   }
 
-  .portraits-item[data-layout='pair-start'] {
-    grid-column: 7 / span 3;
-    margin-block-start: 0;
+  /* Cabe entera en pantalla, por debajo del header fijo */
+  .portraits-stage {
+    grid-column: 6 / -1;
+    grid-row: 1 / span 2;
+    justify-self: end;
+    inline-size: min(100%, calc(100svh - var(--header-height) - var(--space-16)));
+  }
+}
+
+/* Sin movimiento: ni avance automático ni acercamiento ni desenfoque */
+@media (prefers-reduced-motion: reduce) {
+  .portraits-card[data-slot='main'] img {
+    animation: none;
   }
 
-  .portraits-item[data-layout='pair-end'] {
-    grid-column: 10 / span 3;
-    margin-block-start: var(--space-16);
+  .portraits-progress span {
+    animation: none;
+    transform: scaleX(1);
   }
 }

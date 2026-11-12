@@ -1,0 +1,67 @@
+<section class="portraits" aria-labelledby="portraits-title" [attr.data-playing]="playing() ? '' : null">
+  <header class="portraits-header" appReveal>
+    <p class="eyebrow">03 — Sesión de fotos</p>
+    <h2 id="portraits-title" class="portraits-title">Retrato</h2>
+  </header>
+
+  <!-- Marco estable: los retratos cambian de hueco y el CSS anima posición y tamaño -->
+  <div
+    class="portraits-stage"
+    #stage
+    appReveal
+    [revealDelay]="120"
+    [style.--count]="count()"
+    (pointerenter)="hover($event, true)"
+    (pointerleave)="hover($event, false)"
+  >
+    @for (card of cards(); track card.portrait.id) {
+      <button
+        type="button"
+        class="portraits-card"
+        [attr.data-slot]="card.slot === 0 ? 'main' : 'thumb'"
+        [style.--k]="card.slot - 1"
+        [attr.aria-current]="card.slot === 0 ? 'true' : null"
+        (click)="go(card.i)"
+      >
+        <img
+          [ngSrc]="card.portrait.photo.src"
+          [alt]="card.portrait.photo.alt"
+          fill
+          sizes="(min-width: 64rem) 40vw, (min-width: 48rem) 64vw, 72vw"
+          [style.object-position]="card.portrait.photo.focus ?? null"
+        />
+        <!-- Visor de cámara: esquinas de enfoque y cruz; aparece con el ratón sobre la grande -->
+        <span class="portraits-viewfinder" aria-hidden="true"></span>
+      </button>
+    }
+  </div>
+
+  <div class="portraits-info">
+    <!-- La línea marca el ritmo: al llenarse, pasa al siguiente retrato -->
+    <div class="portraits-progress" aria-hidden="true">
+      @for (key of [active()]; track key) {
+        <span (animationend)="advance()"></span>
+      }
+    </div>
+
+    <p class="portraits-count" aria-hidden="true">
+      {{ label(active()) }} <span>/ {{ label(count() - 1) }}</span>
+    </p>
+
+    @for (key of [active()]; track key) {
+      <p class="portraits-caption">
+        <span class="portraits-artist">{{ current().artist }}</span>&ngsp;<span class="portraits-meta">{{
+          meta()
+        }}</span>
+      </p>
+    }
+
+    @if (!reducedMotion() && count() > 1) {
+      <button type="button" class="portraits-toggle" (click)="toggle()">
+        {{ userPaused() ? 'Reproducir' : 'Pausar' }}<span class="visually-hidden"> los retratos</span>
+      </button>
+    }
+  </div>
+
+  <p class="visually-hidden" aria-live="polite">{{ announcement() }}</p>
+</section>
