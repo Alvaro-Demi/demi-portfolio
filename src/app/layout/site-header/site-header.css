@@ -75,7 +75,7 @@
   }
 }
 
-/* --- Mobile: DEMI + MENU; la navegación se despliega bajo el header --- */
+/* --- Móvil y tablet: DEMI + MENU; la navegación se despliega bajo el header --- */
 
 .nav {
   display: none;
@@ -108,9 +108,10 @@
   gap: var(--space-2);
 }
 
-/* --- Desktop: navegación en línea, MENU oculto --- */
+/* --- Escritorio: una entrada por sección, en línea; MENU oculto ---
+   (en tablet no caben las siete en una línea: usa el desplegable) */
 
-@media (min-width: 48rem) {
+@media (min-width: 64rem) {
   .menu-button {
     display: none;
   }
@@ -127,6 +128,6 @@
 
   .nav-list {
     flex-direction: row;
-    gap: var(--space-8);
+    gap: clamp(var(--space-4), 1.6vw, var(--space-8));
   }
 }

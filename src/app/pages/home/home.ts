@@ -15,6 +15,7 @@ import {
   INTERLUDE_SEQUENCE,
   PHOTO_STORIES,
   PORTRAITS,
+  PORTRAITS_INTRO,
   SERVICES,
   VIDEOCLIPS,
 } from '../../data/home.data';
@@ -31,6 +32,7 @@ export class Home {
   protected readonly backstageFrames = INTERLUDE_SEQUENCE;
   protected readonly stories = PHOTO_STORIES;
   protected readonly portraits = PORTRAITS;
+  protected readonly portraitsIntro = PORTRAITS_INTRO;
   protected readonly aboutPhoto = ABOUT_PHOTO;
   protected readonly contactEmail = CONTACT_EMAIL;
   protected readonly instagram = INSTAGRAM_HANDLE;

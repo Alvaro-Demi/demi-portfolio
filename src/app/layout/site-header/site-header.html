@@ -14,10 +14,16 @@
   </button>
 
   <nav id="site-nav" class="nav" [class.is-open]="menuOpen()" aria-label="Principal">
-    <ul class="nav-list" role="list" lang="en">
+    <ul class="nav-list" role="list">
       @for (item of navItems; track item.fragment) {
         <li>
-          <a class="nav-link" routerLink="/" [fragment]="item.fragment" (click)="closeMenu()">
+          <a
+            class="nav-link"
+            routerLink="/"
+            [fragment]="item.fragment"
+            [attr.lang]="item.lang"
+            (click)="closeMenu()"
+          >
             {{ item.label }}
           </a>
         </li>

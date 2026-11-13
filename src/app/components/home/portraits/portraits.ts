@@ -10,7 +10,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { Portrait } from '../../../models/photo';
+import { Portrait, SectionIntro } from '../../../models/photo';
 import { Reveal } from '../../../shared/reveal';
 
 /** Tiempo que se ve cada retrato en grande y duración del cambio, en ms. Llegan al CSS. */
@@ -40,6 +40,8 @@ const MOVE = 700;
 })
 export class Portraits {
   readonly entries = input.required<readonly Portrait[]>();
+  /** Frase y etiquetas bajo el título. Solo se muestran en escritorio. */
+  readonly intro = input<SectionIntro | null>(null);
 
   protected readonly hold = HOLD;
   protected readonly move = MOVE;

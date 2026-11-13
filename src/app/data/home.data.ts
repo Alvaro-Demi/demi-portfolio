@@ -1,4 +1,4 @@
-import type { Photo, PhotoStory, Portrait, SequenceFrame, WorkEntry } from '../models/photo';
+import type { Photo, PhotoStory, Portrait, SectionIntro, SequenceFrame, WorkEntry } from '../models/photo';
 
 /*
  * Contenido de la Home. `src` es el id de la foto, no una ruta.
@@ -92,7 +92,7 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
  */
 export const PHOTO_STORIES: readonly PhotoStory[] = [
   {
-    id: 'live-01',
+    id: 'conciertos', // ancla: el menú enlaza a #conciertos
     artist: 'AL SAFIR EN CONCIERTO',
     category: 'Conciertos',
     context: 'Live',
@@ -106,7 +106,7 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
     },
   },
   {
-    id: 'live-02',
+    id: 'boxeo', // ancla: el menú enlaza a #boxeo
     artist: 'COMBATE DE DOMÍNGUEZ SEVILLANO',
     category: 'Velada de boxeo',
     context: 'Boxeo',
@@ -127,6 +127,12 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
  * (portraits). Funciona con 3 o más; está pensada para 4.
  * Las fotos verticales encajan mejor (la grande es casi 3:4 y las miniaturas casi 5:6).
  */
+export const PORTRAITS_INTRO: SectionIntro = {
+  // Solo se ve en escritorio, bajo el título «Retrato»: rellena la columna junto a las fotos.
+  lead: 'No retrato caras: retrato actitud.',
+  tags: ['Marcas de ropa', 'Artistas', 'Modelos', 'Productos'],
+};
+
 export const PORTRAITS: readonly Portrait[] = [
   {
     id: 'portrait-eagle',

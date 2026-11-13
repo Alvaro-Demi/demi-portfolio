@@ -1,7 +1,19 @@
-<section class="portraits" aria-labelledby="portraits-title" [attr.data-playing]="playing() ? '' : null">
+<section id="retrato" class="portraits" aria-labelledby="portraits-title" [attr.data-playing]="playing() ? '' : null">
   <header class="portraits-header" appReveal>
     <p class="eyebrow">04 — Sesión de fotos</p>
     <h2 id="portraits-title" class="portraits-title">Retrato</h2>
+
+    <!-- Solo en escritorio: llena la columna junto a las fotos (ver portraits.css) -->
+    @if (intro(); as intro) {
+      <div class="portraits-intro">
+        <p class="portraits-lead">{{ intro.lead }}</p>
+        <ul class="portraits-tags" role="list">
+          @for (tag of intro.tags; track tag) {
+            <li>{{ tag }}</li>
+          }
+        </ul>
+      </div>
+    }
   </header>
 
   <!-- Marco estable: los retratos cambian de hueco y el CSS anima posición y tamaño -->

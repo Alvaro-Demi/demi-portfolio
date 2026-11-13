@@ -4,7 +4,10 @@ import { RouterLink } from '@angular/router';
 
 interface NavItem {
   readonly label: string;
+  /** El `id` de la sección en la Home. */
   readonly fragment: string;
+  /** Idioma de la etiqueta, para que los lectores de pantalla la pronuncien bien. */
+  readonly lang: 'es' | 'en';
 }
 
 @Component({
@@ -19,10 +22,15 @@ interface NavItem {
   },
 })
 export class SiteHeader {
+  /** Una entrada por sección de la Home, en su orden. */
   protected readonly navItems: readonly NavItem[] = [
-    { label: 'Work', fragment: 'work' },
-    { label: 'About', fragment: 'about' },
-    { label: 'Contact', fragment: 'contact' },
+    { label: 'Videoclip', fragment: 'work', lang: 'es' },
+    { label: 'Backstage', fragment: 'backstage', lang: 'en' },
+    { label: 'Conciertos', fragment: 'conciertos', lang: 'es' },
+    { label: 'Retrato', fragment: 'retrato', lang: 'es' },
+    { label: 'Boxeo', fragment: 'boxeo', lang: 'es' },
+    { label: 'About', fragment: 'about', lang: 'en' },
+    { label: 'Contact', fragment: 'contact', lang: 'en' },
   ];
 
   /** Estado del menú móvil. Más adelante abrirá el menú a pantalla completa. */

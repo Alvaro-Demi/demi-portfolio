@@ -33,7 +33,8 @@
   --color-bg: #0a0a0a;
   --color-surface: #111111;
   --color-text: #f2ede6;
-  --color-text-muted: #8a8580; /* 5.4:1 sobre --color-bg → apto para texto */
+  /* 6.7:1 sobre --color-bg; ≥ 4.5:1 también sobre las zonas más claras del fondo de la Home */
+  --color-text-muted: #9a958f;
   --color-accent: #e10600; /* 4:1 sobre --color-bg → solo texto grande, bordes y foco */
   --color-line: #2a2a2a;
 

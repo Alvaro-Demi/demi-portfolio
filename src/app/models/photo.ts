@@ -64,9 +64,15 @@ export interface Portrait {
   readonly photo: Photo;
 }
 
+/** Texto de presentación de una sección: una frase destacada y una lista de etiquetas. */
+export interface SectionIntro {
+  readonly lead: string;
+  readonly tags: readonly string[];
+}
+
 /** Composición panorámica de un directo: en escritorio se recorre en horizontal con el scroll. */
 export interface PhotoStory {
-  /** También es el ancla de la sección (#live-01). */
+  /** También es el ancla de la sección (#conciertos): si lo cambias, cambia el menú. */
   readonly id: string;
   readonly artist: string;
   /** Etiqueta de la sección, junto al número: 'Conciertos', 'Velada de boxeo'… */

@@ -37,7 +37,7 @@
  * desenfoque no deje bordes claros.
  */
 .backdrop-soft {
-  filter: blur(36px) brightness(0.6);
+  filter: blur(20px) brightness(0.55);
   scale: 1.12;
   opacity: var(--backdrop-p);
 }
@@ -62,8 +62,9 @@
 }
 
 /*
- * Velo oscuro final: con él, el texto gris de la web (#8a8580) mantiene un contraste
- * de al menos 4,5:1 incluso sobre las luces del escenario, ya desenfocadas.
+ * Velo oscuro final. Con él, el texto gris de la web (--color-text-muted, #9a958f) mantiene
+ * un contraste de al menos 4,5:1 incluso sobre las luces del escenario, ya desenfocadas.
+ * Si lo bajas, o bajas el desenfoque, vuelve a comprobar ese contraste.
  */
 .backdrop-shade {
   position: absolute;

@@ -18,6 +18,11 @@
   text-transform: uppercase;
 }
 
+/* Frase y etiquetas bajo el título: solo en escritorio (ver más abajo) */
+.portraits-intro {
+  display: none;
+}
+
 /* --- Composición ------------------------------------------------------------ */
 
 /*
@@ -220,6 +225,16 @@
   color: var(--color-text-muted);
 }
 
+/* Pie, pausa y etiquetas: la misma letra pequeña en versalitas espaciadas */
+.portraits-caption,
+.portraits-toggle,
+.portraits-tags {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
 /* El retrato actual: entra con un fundido corto cada vez que cambia */
 .portraits-caption {
   display: flex;
@@ -227,10 +242,6 @@
   flex-wrap: wrap;
   gap: 0 var(--space-3);
   min-inline-size: 0;
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
   animation: portraits-caption 500ms var(--ease-out) both;
 }
 
@@ -252,11 +263,7 @@
   margin-inline-end: calc(var(--space-2) * -1);
   border: 0;
   background: none;
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-wide);
   text-align: end;
-  text-transform: uppercase;
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 1px;
@@ -284,10 +291,40 @@
     row-gap: var(--space-6);
   }
 
+  /*
+   * La columna del título ocupa todo el alto de las fotos: número y título arriba (a la
+   * altura del borde superior de la grande) y la frase con las etiquetas abajo (a la
+   * altura de su borde inferior).
+   */
   .portraits-header {
-    grid-column: 1 / span 4;
+    display: flex;
+    flex-direction: column;
+    grid-column: 1 / span 5;
     grid-row: 1;
-    align-self: top;
+  }
+
+  .portraits-intro {
+    display: block;
+    margin-block-start: auto;
+    padding-block-start: var(--space-12);
+  }
+
+  .portraits-lead {
+    max-inline-size: 16ch;
+    font-size: var(--text-xl);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  /* Como la lista de servicios del About: línea fina encima */
+  .portraits-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin-block-start: var(--space-8);
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid var(--color-line);
+    color: var(--color-text-muted);
   }
 
   .portraits-stage,
