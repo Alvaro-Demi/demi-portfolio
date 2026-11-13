@@ -181,6 +181,44 @@ a {
   background-color: var(--color-accent);
 }
 
+/* Botón rojo de llamada a la acción (About y Contacto): blanco sobre #E10600 = 5:1 */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-block-size: 3.5rem;
+  padding-inline: var(--space-8);
+  border: 0;
+  background-color: var(--color-accent);
+  color: #ffffff;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background-color var(--duration-base) ease,
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.cta:active {
+  transform: scale(0.97);
+}
+
+.cta-arrow {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta:hover {
+    background-color: #b80500;
+  }
+
+  .cta:hover .cta-arrow {
+    transform: translateX(0.25rem);
+  }
+}
+
 /* Revelado al entrar en viewport (directiva appReveal) */
 .reveal {
   transition:

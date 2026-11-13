@@ -129,7 +129,7 @@ export const SOCIAL_REELS: readonly SocialReel[] = [
   },
   {
     id: 'reel-combate',
-    title: 'Velda de Boxeo', // Pendiente: título del reel.
+    title: 'Velada de Boxeo', // Pendiente: título del reel.
     context: 'Reel',
     year: null,
     video: 'reel-03',
@@ -174,7 +174,7 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
     year: null,
     photo: {
       src: 'composicion3',
-      alt: 'velada de boxeo: varias imagenes de Dominguez Sevillano en su combate',
+      alt: 'Velada de boxeo: varias imágenes de Domínguez Sevillano durante su combate',
       width: 21402,
       height: 4724,
     },
@@ -350,10 +350,14 @@ export const ABOUT_PHOTO: Photo = {
 /** Servicios: se listan en el About y son las opciones de «Tipo de proyecto» del formulario. */
 export const SERVICES: readonly string[] = [
   'Imagen corporativa',
-  'Videoclips y rodajes',
+  'Videoclips',
+  'rodajes',
   'Sesiones de fotos',
   'Dron',
-  'Conciertos y eventos',
+  'Conciertos',
+  'Eventos',
+  'Social Media', 
+  'Reels'
 ];
 
 /** Dirección a la que llegan los mensajes del formulario de contacto. */

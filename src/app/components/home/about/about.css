@@ -2,25 +2,28 @@
   display: block;
 }
 
+/*
+ * Mismo esquema que Retrato.
+ *   Móvil y tablet: título, texto, botón, servicios y foto, uno bajo otro.
+ *   Escritorio: título, texto y servicios a la izquierda; la foto a la derecha.
+ */
 .about {
   display: grid;
-  gap: var(--space-12);
-  padding: var(--space-24) var(--page-gutter);
-}
-
-.about-media {
-  inline-size: 80%;
-}
-
-.about-media img {
-  inline-size: 100%;
-  background-color: var(--color-surface);
+  gap: var(--space-8);
+  padding: var(--space-6) var(--page-gutter);
 }
 
 .about-title {
-  margin-block: var(--space-4) var(--space-8);
+  margin-block-start: var(--space-4);
   font-size: var(--text-heading);
   text-transform: uppercase;
+}
+
+/* --- Texto, botón y servicios ------------------------------------------------- */
+
+.about-body {
+  display: flex;
+  flex-direction: column;
 }
 
 .about-lead {
@@ -35,39 +38,106 @@
   color: var(--color-text-muted);
 }
 
+/* Botón rojo hacia Contacto (.cta, en styles.css): no se estira a lo ancho de la columna */
+.about-cta {
+  align-self: flex-start;
+  margin-block-start: var(--space-8);
+}
+
+/* Misma letra pequeña y la misma línea fina que las etiquetas de Retrato */
 .about-services {
   display: flex;
   flex-wrap: wrap;
+  align-content: center;
   gap: var(--space-2) var(--space-6);
   margin-block-start: var(--space-8);
   padding-block-start: var(--space-4);
   border-block-start: 1px solid var(--color-line);
+  color: var(--color-text-muted);
   font-size: var(--text-xs);
   font-weight: var(--weight-medium);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
 
-@media (min-width: 48rem) {
-  .about-media {
-    inline-size: 55%;
-  }
+/* --- Foto: esquinas como las de Retrato -------------------------------------- */
+
+.about-media {
+  inline-size: min(100%, 24rem);
 }
 
+.about-media img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: 0.5rem;
+  background-color: var(--color-surface);
+}
+
+/*
+ * --- Escritorio: título y texto | foto ---------------------------------------
+ * Como en Retrato, la foto cabe entera en pantalla y la columna izquierda mide lo mismo que
+ * ella: el número y el título arriba (a la altura de su borde superior) y los servicios abajo
+ * (a la altura de su borde inferior).
+ */
 @media (min-width: 64rem) {
-  /* El texto se centra en la altura de la foto: acompaña a la imagen en vez de caer a su pie */
   .about {
+    --photo-h: calc(100svh - var(--header-height) - 6rem);
     grid-template-columns: repeat(12, 1fr);
+    /* La fila del texto absorbe el alto que sobra: los servicios bajan hasta el pie de la foto */
+    grid-template-rows: auto 1fr;
     column-gap: var(--space-6);
-    align-items: center;
+    row-gap: var(--space-8);
   }
 
-  .about-media {
-    grid-column: 2 / span 4;
-    inline-size: auto;
+  .about-header,
+  .about-body {
+    grid-column: 1 / span 6;
+  }
+
+  .about-header {
+    grid-row: 1;
+  }
+
+  /* El número arriba del todo: su interlineado no lo separa del borde de la foto */
+  .about-header .eyebrow {
+    margin-block-start: -0.3em;
   }
 
   .about-body {
-    grid-column: 7 / span 5;
+    grid-row: 2;
+  }
+
+
+  .about-services {
+    margin-block-start: auto;
+  }
+
+  /* El hueco que sobra queda entre el botón y los servicios (como mínimo, el de siempre) */
+  .about-cta {
+    margin-block-end: var(--space-8);
+  }
+
+  .about-media {
+    grid-column: 7 / -1;
+    grid-row: 1 / span 2;
+    justify-self: end;
+    inline-size: auto;
+  }
+
+  /* Alta como la pantalla (menos el header y un margen), sin pasar de su tamaño natural */
+  .about-media img {
+    inline-size: auto;
+    block-size: min(var(--photo-h), 52rem);
+  }
+}
+
+/* Pantallas anchas (el título cabe en una línea): la cita, con la presencia de la de Retrato */
+@media (min-width: 80rem) {
+  .about-lead {
+    max-inline-size: 24ch;
+    font-size: var(--text-xl);
+    line-height: 1.15;
+    text-wrap: balance;
   }
 }

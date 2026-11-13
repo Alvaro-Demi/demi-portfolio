@@ -1,4 +1,31 @@
 <section id="about" class="about" aria-labelledby="about-title">
+  <!-- Cabecera como la del resto de secciones: número y categoría, y el título grande -->
+  <header class="about-header" appReveal>
+    <p class="eyebrow">{{ chapter() }} — <span lang="en">About</span></p>
+    <h2 id="about-title" class="about-title">Fotografía & Videografía</h2>
+  </header>
+
+  <!-- El texto, bajo el título. En escritorio mide lo mismo que la foto (a su derecha):
+       la cita arriba, el botón tras el texto y los servicios al pie -->
+  <div class="about-body" appReveal [revealDelay]="120">
+    <p class="about-lead">"Plasmar ideas sin perder la esencia"</p>
+    <p class="about-text">
+      Soy Demi, me podrás encontrar entre sets de rodaje, entre escenarios o con la cámara en la
+      esquina de un ring, allí donde tu música, tu arte o tu esencia tiene algo que contar.
+    </p>
+    <p class="about-text">Me encargo de todo el proceso para que cada proyecto se vea tal y como lo imaginaste.</p>
+
+    <a class="cta about-cta" routerLink="/" fragment="contact">
+      Cuéntame tu idea <span class="cta-arrow" aria-hidden="true">→</span>
+    </a>
+
+    <ul class="about-services" role="list">
+      @for (service of services(); track service) {
+        <li>{{ service }}</li>
+      }
+    </ul>
+  </div>
+
   <div class="about-media" appReveal="clip">
     <img
       [ngSrc]="photo().src"
@@ -7,22 +34,5 @@
       [height]="photo().height"
       sizes="(min-width: 64rem) 30vw, (min-width: 48rem) 55vw, 80vw"
     />
-  </div>
-
-  <div class="about-body" appReveal>
-    <p class="eyebrow">{{ chapter() }} — <span lang="en">About</span></p>
-    <h2 id="about-title" class="about-title">Fotografía & Videografía</h2>
-    <p class="about-lead">
-      "Plasmar ideas sin perder la esencia"
-    </p>
-    <p class="about-text">
-      
-    </p>
-
-    <ul class="about-services" role="list">
-      @for (service of services(); track service) {
-        <li>{{ service }}</li>
-      }
-    </ul>
   </div>
 </section>

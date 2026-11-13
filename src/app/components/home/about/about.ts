@@ -1,11 +1,12 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Photo } from '../../../models/photo';
 import { Reveal } from '../../../shared/reveal';
 
 @Component({
   selector: 'app-about',
-  imports: [NgOptimizedImage, Reveal],
+  imports: [NgOptimizedImage, Reveal, RouterLink],
   templateUrl: './about.html',
   styleUrl: './about.css',
 })
