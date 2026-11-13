@@ -1,3 +1,9 @@
+/* La Home se carga en diferido: mientras llega, <main> ocupa al menos una pantalla para que el
+   footer no aparezca arriba y luego salte hacia abajo (CLS). */
+main {
+  min-block-size: 100svh;
+}
+
 .skip-link {
   position: absolute;
   inset-block-start: var(--space-2);

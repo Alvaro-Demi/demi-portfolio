@@ -30,8 +30,8 @@ export class SiteHeader {
     { label: 'Retrato', fragment: 'retrato', lang: 'es' },
     { label: 'Eventos', fragment: 'boxeo', lang: 'es' },
     { label: 'Backstage', fragment: 'backstage', lang: 'en' },
-    { label: 'Sobre mí', fragment: 'about', lang: 'en' },
-    { label: 'Contacto', fragment: 'contact', lang: 'en' },
+    { label: 'Sobre mí', fragment: 'about', lang: 'es' },
+    { label: 'Contacto', fragment: 'contact', lang: 'es' },
   ];
 
   /** Estado del menú móvil. Más adelante abrirá el menú a pantalla completa. */

@@ -175,8 +175,8 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
     photo: {
       src: 'composicion3',
       alt: 'velada de boxeo: varias imagenes de Dominguez Sevillano en su combate',
-      width: 6480,
-      height: 1350,
+      width: 21402,
+      height: 4724,
     },
   },
 ];
@@ -336,8 +336,12 @@ export const INTERLUDE_SEQUENCE: readonly SequenceFrame[] = [
 
 
 
+/*
+ * 07 — About. Es la misma foto que la posición 04 de backstage (BTS4): usa su id para que se
+ * publique y se descargue una sola vez. Para poner otra foto, cambia `src` por su id.
+ */
 export const ABOUT_PHOTO: Photo = {
-  src: 'about',
+  src: 'BTS4',
   alt: 'DEMI de espaldas, con sudadera y gafas de sol en la cabeza, pilotando un dron en la calle',
   width: 4506,
   height: 6759,
