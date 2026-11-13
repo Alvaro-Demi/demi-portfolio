@@ -35,7 +35,24 @@
   }
 }
 
-/* Velos: arriba para la navegación, abajo para el titular */
+/*
+ * Tablet y escritorio: la foto que se ve es la del fondo fijo de la página (app-backdrop),
+ * con el mismo encuadre y los mismos velos; al hacer scroll se queda quieta y se desenfoca.
+ * Esta queda transparente pero en su sitio, por su texto alternativo. Sus velos se apagan:
+ * si se movieran con el hero, al bajar dejarían un corte con el fondo de debajo.
+ */
+@media (min-width: 48rem) {
+  .hero-media img {
+    opacity: 0;
+  }
+
+  .hero-media::after {
+    display: none;
+  }
+}
+
+/* Velos: arriba para la navegación, abajo para el titular (en tablet y escritorio, los
+   mismos van en app-backdrop: si cambias uno, cambia el otro) */
 .hero-media::after {
   content: '';
   position: absolute;

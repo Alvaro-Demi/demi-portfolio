@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { About } from '../../components/home/about/about';
+import { Backdrop } from '../../components/home/backdrop/backdrop';
 import { Contact } from '../../components/home/contact/contact';
 import { FilmStrip } from '../../components/home/film-strip/film-strip';
 import { Hero } from '../../components/home/hero/hero';
@@ -21,7 +22,7 @@ import {
 /** Página contenedora: reúne los datos y se los pasa a cada sección. */
 @Component({
   selector: 'app-home',
-  imports: [Hero, SelectedWork, FilmStrip, PhotoStory, Portraits, About, Contact],
+  imports: [Backdrop, Hero, SelectedWork, FilmStrip, PhotoStory, Portraits, About, Contact],
   templateUrl: './home.html',
 })
 export class Home {

@@ -1,0 +1,90 @@
+/*
+ * Capa fija detrás de toda la página (z-index negativo: por encima del fondo del body y por
+ * debajo de las secciones, que son transparentes). --backdrop-p va de 0 (arriba del todo)
+ * a 1 (pasado el hero).
+ */
+:host {
+  --backdrop-p: 0;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Al bajar, la cámara se acerca un poco (hasta un 8 %) */
+.backdrop-zoom {
+  position: absolute;
+  inset: 0;
+  transform: scale(calc(1 + var(--backdrop-p) * 0.08));
+}
+
+/* Mismo encuadre que la foto del hero (ver hero.css) */
+.backdrop-zoom img {
+  object-fit: cover;
+  object-position: var(--focus, 50% 50%);
+}
+
+@media (max-aspect-ratio: 1/1) {
+  .backdrop-zoom img {
+    object-position: var(--focus-mobile, var(--focus, 50% 50%));
+  }
+}
+
+/*
+ * La versión desenfocada entra por encima de la nítida. Su desenfoque es fijo (se calcula
+ * una vez); lo que cambia con el scroll es su opacidad. Se agranda un poco para que el
+ * desenfoque no deje bordes claros.
+ */
+.backdrop-soft {
+  filter: blur(36px) brightness(0.6);
+  scale: 1.12;
+  opacity: var(--backdrop-p);
+}
+
+/*
+ * Los velos del hero (los mismos degradados que hero.css): arriba para la navegación, abajo
+ * para el titular. Van fijos a la pantalla, así al bajar no hay corte entre el hero y lo
+ * que viene después; se apagan a medida que entra el velo final.
+ */
+.backdrop-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(10 10 10 / 0.7) 0%,
+    rgb(10 10 10 / 0) 22%,
+    rgb(10 10 10 / 0) 35%,
+    rgb(10 10 10 / 0.6) 55%,
+    rgb(10 10 10 / 0.92) 100%
+  );
+  opacity: calc(1 - var(--backdrop-p));
+}
+
+/*
+ * Velo oscuro final: con él, el texto gris de la web (#8a8580) mantiene un contraste
+ * de al menos 4,5:1 incluso sobre las luces del escenario, ya desenfocadas.
+ */
+.backdrop-shade {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-bg);
+  opacity: calc(var(--backdrop-p) * 0.66);
+}
+
+/*
+ * Móvil: el hero tiene su propia foto en bloque y el titular sobre negro; aquí no se ve la
+ * versión nítida. El fondo desenfocado aparece con un fundido al bajar.
+ */
+@media (max-width: 47.99rem) {
+  .backdrop-sharp,
+  .backdrop-veil {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop-zoom {
+    transform: none;
+  }
+}
