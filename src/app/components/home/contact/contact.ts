@@ -29,6 +29,8 @@ export class Contact {
   readonly instagram = input.required<string>();
   /** Opciones de «Tipo de proyecto» (los servicios del About). */
   readonly projectTypes = input.required<readonly string[]>();
+  /** Número de sección: «08». */
+  readonly chapter = input.required<string>();
 
   protected readonly maxMessage = MAX_MESSAGE;
   protected readonly instagramUrl = computed(() => `https://www.instagram.com/${this.instagram()}/`);

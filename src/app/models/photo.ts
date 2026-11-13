@@ -46,6 +46,28 @@ export interface WorkEntry {
   readonly photo: Photo;
 }
 
+/** Reel de Instagram (sección Social Media): vídeo vertical propio y enlace a la publicación. */
+export interface SocialReel {
+  readonly id: string;
+  /** Título del reel. */
+  readonly title: string;
+  /** 'Reel', 'Velada', 'Directo'… */
+  readonly context: string;
+  /** `null` mientras no se confirme. */
+  readonly year: number | null;
+  /**
+   * Id del vídeo: el original es videos-src/{video}.mp4 y `npm run videos` publica
+   * public/videos/{video}.mp4 (con sonido) y public/videos/{video}-loop.mp4 (bucle mudo).
+   */
+  readonly video: string;
+  /** Segundo del reel del que salen el póster y el bucle mudo de la tarjeta. */
+  readonly highlight: number;
+  /** Póster: un fotograma del reel que `npm run videos` deja en images-src/{video}.jpg. */
+  readonly photo: Photo;
+  /** Publicación en Instagram. */
+  readonly instagramUrl: string;
+}
+
 /** Retrato de una sesión de fotos (sección 03). */
 export interface Portrait {
   readonly id: string;

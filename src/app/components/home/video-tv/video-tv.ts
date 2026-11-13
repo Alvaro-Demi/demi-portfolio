@@ -12,14 +12,27 @@ import {
   viewChild,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { WorkEntry } from '../../../models/photo';
+import { Photo } from '../../../models/photo';
 import {
   YOUTUBE_EMBED_ORIGIN,
   YoutubeVideo,
   youtubeEmbedUrl,
   youtubeWatchUrl,
 } from '../../../shared/youtube';
-import { COVER_SIZES } from '../video-ribbon/ribbon-layout';
+
+/** Enlace de respaldo para verlo en su plataforma. */
+export interface TvLink {
+  readonly label: string;
+  readonly url: string;
+}
+
+/**
+ * Lo que se ve en la tele: un vídeo de YouTube (iframe sin cookies) o un vídeo propio
+ * (`<video>`), con la proporción de su pantalla y el enlace a su plataforma.
+ */
+export type TvMedia =
+  | { readonly kind: 'youtube'; readonly video: YoutubeVideo }
+  | { readonly kind: 'file'; readonly src: string; readonly ratio: number; readonly link: TvLink };
 
 /** Apertura: la portada vuela y crece, se abren las bandas y el marco sale de la pantalla. */
 const OPEN_MS = 950;
@@ -54,7 +67,8 @@ const inset = (top: number, right: number, bottom: number, left: number, radius:
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null;
 
 /**
- * La tele: reproduce un videoclip dentro de la web, en un `<dialog>` modal.
+ * La tele: reproduce un vídeo dentro de la web, en un `<dialog>` modal. Sirve para los
+ * videoclips de YouTube (pantalla 16:9) y para los reels propios (pantalla vertical).
  *
  * Se abre como una transformación de la tarjeta de origen (técnica FLIP con la Web Animations
  * API): la tele se coloca en su sitio final y un solo elemento anima `transform` y `clip-path`
@@ -75,10 +89,17 @@ const isRecord = (value: unknown): value is Record<string, unknown> => typeof va
   styleUrl: './video-tv.css',
 })
 export class VideoTv {
-  readonly entry = input.required<WorkEntry>();
-  readonly video = input.required<YoutubeVideo>();
+  readonly heading = input.required<string>();
+  readonly meta = input.required<string>();
+  /** Portada de la tarjeta: se ve entera en la pantalla hasta que arranca el vídeo. */
+  readonly poster = input.required<Photo>();
+  /** `sizes` del póster: el mismo que en la tarjeta, así la imagen ya está en caché. */
+  readonly posterSizes = input.required<string>();
+  readonly media = input.required<TvMedia>();
   /** Rectángulo en pantalla de la tarjeta de origen; se mide al abrir y otra vez al cerrar. */
   readonly origin = input.required<() => DOMRect | null>();
+  /** Radio de las esquinas de la tarjeta de origen, como fracción de su alto. */
+  readonly originRadius = input(0.05);
   /** Empieza el cierre: la tarjeta de origen puede volver a verse. */
   readonly closing = output<void>();
   /** Terminó el cierre: ya se puede retirar el componente. */
@@ -88,27 +109,43 @@ export class VideoTv {
   private readonly sanitizer = inject(DomSanitizer);
 
   protected readonly titleId = `tv-title-${nextId++}`;
-  protected readonly coverSizes = COVER_SIZES;
 
   protected readonly phase = signal<Phase>('opening');
-  /** YouTube avisa de que no se puede insertar (o de otro error): se ofrece verlo allí. */
+  /** El vídeo no se puede reproducir aquí (YouTube no lo deja insertar, o falla el archivo). */
   protected readonly failed = signal(false);
   private readonly morphed = signal(false);
   private readonly playing = signal(false);
   private readonly timedOut = signal(false);
 
-  protected readonly heading = computed(() => this.entry().title ?? this.entry().artist);
-  protected readonly meta = computed(() =>
-    [this.entry().context, this.entry().year].filter((part) => part !== null).join(' · '),
-  );
-  protected readonly watchUrl = computed(() => youtubeWatchUrl(this.video()));
+  /** El vídeo de YouTube, si lo es. */
+  protected readonly youtube = computed(() => {
+    const media = this.media();
+    return media.kind === 'youtube' ? media.video : null;
+  });
+  /** El archivo de vídeo propio, si lo es. */
+  protected readonly file = computed(() => {
+    const media = this.media();
+    return media.kind === 'file' ? media.src : null;
+  });
+  protected readonly link = computed<TvLink>(() => {
+    const media = this.media();
+    return media.kind === 'file' ? media.link : { label: 'YouTube', url: youtubeWatchUrl(media.video) };
+  });
+  /** Proporción de la pantalla: 16:9 para YouTube; la del archivo para los propios (9:16 en reels). */
+  protected readonly screenRatio = computed(() => {
+    const media = this.media();
+    return media.kind === 'file' ? media.ratio : 16 / 9;
+  });
   /** La URL se construye solo con un id validado (11 caracteres [A-Za-z0-9_-]). */
-  protected readonly embedUrl = computed(() =>
-    this.sanitizer.bypassSecurityTrustResourceUrl(youtubeEmbedUrl(this.video(), this.document.location.origin)),
-  );
-  /** El iframe existe mientras la tele está abierta: quitarlo al cerrar corta el sonido en seco. */
+  protected readonly embedUrl = computed(() => {
+    const video = this.youtube();
+    return video
+      ? this.sanitizer.bypassSecurityTrustResourceUrl(youtubeEmbedUrl(video, this.document.location.origin))
+      : null;
+  });
+  /** El reproductor existe mientras la tele está abierta: quitarlo al cerrar corta el sonido en seco. */
   protected readonly showFrame = computed(() => !this.failed() && this.phase() !== 'closing');
-  /** El vídeo se funde sobre el póster cuando la pantalla está en su sitio y YouTube reproduce. */
+  /** El vídeo se funde sobre el póster cuando la pantalla está en su sitio y ya reproduce. */
   protected readonly revealed = computed(
     () => this.showFrame() && this.morphed() && (this.playing() || this.timedOut()),
   );
@@ -241,6 +278,15 @@ export class VideoTv {
     this.timers.push(window.setTimeout(() => this.timedOut.set(true), REVEAL_FALLBACK_MS));
   }
 
+  /** Vídeo propio: si el navegador no deja arrancar con sonido, se enseñan sus controles igual. */
+  protected onVideoReady(): void {
+    this.timers.push(window.setTimeout(() => this.timedOut.set(true), REVEAL_FALLBACK_MS));
+  }
+
+  protected onVideoState(playing: boolean): void {
+    this.playing.set(playing);
+  }
+
   private readonly onMessage = (event: MessageEvent) => {
     if (event.origin !== YOUTUBE_EMBED_ORIGIN) return;
     if (event.source !== this.frame()?.nativeElement.contentWindow) return;
@@ -358,7 +404,7 @@ export class VideoTv {
     const screenRadius = parseFloat(getComputedStyle(screenEl).borderTopLeftRadius) || 0;
 
     // La portada dentro de la pantalla (contain).
-    const { width, height } = this.entry().photo;
+    const { width, height } = this.poster();
     const ratio = width / height;
     const posterW = Math.min(screen.w, screen.h * ratio);
     const posterH = posterW / ratio;
@@ -371,8 +417,8 @@ export class VideoTv {
     const visibleH = card.height / scale;
     const tx = card.left + card.width / 2 - tv.x - scale * cx;
     const ty = card.top + card.height / 2 - tv.y - scale * cy;
-    // Las tarjetas redondean un 5 % de su alto (ver .rib-face).
-    const cardRadius = (card.height * 0.05) / scale;
+    // Las esquinas de la tarjeta de origen (p. ej. .rib-face redondea un 5 % de su alto).
+    const cardRadius = (card.height * this.originRadius()) / scale;
 
     return {
       transform: `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${scale.toFixed(4)})`,

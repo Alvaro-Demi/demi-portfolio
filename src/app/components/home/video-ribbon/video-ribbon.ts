@@ -11,14 +11,15 @@ import {
   viewChild,
 } from '@angular/core';
 import { WorkEntry } from '../../../models/photo';
-import { parseYoutubeUrl, YoutubeVideo } from '../../../shared/youtube';
-import { VideoTv } from '../video-tv/video-tv';
+import { unionRect } from '../../../shared/rect';
+import { parseYoutubeUrl } from '../../../shared/youtube';
+import { TvMedia, VideoTv } from '../video-tv/video-tv';
 import { COPIES, COVER_SIZES, layoutRibbon, RibbonCard, wrap } from './ribbon-layout';
 
 /** El videoclip que suena en la tele y la tarjeta de la que salió. */
 interface Playing {
   readonly entry: WorkEntry;
-  readonly video: YoutubeVideo;
+  readonly media: TvMedia;
   readonly card: number;
   readonly origin: () => DOMRect | null;
 }
@@ -182,7 +183,12 @@ export class VideoRibbon {
     const video = card && this.videos()[card.index];
     if (!video) return false;
     if (!this.playing()) {
-      this.playing.set({ entry: card.entry, video, card: i, origin: () => this.cardRect(i) });
+      this.playing.set({
+        entry: card.entry,
+        media: { kind: 'youtube', video },
+        card: i,
+        origin: () => this.cardRect(i),
+      });
       this.lent.set(i);
     }
     return true;
@@ -192,18 +198,7 @@ export class VideoRibbon {
   private cardRect(i: number): DOMRect | null {
     const card = this.cards[i];
     if (!card?.isConnected || card.style.visibility === 'hidden') return null;
-    let left = Infinity;
-    let top = Infinity;
-    let right = -Infinity;
-    let bottom = -Infinity;
-    for (const slice of this.sliceNodes[i] ?? []) {
-      const rect = slice.getBoundingClientRect();
-      left = Math.min(left, rect.left);
-      top = Math.min(top, rect.top);
-      right = Math.max(right, rect.right);
-      bottom = Math.max(bottom, rect.bottom);
-    }
-    return right > left && bottom > top ? new DOMRect(left, top, right - left, bottom - top) : null;
+    return unionRect(this.sliceNodes[i] ?? []);
   }
 
   /** Pide un frame si no hay uno ya en marcha. */

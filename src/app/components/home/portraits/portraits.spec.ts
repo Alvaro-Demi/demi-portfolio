@@ -40,6 +40,7 @@ describe('Portraits', () => {
     });
     const fixture = TestBed.createComponent(Portraits);
     fixture.componentRef.setInput('entries', ENTRIES);
+    fixture.componentRef.setInput('chapter', '04');
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
     const cards = () => [...element.querySelectorAll<HTMLElement>('.portraits-card')];

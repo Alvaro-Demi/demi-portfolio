@@ -12,4 +12,6 @@ import { Reveal } from '../../../shared/reveal';
 export class About {
   readonly photo = input.required<Photo>();
   readonly services = input.required<readonly string[]>();
+  /** Número de sección: «07». */
+  readonly chapter = input.required<string>();
 }

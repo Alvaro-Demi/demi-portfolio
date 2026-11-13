@@ -61,5 +61,14 @@
 
 <!-- La tele: fuera del escenario (que recorta y tiene perspectiva); se abre en la capa superior -->
 @if (playing(); as p) {
-  <app-video-tv [entry]="p.entry" [video]="p.video" [origin]="p.origin" (closing)="lent.set(-1)" (closed)="stopped()" />
+  <app-video-tv
+    [heading]="heading(p.entry)"
+    [meta]="meta(p.entry)"
+    [poster]="p.entry.photo"
+    [posterSizes]="coverSizes"
+    [media]="p.media"
+    [origin]="p.origin"
+    (closing)="lent.set(-1)"
+    (closed)="stopped()"
+  />
 }

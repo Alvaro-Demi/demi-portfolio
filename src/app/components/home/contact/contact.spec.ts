@@ -16,6 +16,7 @@ describe('Contact', () => {
     fixture.componentRef.setInput('email', 'hola@example.com');
     fixture.componentRef.setInput('instagram', 'usuario');
     fixture.componentRef.setInput('projectTypes', ['Videoclips y rodajes', 'Dron']);
+    fixture.componentRef.setInput('chapter', '08');
     await fixture.whenStable();
     return { fixture, element: fixture.nativeElement as HTMLElement };
   }

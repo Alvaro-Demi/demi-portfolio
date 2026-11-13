@@ -40,6 +40,8 @@ const MOVE = 700;
 })
 export class Portraits {
   readonly entries = input.required<readonly Portrait[]>();
+  /** Número de sección: «04». */
+  readonly chapter = input.required<string>();
   /** Frase y etiquetas bajo el título. Solo se muestran en escritorio. */
   readonly intro = input<SectionIntro | null>(null);
 

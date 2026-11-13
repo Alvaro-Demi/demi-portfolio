@@ -1,4 +1,4 @@
-import type { Photo, PhotoStory, Portrait, SectionIntro, SequenceFrame, WorkEntry } from '../models/photo';
+import type { Photo, PhotoStory, Portrait, SectionIntro, SequenceFrame, SocialReel, WorkEntry } from '../models/photo';
 
 /*
  * Contenido de la Home. `src` es el id de la foto, no una ruta.
@@ -9,12 +9,13 @@ import type { Photo, PhotoStory, Portrait, SectionIntro, SequenceFrame, WorkEntr
  *   3. Copia aquí `width` y `height` de la tabla que imprime, y escribe el `alt`.
  *   4. Ajusta `focus` (y `mobile`) si el recorte corta lo importante.
  *
- * Orden de la Home: Hero → 01 Videoclip → 02 Detrás de las cámaras → 03 Conciertos → 04 Retrato
- * → 05 Velada de boxeo → 06 About → 07 Contact.
+ * Orden de la Home: Hero → 01 Videoclips → 02 Social Media → 03 Conciertos → 04 Retrato
+ * → 05 Velada de boxeo → 06 Backstage → 07 About → 08 Contact.
  */
 
-/** Marca visible de dato pendiente: búscala para completar el contenido. */
+/** Marcas visibles de dato pendiente: búscalas para completar el contenido. */
 const PENDING_ARTIST = '[Artista]';
+const PENDING_TITLE = '[Título del reel]';
 
 export const HERO_PHOTO: Photo = {
   src: 'hero',
@@ -79,6 +80,64 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
       width: 1920,
       height: 1080,
     },
+  },
+];
+
+/*
+ * 02 — Social Media. Reels de Instagram en una rueda en abanico (reel-wheel) que gira sola;
+ * la del centro reproduce un bucle mudo y, al pulsarla, se abre en grande con sonido.
+ *
+ * Para cambiar o añadir un reel:
+ *   1. Copia el vídeo a videos-src/ con un id (p. ej. videos-src/reel-04.mp4).
+ *   2. Añádelo aquí: `video` → el id; `highlight` → el segundo para el póster y el bucle;
+ *      `photo.src` → el mismo id; `instagramUrl` → el enlace de la publicación (sin ?…).
+ *   3. Ejecuta `npm run videos` (comprime y saca el póster) y luego `npm run images`.
+ */
+export const SOCIAL_REELS: readonly SocialReel[] = [
+  {
+    id: 'reel-velada',
+    title: PENDING_TITLE, // Pendiente: título del reel.
+    context: 'Reel',
+    year: null,
+    video: 'reel-01',
+    highlight: 5,
+    photo: {
+      src: 'reel-01',
+      alt: 'Un boxeador con equipación rosa camina hacia el ring en una velada, rodeado de su equipo',
+      width: 1080,
+      height: 1920,
+    },
+    instagramUrl: 'https://www.instagram.com/reel/DfaUMQMInqZ/',
+  },
+  {
+    id: 'reel-directo',
+    title: PENDING_TITLE, // Pendiente: título del reel.
+    context: 'Reel',
+    year: null,
+    video: 'reel-02',
+    highlight: 15,
+    photo: {
+      src: 'reel-02',
+      alt: 'El artista canta con camiseta blanca sobre el escenario, junto a una bailarina y frente a una pantalla gigante',
+      width: 1080,
+      height: 1920,
+    },
+    instagramUrl: 'https://www.instagram.com/reel/DZdIrTXoAtc/',
+  },
+  {
+    id: 'reel-combate',
+    title: PENDING_TITLE, // Pendiente: título del reel.
+    context: 'Reel',
+    year: null,
+    video: 'reel-03',
+    highlight: 15,
+    photo: {
+      src: 'reel-03',
+      alt: 'Un boxeador tatuado con equipación rosa y guantes rojos en guardia sobre el ring, junto al árbitro',
+      width: 1080,
+      height: 1920,
+    },
+    instagramUrl: 'https://www.instagram.com/reel/DfXwNWeoqZ_/',
   },
 ];
 

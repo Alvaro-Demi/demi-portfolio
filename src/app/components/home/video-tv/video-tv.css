@@ -36,10 +36,12 @@
 /* --- La tele ----------------------------------------------------------------- */
 
 /*
- * Marco negro, plano y contundente: el bisel rodea la pantalla 16:9 y abajo queda la
- * barbilla con el título y los controles. El ancho se ajusta para que todo quepa en alto.
+ * Marco negro, plano y contundente: el bisel rodea la pantalla (16:9, o vertical en los
+ * reels: --screen-ratio, lo pone video-tv.ts) y abajo queda la barbilla con el título y los
+ * controles. El ancho se ajusta para que todo quepa en alto.
  */
 .tv {
+  --screen-ratio: 16 / 9;
   --bezel: clamp(0.5rem, 0.25rem + 1vw, 1.25rem);
   --chin: 4.5rem;
   --tv-radius: clamp(0.75rem, 0.5rem + 0.8vw, 1.25rem);
@@ -50,7 +52,7 @@
   inline-size: min(
     100%,
     80rem,
-    calc((100dvh - 2 * var(--page-gutter) - var(--chin) - var(--bezel)) * 16 / 9 + 2 * var(--bezel))
+    calc((100dvh - 2 * var(--page-gutter) - var(--chin) - var(--bezel)) * var(--screen-ratio) + 2 * var(--bezel))
   );
   padding: var(--bezel) var(--bezel) 0;
   border-radius: var(--tv-radius);
@@ -64,7 +66,7 @@
 /* Pantalla encastrada: un filo claro por fuera (el borde del bisel) y uno oscuro por dentro */
 .tv-screen {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: var(--screen-ratio);
   overflow: hidden;
   border-radius: calc(var(--tv-radius) * 0.3);
   background-color: #000000;
@@ -227,7 +229,17 @@
   }
 }
 
-/* --- Pantallas estrechas ----------------------------------------------------- */
+/* --- Pantallas estrechas y tele vertical ------------------------------------ */
+
+/* Título arriba y datos debajo: en una tele estrecha, el título no se queda sin sitio */
+.tv.is-portrait .tv-chin {
+  gap: var(--space-3);
+}
+
+.tv.is-portrait .tv-info {
+  flex-direction: column;
+  gap: var(--space-1);
+}
 
 @media (max-width: 47.99rem) {
   .tv {
@@ -238,7 +250,6 @@
     gap: var(--space-3);
   }
 
-  /* Título arriba y datos debajo: el título no se queda sin sitio */
   .tv-info {
     flex-direction: column;
     gap: var(--space-1);

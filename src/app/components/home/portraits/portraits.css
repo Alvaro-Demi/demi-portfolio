@@ -316,12 +316,12 @@
   .portraits-lead {
     max-inline-size: 16ch;
     font-size: var(--text-xl);
-    line-height: 1.1;
+    line-height: 1;
     text-wrap: balance;
   }
 
   .portraits-lead p + p {
-    margin-block-start: var(--space-4);
+    margin-block-start: var(--space-8);
   }
 
   /*

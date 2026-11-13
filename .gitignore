@@ -51,3 +51,6 @@ Thumbs.db
 # Originales de fotos (solo se versiona la salida en public/images/photos)
 /images-src/*
 !/images-src/README.md
+
+# Originales de vídeo (solo se versiona la salida en public/videos)
+/videos-src/*

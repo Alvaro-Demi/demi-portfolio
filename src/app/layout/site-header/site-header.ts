@@ -25,6 +25,7 @@ export class SiteHeader {
   /** Una entrada por sección de la Home, en su orden. */
   protected readonly navItems: readonly NavItem[] = [
     { label: 'Videoclips', fragment: 'work', lang: 'es' },
+    { label: 'Social Media', fragment: 'social', lang: 'en' },
     { label: 'Conciertos', fragment: 'conciertos', lang: 'es' },
     { label: 'Retrato', fragment: 'retrato', lang: 'es' },
     { label: 'Eventos', fragment: 'boxeo', lang: 'es' },

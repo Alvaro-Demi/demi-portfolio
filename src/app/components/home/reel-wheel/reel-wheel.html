@@ -1,0 +1,88 @@
+<!-- Escenario: las tarjetas cuelgan de una rueda con el eje por debajo; reel-wheel.ts las gira -->
+<div class="reel-stage" #stage>
+  @for (s of slots(); track s.slot) {
+    <!-- Solo la primera vuelta llega al tabulador y a los lectores de pantalla -->
+    <a
+      class="reel-card"
+      [href]="s.reel.instagramUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      draggable="false"
+      [attr.aria-label]="label(s.reel)"
+      aria-haspopup="dialog"
+      [attr.tabindex]="s.first ? null : -1"
+      [attr.aria-hidden]="s.first ? null : 'true'"
+      [attr.data-active]="active() === s.slot ? '' : null"
+      [attr.data-lent]="lent() === s.slot ? '' : null"
+    >
+      <img
+        class="reel-poster"
+        [ngSrc]="s.reel.photo.src"
+        alt=""
+        fill
+        [sizes]="posterSizes"
+        draggable="false"
+      />
+      @if (active() === s.slot && visible()) {
+        <!-- El bucle mudo, solo en la del centro y solo mientras la sección se ve -->
+        <video
+          class="reel-loop"
+          [class.is-playing]="loopPlaying()"
+          [src]="loopUrl(s.reel)"
+          muted
+          [muted]="true"
+          loop
+          autoplay
+          playsinline
+          preload="auto"
+          disablepictureinpicture
+          aria-hidden="true"
+          tabindex="-1"
+          (playing)="loopPlaying.set(true)"
+        ></video>
+      }
+      <span class="reel-text" aria-hidden="true">
+        <span class="reel-title">{{ s.reel.title }}</span>
+        <span class="reel-meta">{{ meta(s.reel) }}</span>
+      </span>
+      <span class="reel-go" aria-hidden="true">
+        <svg viewBox="0 0 16 16" width="16" height="16" focusable="false">
+          <path d="M5 3.5v9l7.5-4.5z" fill="currentColor" />
+        </svg>
+      </span>
+    </a>
+  }
+</div>
+
+<div class="reel-footer">
+  <p class="reel-count" aria-hidden="true">{{ number(activeIndex()) }} <span>/ {{ number(count() - 1) }}</span></p>
+  <button type="button" class="reel-pause" (click)="togglePause()">
+    @if (paused()) {
+      <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false">
+        <path d="M4 2.5v11l9-5.5z" fill="currentColor" />
+      </svg>
+      Reanudar giro
+    } @else {
+      <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false">
+        <path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor" />
+      </svg>
+      Pausar giro
+    }
+  </button>
+  <p class="reel-hint" aria-hidden="true">Arrastra o desliza para ver más</p>
+</div>
+
+<!-- La tele vertical: fuera del escenario (que recorta); se abre en la capa superior -->
+@if (playing(); as p) {
+  <app-video-tv
+    [heading]="p.reel.title"
+    [meta]="meta(p.reel)"
+    [poster]="p.reel.photo"
+    [posterSizes]="posterSizes"
+    [media]="p.media"
+    [origin]="p.origin"
+    [originRadius]="cardRadius"
+    (closing)="lent.set(-1)"
+    (closed)="stopped()"
+  />
+}
