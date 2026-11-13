@@ -17,8 +17,8 @@ const entry = (id: string, title: string | null, youtubeUrl: string | null, widt
 });
 
 const ENTRIES: readonly WorkEntry[] = [
-  entry('uno', 'Uno', 'https://www.youtube.com/watch?v=uno'),
-  entry('dos', 'Dos', 'https://www.youtube.com/watch?v=dos', 9000), // muy panorámica: se limita
+  entry('uno', 'Uno', 'https://www.youtube.com/watch?v=unoUNO12345&list=RDunoUNO12345'),
+  entry('dos', 'Dos', 'https://www.youtube.com/watch?v=dos', 9000), // muy panorámica; id no válido
   entry('tres', null, null), // sin título ni enlace
 ];
 
@@ -98,18 +98,49 @@ describe('VideoRibbon', () => {
     return { fixture, element, cards };
   }
 
-  it('enlaza cada videoclip a YouTube en una pestaña nueva y segura; sin URL, no enlaza', async () => {
+  it('conserva el enlace a YouTube; si se puede reproducir aquí, lo anuncia como diálogo', async () => {
     const { cards } = await render();
-    const [uno, , tres] = cards();
+    const [uno, dos, tres] = cards();
 
-    expect(uno.getAttribute('href')).toBe('https://www.youtube.com/watch?v=uno');
+    expect(uno.getAttribute('href')).toBe('https://www.youtube.com/watch?v=unoUNO12345&list=RDunoUNO12345');
     expect(uno.target).toBe('_blank');
     expect(uno.rel).toBe('noopener noreferrer');
-    expect(uno.getAttribute('aria-label')).toBe(
-      'Uno, Videoclip · 2026. Ver en YouTube (se abre en una pestaña nueva)',
-    );
+    expect(uno.getAttribute('aria-label')).toBe('Uno, Videoclip · 2026. Reproducir videoclip');
+    expect(uno.getAttribute('aria-haspopup')).toBe('dialog');
+    // URL que no es un vídeo válido: sigue siendo un enlace normal a YouTube
+    expect(dos.getAttribute('aria-label')).toBe('Dos, Videoclip · 2026. Ver en YouTube (se abre en una pestaña nueva)');
+    expect(dos.hasAttribute('aria-haspopup')).toBe(false);
     expect(tres.hasAttribute('href')).toBe(false);
     expect(tres.querySelector('.rib-title')?.textContent?.trim()).toBe('Artista');
+  });
+
+  it('un clic en la tarjeta del centro abre la tele en vez de ir a YouTube; solo una a la vez', async () => {
+    const { fixture, cards, element } = await render();
+    const click = () => {
+      const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+      cards()[0].querySelector('.rib-face')!.dispatchEvent(event);
+      return event;
+    };
+
+    expect(click().defaultPrevented).toBe(true);
+    await fixture.whenStable();
+    click();
+    await fixture.whenStable();
+
+    expect(element.querySelectorAll('app-video-tv').length).toBe(1);
+    expect(cards()[0].hasAttribute('data-lent')).toBe(true);
+    expect(element.querySelector('.tv-title')?.textContent?.trim()).toBe('Uno');
+  });
+
+  it('con Ctrl/⌘ el clic en la del centro deja que el enlace abra YouTube', async () => {
+    const { fixture, cards, element } = await render();
+    const click = new MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true });
+
+    cards()[0].querySelector('.rib-face')!.dispatchEvent(click);
+    await fixture.whenStable();
+
+    expect(click.defaultPrevented).toBe(false);
+    expect(element.querySelector('app-video-tv')).toBeNull();
   });
 
   it('solo la primera repetición llega al tabulador y a los lectores de pantalla', async () => {

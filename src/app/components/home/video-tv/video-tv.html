@@ -1,0 +1,59 @@
+<dialog
+  #dialog
+  class="tv-dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="titleId"
+  (cancel)="onCancel($event)"
+  (close)="onNativeClose()"
+>
+  <!-- Fondo: un clic fuera de la tele la cierra (los clics dentro del vídeo no llegan aquí) -->
+  <div #backdrop class="tv-backdrop" (click)="close()"></div>
+
+  <div #tv class="tv">
+    <div #screen class="tv-screen">
+      <!-- Póster: la portada de la tarjeta, entera y con bandas negras, hasta que suena el vídeo -->
+      <img class="tv-poster" [ngSrc]="entry().photo.src" alt="" fill [sizes]="coverSizes" loading="eager" />
+
+      @if (showFrame()) {
+        <iframe
+          #frame
+          class="tv-frame"
+          [class.is-revealed]="revealed()"
+          [src]="embedUrl()"
+          [title]="'Videoclip: ' + heading()"
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen
+          referrerpolicy="strict-origin-when-cross-origin"
+          (load)="onFrameLoad()"
+        ></iframe>
+      }
+
+      @if (failed()) {
+        <div class="tv-fallback" role="status">
+          <p>Este videoclip no se puede reproducir aquí.</p>
+          <a [href]="watchUrl()" target="_blank" rel="noopener noreferrer">
+            Verlo en YouTube <span aria-hidden="true">↗</span>
+            <span class="visually-hidden">(se abre en una pestaña nueva)</span>
+          </a>
+        </div>
+      }
+    </div>
+
+    <div #chin class="tv-chin">
+      <span class="tv-led" [class.is-on]="onAir()" aria-hidden="true"></span>
+      <div class="tv-info">
+        <h2 class="tv-title" [id]="titleId">{{ heading() }}</h2>
+        <p class="tv-meta">{{ meta() }}</p>
+      </div>
+      <a class="tv-link" [href]="watchUrl()" target="_blank" rel="noopener noreferrer">
+        YouTube <span aria-hidden="true">↗</span>
+        <span class="visually-hidden">(se abre en una pestaña nueva)</span>
+      </a>
+      <button type="button" class="tv-close" aria-label="Cerrar el videoclip" autofocus (click)="close()">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+          <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" fill="none" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</dialog>

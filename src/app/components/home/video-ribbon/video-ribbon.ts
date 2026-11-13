@@ -11,7 +11,17 @@ import {
   viewChild,
 } from '@angular/core';
 import { WorkEntry } from '../../../models/photo';
-import { COPIES, layoutRibbon, RibbonCard, wrap } from './ribbon-layout';
+import { parseYoutubeUrl, YoutubeVideo } from '../../../shared/youtube';
+import { VideoTv } from '../video-tv/video-tv';
+import { COPIES, COVER_SIZES, layoutRibbon, RibbonCard, wrap } from './ribbon-layout';
+
+/** El videoclip que suena en la tele y la tarjeta de la que salió. */
+interface Playing {
+  readonly entry: WorkEntry;
+  readonly video: YoutubeVideo;
+  readonly card: number;
+  readonly origin: () => DOMRect | null;
+}
 
 /** Franjas por tarjeta: cada una se coloca en la onda, así la tarjeta se curva de verdad. */
 const SLICES = 8;
@@ -45,9 +55,10 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
  *
  *   - La tarjeta del centro se ve nítida y con el título grande; las demás, tras un velo
  *     de cristal esmerilado. Es gradual: depende de lo cerca que esté cada una del centro.
- *   - Clic en la del centro: abre su videoclip en YouTube. Clic en otra: la trae al centro
- *     (así no hace falta arrastrar para recorrerla, WCAG 2.5.7). Con teclado, la tarjeta
- *     que recibe el foco se centra sola.
+ *   - Clic en la del centro: la tarjeta se transforma en una tele (VideoTv) que reproduce el
+ *     videoclip sin salir de la web. Con Ctrl/⌘/Mayús o la rueda, se abre YouTube como un
+ *     enlace normal. Clic en otra: la trae al centro (así no hace falta arrastrar para
+ *     recorrerla, WCAG 2.5.7). Con teclado, la tarjeta que recibe el foco se centra sola.
  *   - Hover: la tarjeta se adelanta, se aclara el velo y un reflejo la recorre.
  *   - No se mueve sola: no necesita botón de pausa.
  *
@@ -56,7 +67,7 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
  */
 @Component({
   selector: 'app-video-ribbon',
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, VideoTv],
   templateUrl: './video-ribbon.html',
   styleUrl: './video-ribbon.css',
 })
@@ -66,18 +77,27 @@ export class VideoRibbon {
   protected readonly layout = computed(() => layoutRibbon(this.entries()));
   protected readonly slices = Array.from({ length: SLICES }, (_, k) => k);
   protected readonly copies = COPIES;
+  protected readonly coverSizes = COVER_SIZES;
 
   /** Índice (en la lista original) de la tarjeta del centro: para el contador. */
   protected readonly active = signal(0);
   protected readonly near = signal(false);
+
+  /** El vídeo de cada entrada (en la lista original), o `null` si no se puede reproducir aquí. */
+  protected readonly videos = computed(() => this.entries().map((entry) => parseYoutubeUrl(entry.youtubeUrl)));
+  /** Lo que suena en la tele; solo uno a la vez. */
+  protected readonly playing = signal<Playing | null>(null);
+  /** Tarjeta oculta mientras «es» la tele (vuelve a verse en cuanto empieza el cierre). */
+  protected readonly lent = signal(-1);
 
   protected readonly count = computed(() => this.entries().length);
   protected readonly number = (i: number) => String(i + 1).padStart(2, '0');
   protected readonly heading = (entry: WorkEntry) => entry.title ?? entry.artist;
   protected readonly meta = (entry: WorkEntry) =>
     [entry.context, entry.year].filter((part) => part !== null).join(' · ');
-  protected readonly linkLabel = (entry: WorkEntry) =>
-    `${this.heading(entry)}, ${this.meta(entry)}. Ver en YouTube (se abre en una pestaña nueva)`;
+  protected readonly linkLabel = (entry: WorkEntry, index: number) =>
+    `${this.heading(entry)}, ${this.meta(entry)}. ` +
+    (this.videos()[index] ? 'Reproducir videoclip' : 'Ver en YouTube (se abre en una pestaña nueva)');
 
   private readonly stage = viewChild.required<ElementRef<HTMLElement>>('stage');
 
@@ -148,6 +168,42 @@ export class VideoRibbon {
     if (event.pointerType !== 'mouse') return;
     this.hovered = card;
     this.kick();
+  }
+
+  /** La tele terminó de cerrarse. */
+  protected stopped(): void {
+    this.lent.set(-1);
+    this.playing.set(null);
+  }
+
+  /** Abre la tele con el videoclip de la tarjeta i (que ya está en el centro). */
+  private play(i: number): boolean {
+    const card = this.layout().cards[i];
+    const video = card && this.videos()[card.index];
+    if (!video) return false;
+    if (!this.playing()) {
+      this.playing.set({ entry: card.entry, video, card: i, origin: () => this.cardRect(i) });
+      this.lent.set(i);
+    }
+    return true;
+  }
+
+  /** Rectángulo en pantalla de la tarjeta i: la unión de sus franjas. `null` si no se ve. */
+  private cardRect(i: number): DOMRect | null {
+    const card = this.cards[i];
+    if (!card?.isConnected || card.style.visibility === 'hidden') return null;
+    let left = Infinity;
+    let top = Infinity;
+    let right = -Infinity;
+    let bottom = -Infinity;
+    for (const slice of this.sliceNodes[i] ?? []) {
+      const rect = slice.getBoundingClientRect();
+      left = Math.min(left, rect.left);
+      top = Math.min(top, rect.top);
+      right = Math.max(right, rect.right);
+      bottom = Math.max(bottom, rect.bottom);
+    }
+    return right > left && bottom > top ? new DOMRect(left, top, right - left, bottom - top) : null;
   }
 
   /** Pide un frame si no hay uno ya en marcha. */
@@ -349,7 +405,8 @@ export class VideoRibbon {
       this.kick();
     };
 
-    // Clic: tras un arrastre, nada; en una tarjeta lateral, centrarla en vez de abrirla.
+    // Clic: tras un arrastre, nada; en una tarjeta lateral, centrarla; en la del centro, la
+    // tele. Con una tecla modificadora, el enlace hace lo suyo (YouTube en otra pestaña).
     const click = (event: MouseEvent) => {
       if (suppressClick) {
         suppressClick = false;
@@ -358,10 +415,14 @@ export class VideoRibbon {
         return;
       }
       const i = indexOf(event.target);
-      if (i >= 0 && i !== this.activeCard) {
+      if (i < 0) return;
+      if (i !== this.activeCard) {
         event.preventDefault();
         this.center(i);
+        return;
       }
+      const modified = event.ctrlKey || event.metaKey || event.shiftKey || event.altKey;
+      if (!modified && this.play(i)) event.preventDefault();
     };
 
     const focus = (event: FocusEvent) => {

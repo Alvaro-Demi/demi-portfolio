@@ -57,6 +57,11 @@
   cursor: pointer;
 }
 
+/* Mientras la tarjeta «es» la tele, su sitio queda vacío */
+.rib-card[data-lent] {
+  opacity: 0;
+}
+
 /* Un octavo de la tarjeta (+1 px para que no se vean rendijas entre franjas). Gira sobre su
    borde izquierdo: así empieza justo donde acaba la anterior */
 .rib-slice {
@@ -155,6 +160,11 @@
   transition:
     background-color 300ms var(--ease-out),
     color 300ms var(--ease-out);
+}
+
+.rib-go svg {
+  inline-size: 40%;
+  block-size: auto;
 }
 
 /* Foco del teclado: filete rojo por dentro de la tarjeta */

@@ -10,9 +10,11 @@
         [attr.href]="entry.youtubeUrl"
         target="_blank"
         rel="noopener noreferrer"
-        [attr.aria-label]="linkLabel(entry)"
+        [attr.aria-label]="linkLabel(entry, card.index)"
+        [attr.aria-haspopup]="videos()[card.index] ? 'dialog' : null"
         [attr.tabindex]="card.copy > 0 ? -1 : null"
         [attr.aria-hidden]="card.copy > 0 ? 'true' : null"
+        [attr.data-lent]="lent() === i ? '' : null"
         [style.--w]="card.width"
         (pointerenter)="hover($event, i)"
         (pointerleave)="hover($event, -1)"
@@ -26,7 +28,7 @@
                 [ngSrc]="entry.photo.src"
                 alt=""
                 fill
-                sizes="(min-width: 64rem) 48vw, (min-width: 48rem) 72vw, 100vw"
+                [sizes]="coverSizes"
                 loading="eager"
                 draggable="false"
               />
@@ -34,7 +36,14 @@
                 <span class="rib-title">{{ heading(entry) }}</span>
                 <span class="rib-meta">{{ meta(entry) }}</span>
               </span>
-              @if (entry.youtubeUrl) {
+              @if (videos()[card.index]) {
+                <!-- Se reproduce aquí, en la tele -->
+                <span class="rib-go">
+                  <svg viewBox="0 0 16 16" width="16" height="16" focusable="false">
+                    <path d="M5 3.5v9l7.5-4.5z" fill="currentColor" />
+                  </svg>
+                </span>
+              } @else if (entry.youtubeUrl) {
                 <span class="rib-go">↗</span>
               }
             </span>
@@ -49,3 +58,8 @@
   <p class="rib-count">{{ number(active()) }} <span>/ {{ number(count() - 1) }}</span></p>
   <p class="rib-hint">Arrastra o desliza para ver más</p>
 </div>
+
+<!-- La tele: fuera del escenario (que recorta y tiene perspectiva); se abre en la capa superior -->
+@if (playing(); as p) {
+  <app-video-tv [entry]="p.entry" [video]="p.video" [origin]="p.origin" (closing)="lent.set(-1)" (closed)="stopped()" />
+}

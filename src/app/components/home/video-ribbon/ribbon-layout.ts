@@ -6,6 +6,12 @@ import { WorkEntry } from '../../../models/photo';
  * poder arrastrar sin fin.
  */
 
+/**
+ * `sizes` de las portadas. La tele lo reutiliza para su póster: así el navegador ya tiene la
+ * misma variante en caché y la transformación arranca sin parpadeo.
+ */
+export const COVER_SIZES = '(min-width: 64rem) 48vw, (min-width: 48rem) 72vw, 100vw';
+
 /** Separación entre tarjetas. */
 export const CARD_GAP = 0.1;
 /** Proporciones límite: así ninguna portada queda ni minúscula ni interminable. */
