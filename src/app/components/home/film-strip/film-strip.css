@@ -2,6 +2,60 @@
   display: block;
 }
 
+/*
+ * Arriba, el margen habitual entre secciones. Abajo no hace falta: el escenario va a sangre
+ * y ya deja aire por debajo de las fotos (es más alto que ellas: ver más abajo).
+ */
+.film {
+  padding-block-start: var(--space-24);
+}
+
+/* --- Cabecera: número y pausa en una fila, el título debajo ------------------ */
+
+.film-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-6);
+  padding-inline: var(--page-gutter);
+}
+
+/* La fila de arriba mide lo que la pausa (2,75 rem): el título sube para compensar y queda
+   a la misma distancia del número que en el resto de secciones */
+.film-title {
+  grid-column: 1 / -1;
+  margin-block-start: var(--space-1);
+  font-size: var(--text-heading);
+  text-transform: uppercase;
+}
+
+.film-toggle {
+  grid-column: 2;
+  grid-row: 1;
+  min-block-size: 2.75rem;
+  min-inline-size: 6.5rem;
+  padding-inline: var(--space-2);
+  margin-inline-end: calc(var(--space-2) * -1);
+  border: 0;
+  background: none;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-align: end;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .film-toggle:hover {
+    text-decoration-color: var(--color-accent);
+  }
+}
+
 /* --- Escenario ------------------------------------------------------------ */
 
 /*
@@ -127,90 +181,5 @@
 
   .film-stage:not([data-dragging]) .film-ring:has(.film-frame:hover) .film-frame:not(:hover) img {
     filter: brightness(0.4) saturate(0.5);
-  }
-}
-
-/* --- Pie: título, flechas y pausa ------------------------------------------ */
-
-.film-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-  padding: var(--space-2) var(--page-gutter) 0;
-}
-
-/* El h2 hereda la tipografía de títulos: aquí es una etiqueta, como la del resto de secciones */
-.film-title {
-  font-family: var(--font-body);
-  line-height: var(--leading-normal);
-}
-
-.film-buttons {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-/* Móvil: no cabe todo en una línea. Título arriba; flechas a la izquierda y pausa a la derecha */
-@media (max-width: 47.99rem) {
-  .film-controls {
-    flex-wrap: wrap;
-    row-gap: var(--space-2);
-  }
-
-  .film-title {
-    flex-basis: 100%;
-  }
-
-  .film-buttons {
-    flex: 1;
-  }
-
-  .film-toggle {
-    margin-inline-start: auto;
-  }
-}
-
-.film-arrow {
-  display: grid;
-  place-items: center;
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
-  padding: 0;
-  border: 1px solid var(--color-line);
-  border-radius: 50%;
-  background: none;
-  font-size: var(--text-base);
-  line-height: 1;
-  transition: border-color var(--duration-fast) var(--ease-out);
-}
-
-.film-toggle {
-  min-block-size: 2.75rem;
-  min-inline-size: 6.5rem;
-  padding-inline: var(--space-2);
-  margin-inline-end: calc(var(--space-2) * -1);
-  border: 0;
-  background: none;
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-wide);
-  text-align: end;
-  text-transform: uppercase;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.45em;
-  transition: text-decoration-color var(--duration-fast) var(--ease-out);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .film-arrow:hover {
-    border-color: var(--color-text-muted);
-  }
-
-  .film-toggle:hover {
-    text-decoration-color: var(--color-accent);
   }
 }

@@ -1,4 +1,16 @@
 <section class="film" aria-labelledby="film-title">
+  <!-- Cabecera como la del resto de secciones: número y categoría, título grande y, a la
+       derecha, la pausa (obligatoria: la tira se mueve sola sin parar, WCAG 2.2.2) -->
+  <header class="film-header" appReveal>
+    <p class="eyebrow">{{ chapter() }} — <span lang="en">Backstage</span></p>
+    <h2 id="film-title" class="film-title">Detrás de las cámaras</h2>
+    @if (!reducedMotion()) {
+      <button type="button" class="film-toggle" (click)="toggle()">
+        {{ userPaused() ? 'Reproducir' : 'Pausar' }}<span class="visually-hidden"> la tira de fotos</span>
+      </button>
+    }
+  </header>
+
   <!-- Escenario: la tira gira dentro; su radio y su giro llegan como variables CSS.
        Se puede arrastrar con el ratón o deslizar con el dedo (ver film-strip.ts). -->
   <div
@@ -32,24 +44,6 @@
           }
         }
       </div>
-    </div>
-  </div>
-
-  <div class="film-controls">
-    <h2 id="film-title" class="eyebrow film-title">Detrás de las cámaras</h2>
-
-    <div class="film-buttons">
-      <button type="button" class="film-arrow" aria-label="Foto anterior" (click)="step(-1)">
-        <span aria-hidden="true">←</span>
-      </button>
-      <button type="button" class="film-arrow" aria-label="Foto siguiente" (click)="step(1)">
-        <span aria-hidden="true">→</span>
-      </button>
-      @if (!reducedMotion()) {
-        <button type="button" class="film-toggle" (click)="toggle()">
-          {{ userPaused() ? 'Reproducir' : 'Pausar' }}<span class="visually-hidden"> la tira de fotos</span>
-        </button>
-      }
     </div>
   </div>
 </section>

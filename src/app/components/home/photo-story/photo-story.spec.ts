@@ -7,6 +7,7 @@ import { PhotoStory } from './photo-story';
 const STORY: Story = {
   id: 'live-test',
   artist: 'Artista',
+  category: 'Conciertos',
   context: 'Live',
   place: null,
   year: 2026,

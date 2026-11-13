@@ -93,6 +93,7 @@ describe('FilmStrip', () => {
     });
     const fixture = TestBed.createComponent(FilmStrip);
     fixture.componentRef.setInput('frames', FRAMES);
+    fixture.componentRef.setInput('chapter', '02');
     await fixture.whenStable();
     return { fixture, element: fixture.nativeElement as HTMLElement };
   }
@@ -153,24 +154,9 @@ describe('FilmStrip', () => {
     expect(stage.hasAttribute('data-dragging')).toBe(false);
   });
 
-  it('las flechas mueven la tira una foto', async () => {
-    const { fixture, element } = await render();
-    flushFrames(2);
-    const start = parseFloat(spin(element));
-    const cruise = (() => {
-      flushFrames(60);
-      return start - parseFloat(spin(element));
-    })();
-
-    element.querySelector<HTMLButtonElement>('[aria-label="Foto siguiente"]')!.click();
-    await fixture.whenStable();
-    const before = parseFloat(spin(element));
-    flushFrames(60);
-    const travelled = before - parseFloat(spin(element));
-
-    // Una foto de media: un periodo entre el número de fotos, más lo que avanza sola
-    const oneFrame = layoutStrip(FRAMES).period / FRAMES.length;
-    expect(travelled).toBeGreaterThan(cruise + oneFrame * 0.9);
+  it('muestra el número de capítulo en la cabecera', async () => {
+    const { element } = await render();
+    expect(element.querySelector('.eyebrow')?.textContent?.replace(/\s+/g, ' ').trim()).toBe('02 — Backstage');
   });
 
   it('con movimiento reducido no anima ni muestra el botón', async () => {

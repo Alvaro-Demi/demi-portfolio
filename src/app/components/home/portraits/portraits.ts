@@ -18,7 +18,7 @@ const HOLD = 2600;
 const MOVE = 700;
 
 /**
- * 03 — Retrato: una foto grande y el resto en una columna de miniaturas. Cada pocos segundos
+ * 04 — Retrato: una foto grande y el resto en una columna de miniaturas. Cada pocos segundos
  * la primera miniatura crece hasta el hueco grande (y llega desenfocada, como al pasar el
  * foco), la grande baja al final de la columna y las demás suben un puesto.
  *

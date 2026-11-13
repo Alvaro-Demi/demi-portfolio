@@ -12,6 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { SequenceFrame } from '../../../models/photo';
+import { Reveal } from '../../../shared/reveal';
 import { layoutStrip } from './film-layout';
 
 /** Velocidad de crucero, en alturas de foto por segundo. */
@@ -29,8 +30,6 @@ const GLIDE_RESPONSE = 1.2;
 const MAX_THROW = 25;
 /** Si el dedo o el ratón se quedan quietos más que esto antes de soltar, no hay inercia (ms). */
 const THROW_IDLE = 100;
-/** Botones anterior/siguiente: lo rápido que llega a la foto de al lado. */
-const NUDGE_RESPONSE = 6;
 /** Inclinación máxima (grados) al entrar y al salir de la pantalla. */
 const MAX_TILT = 9;
 
@@ -42,24 +41,26 @@ const RAD_TO_DEG = 180 / Math.PI;
  * anillo visto desde fuera.
  *
  *   - Arrastrar (ratón) o deslizar (dedo): la tira sigue el gesto y, al soltar, conserva su
- *     inercia y vuelve poco a poco a su ritmo. Los botones ← → la mueven una foto.
+ *     inercia y vuelve poco a poco a su ritmo.
  *   - Hover: la tira frena; la foto señalada se adelanta y las demás se apagan.
  *   - Scroll: hacer scroll acelera la tira en ese sentido, y la tira se inclina según la
  *     sección entra o sale de la pantalla.
  *   - Pausa: la tira frena hasta pararse. Movimiento reducido: quieta y sin inclinación
- *     (arrastrar y los botones siguen funcionando).
+ *     (arrastrar sigue funcionando).
  *
  * El giro lo lleva un bucle de requestAnimationFrame que escribe dos variables CSS (--spin y
  * --tilt) directamente en el DOM: no pasa por Angular. Solo corre con la sección a la vista.
  */
 @Component({
   selector: 'app-film-strip',
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, Reveal],
   templateUrl: './film-strip.html',
   styleUrl: './film-strip.css',
 })
 export class FilmStrip {
   readonly frames = input.required<readonly SequenceFrame[]>();
+  /** Número del capítulo en la Home, p. ej. '02'. */
+  readonly chapter = input.required<string>();
 
   protected readonly layout = computed(() => layoutStrip(this.frames()));
 
@@ -81,8 +82,6 @@ export class FilmStrip {
   /** Velocidad actual, en velocidades de crucero (positiva: hacia la izquierda). */
   private speed = 1;
   private response = RESPONSE;
-  /** Grados pendientes de recorrer por los botones ← →. */
-  private nudge = 0;
   private dragging = false;
 
   constructor() {
@@ -130,17 +129,6 @@ export class FilmStrip {
     });
   }
 
-  /** Mueve la tira una foto (de media) hacia atrás (-1) o hacia delante (1). */
-  protected step(direction: -1 | 1): void {
-    this.nudge -= (direction * this.layout().period) / Math.max(1, this.frames().length);
-    // Sin bucle (movimiento reducido), el salto es inmediato.
-    if (!this.running()) {
-      this.spin += this.nudge;
-      this.nudge = 0;
-      this.applySpin();
-    }
-  }
-
   protected toggle(): void {
     this.userPaused.update((paused) => !paused);
   }
@@ -178,7 +166,6 @@ export class FilmStrip {
       lastTime = event.timeStamp;
       velocity = 0;
       this.dragging = true;
-      this.nudge = 0;
       stage.setPointerCapture?.(event.pointerId);
       stage.dataset['dragging'] = '';
     };
@@ -243,10 +230,6 @@ export class FilmStrip {
         this.speed += (target - this.speed) * (1 - Math.exp(-dt * this.response));
         if (Math.abs(target - this.speed) < 0.05) this.response = RESPONSE;
         this.spin -= this.speed * this.cruise() * dt;
-
-        const nudged = this.nudge * (1 - Math.exp(-dt * NUDGE_RESPONSE));
-        this.spin += nudged;
-        this.nudge -= nudged;
         this.applySpin();
       }
 

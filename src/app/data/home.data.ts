@@ -9,8 +9,8 @@ import type { Photo, PhotoStory, Portrait, SequenceFrame, WorkEntry } from '../m
  *   3. Copia aquí `width` y `height` de la tabla que imprime, y escribe el `alt`.
  *   4. Ajusta `focus` (y `mobile`) si el recorte corta lo importante.
  *
- * Orden de la Home: Hero → 01 Videoclip → Detrás de las cámaras → 02 Live → 03 Retrato → 04 Live
- * → 06 About → 07 Contact.
+ * Orden de la Home: Hero → 01 Videoclip → 02 Detrás de las cámaras → 03 Conciertos → 04 Retrato
+ * → 05 Velada de boxeo → 06 About → 07 Contact.
  */
 
 /** Marca visible de dato pendiente: búscala para completar el contenido. */
@@ -86,7 +86,7 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
 ];
 
 /*
- * 02 y 04 — Live. Dos composiciones panorámicas, una por artista. Van separadas por
+ * 03 y 05 — Live. Dos composiciones panorámicas, una por artista. Van separadas por
  * los retratos: dos secuencias seguidas en B/N con el mismo mecanismo cansarían.
  * Se ven siempre enteras, en una tira que se recorre en horizontal.
  */
@@ -109,7 +109,7 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
     id: 'live-02',
     artist: 'COMBATE DE DOMÍNGUEZ SEVILLANO',
     category: 'Velada de boxeo',
-    context: 'Live',
+    context: 'Boxeo',
     place: null, // Pendiente: ciudad o sala.
     year: null,
     photo: {
@@ -122,7 +122,7 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
 ];
 
 /*
- * 03 — Retrato. Respiración en color entre los dos directos. Una foto grande y el resto en
+ * 04 — Retrato. Respiración en color entre los dos directos. Una foto grande y el resto en
  * una columna de miniaturas; cada pocos segundos la primera miniatura pasa a ser la grande
  * (portraits). Funciona con 3 o más; está pensada para 4.
  * Las fotos verticales encajan mejor (la grande es casi 3:4 y las miniaturas casi 5:6).
