@@ -4,54 +4,34 @@ import { WorkEntry } from '../../../models/photo';
 import { photoLoader } from '../../../shared/image-loader';
 import { SelectedWork } from './selected-work';
 
-const photo = { src: 'test', alt: 'Foto de prueba', width: 1200, height: 800 };
-
 const ENTRIES: readonly WorkEntry[] = [
   {
-    id: 'foto',
-    artist: 'Artista',
-    title: null,
-    context: 'Directo',
-    type: 'photo',
-    year: null,
-    youtubeUrl: null,
-    layout: 'screen',
-    photo,
-  },
-  {
-    id: 'clip-con-url',
+    id: 'clip',
     artist: 'Artista',
     title: 'Clip',
     context: 'Videoclip',
     type: 'video',
     year: 2025,
     youtubeUrl: 'https://www.youtube.com/watch?v=test',
-    layout: 'screen',
-    photo,
-  },
-  {
-    id: 'clip-sin-url',
-    artist: 'Artista',
-    title: 'Pendiente',
-    context: 'Videoclip',
-    type: 'video',
-    year: null,
-    youtubeUrl: null,
-    layout: 'coda',
-    photo,
+    photo: { src: 'images/placeholders/foto-01.svg', alt: 'Portada', width: 1600, height: 900 },
   },
 ];
 
 describe('SelectedWork', () => {
   beforeAll(() => {
-    // jsdom no implementa IntersectionObserver (lo usa la directiva appReveal).
+    // jsdom no implementa IntersectionObserver (lo usan appReveal y la cinta).
     globalThis.IntersectionObserver ??= class {
       observe() {}
       disconnect() {}
     } as unknown as typeof IntersectionObserver;
+    window.matchMedia ??= (() => ({
+      matches: false,
+      addEventListener() {},
+      removeEventListener() {},
+    })) as unknown as typeof window.matchMedia;
   });
 
-  async function render() {
+  it('presenta la sección y le pasa los videoclips a la cinta', async () => {
     TestBed.configureTestingModule({
       imports: [SelectedWork],
       providers: [{ provide: IMAGE_LOADER, useValue: photoLoader }],
@@ -59,25 +39,10 @@ describe('SelectedWork', () => {
     const fixture = TestBed.createComponent(SelectedWork);
     fixture.componentRef.setInput('entries', ENTRIES);
     await fixture.whenStable();
-    return fixture.nativeElement as HTMLElement;
-  }
+    const element = fixture.nativeElement as HTMLElement;
 
-  it('solo enlaza los videoclips que tienen URL, en una pestaña nueva y segura', async () => {
-    const links = (await render()).querySelectorAll<HTMLAnchorElement>('.work-link');
-
-    expect(links.length).toBe(1);
-    expect(links[0].href).toBe('https://www.youtube.com/watch?v=test');
-    expect(links[0].target).toBe('_blank');
-    expect(links[0].rel).toBe('noopener noreferrer');
-    expect(links[0].textContent).toContain('«Clip»');
-  });
-
-  it('numera las piezas como un setlist y compone los metadatos sin huecos', async () => {
-    const element = await render();
-    const numbers = [...element.querySelectorAll('.work-index')].map((n) => n.textContent?.trim());
-    const meta = [...element.querySelectorAll('.work-meta')].map((n) => n.textContent?.trim());
-
-    expect(numbers).toEqual(['01', '02', '03']);
-    expect(meta).toEqual(['Directo', 'Videoclip · 2025', 'Videoclip']);
+    expect(element.querySelector('#work-title')?.textContent?.trim()).toBe('Selected work');
+    expect(element.querySelector('app-video-ribbon')).not.toBeNull();
+    expect(element.querySelector('.rib-count')?.textContent?.replace(/\s+/g, ' ').trim()).toBe('01 / 01');
   });
 });

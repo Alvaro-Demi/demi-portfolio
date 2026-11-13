@@ -29,9 +29,9 @@ export const HERO_PHOTO: Photo = {
 /*
  * 01 — Videoclip. Primero tras el hero: el color cálido contrasta con el B/N del directo
  * y deja claro desde el principio que DEMI también trabaja alrededor del videoclip.
- *   01 «Mírame»  → la pantalla: el momento más grande.
- *   02 «Abuela»  → tríptico con mucha información: secundario.
- *   03 «Odiseo»  → otra pantalla a sangre; Atenas enlaza con el interludio en Grecia.
+ * Las portadas van en una cinta 3D que se arrastra (video-ribbon), en este orden; la primera
+ * empieza en el centro. Cada tarjeta enlaza a su `youtubeUrl` (sin URL, no enlaza).
+ * Puedes añadir más: la cinta se adapta sola.
  */
 export const VIDEOCLIPS: readonly WorkEntry[] = [
   {
@@ -42,7 +42,6 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
     type: 'video',
     year: 2026,
     youtubeUrl: 'https://www.youtube.com/watch?v=x-do0kjojXc&list=RDx-do0kjojXc&start_radio=1', // Pendiente: URL de YouTube del videoclip.
-    layout: 'screen',
     photo: {
       src: 'work-01',
       alt: 'Tríptico del videoclip «Mírame»: una mujer, una pareja a contraluz al atardecer y un retrato del artista',
@@ -58,7 +57,6 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
     type: 'video',
     year: 2026,
     youtubeUrl:'https://www.youtube.com/watch?v=k1-Gh7qZDlc&list=RDk1-Gh7qZDlc&start_radio=1', // Pendiente: URL de YouTube del videoclip.
-    layout: 'wide',
     photo: {
       src: 'work-05',
       alt: 'Tríptico de rodaje: un grupo posa en una nave, dos artistas junto a una mujer mayor sentada en un trono y una escena en un interior',
@@ -74,7 +72,6 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
     type: 'video',
     year: 2025,
     youtubeUrl: 'https://www.youtube.com/watch?v=8mCN0b5XTSw&list=RD8mCN0b5XTSw&start_radio=1', // Pendiente: URL de YouTube del videoclip.
-    layout: 'screen',
     photo: {
       src: 'work-03',
       alt: 'Portada del videoclip «Odiseo»: título dorado sobre Atenas y dos retratos del artista',

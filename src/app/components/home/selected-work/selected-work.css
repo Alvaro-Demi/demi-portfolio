@@ -3,20 +3,21 @@
 }
 
 .work {
-  padding: var(--space-24) var(--page-gutter);
+  padding: var(--space-6) var(--page-gutter);
 }
 
 /* --- Cabecera ------------------------------------------------------------ */
 
+/* La cinta deja aire arriba (para la onda 3D): la cabecera no necesita más margen */
 .work-header {
   display: grid;
   gap: var(--space-6);
-  margin-block-end: var(--space-16);
+  margin-block-end: var(--space-4);
 }
 
 .work-title {
   margin-block-start: var(--space-4);
-  font-size: clamp(4rem, 2rem + 10vw, 11rem);
+  font-size: var(--text-heading);
   line-height: 0.85;
   text-transform: uppercase;
 }
@@ -28,80 +29,20 @@
   color: var(--color-text-muted);
 }
 
-/*
- * Piezas en zigzag: las pantallas a sangre por la derecha y el rodaje a sangre
- * por la izquierda. La separación entre piezas no depende de su papel.
- */
+/* --- Cinta de videoclips: a sangre, de borde a borde --------------------- */
 
-/* --- Móvil --------------------------------------------------------------- */
-
-.work-grid {
-  display: grid;
-}
-
-.work-item + .work-item {
-  margin-block-start: var(--space-16);
-}
-
-/* Móvil: los videoclips van todos a sangre y enteros, al mismo tamaño */
-.work-item[data-layout='screen'],
-.work-item[data-layout='wide'] {
+.work-ribbon {
   margin-inline: calc(var(--page-gutter) * -1);
-  --caption-inset-start: var(--page-gutter);
-  --caption-inset-end: var(--page-gutter);
 }
-.work-item[data-layout='coda'] {
-  inline-size: 84%;
-}
-
-/* --- Tablet: 8 columnas -------------------------------------------------- */
 
 @media (min-width: 48rem) {
   .work-header {
     grid-template-columns: 1fr auto;
     align-items: end;
   }
-
-  .work-grid {
-    grid-template-columns: repeat(8, 1fr);
-    column-gap: var(--space-6);
-  }
-
-  .work-item[data-layout] {
-    inline-size: auto;
-    justify-self: stretch;
-    margin-inline: 0;
-    --caption-inset-start: 0;
-    --caption-inset-end: 0;
-  }
-
-  .work-item + .work-item {
-    margin-block-start: var(--space-24);
-  }
-
-  /* Las tres piezas, del mismo ancho: 6 de 8 columnas más el margen hasta el borde */
-  .work-item[data-layout='screen'] {
-    grid-column: 3 / -1;
-    margin-inline-end: calc(var(--page-gutter) * -1);
-    --caption-inset-end: var(--page-gutter);
-  }
-  .work-item[data-layout='wide'] {
-    grid-column: 1 / span 6;
-    margin-inline-start: calc(var(--page-gutter) * -1);
-    --caption-inset-start: var(--page-gutter);
-  }
-  .work-item[data-layout='coda'] {
-    grid-column: 4 / -1;
-  }
 }
 
-/* --- Escritorio: 12 columnas --------------------------------------------- */
-
 @media (min-width: 64rem) {
-  .work-grid {
-    grid-template-columns: repeat(12, 1fr);
-  }
-
   /* El texto, justo a la derecha del título: su última línea comparte la línea base
      de «SELECTED WORK», sea cual sea el tamaño del título */
   .work-header {
@@ -116,20 +57,5 @@
 
   .work-intro {
     min-inline-size: 0;
-  }
-
-  .work-item + .work-item {
-    margin-block-start: clamp(2rem, 3vw, 2rem);
-  }
-
-  /* 8 de 12 columnas más el margen: presencia sin ocupar toda la pantalla */
-  .work-item[data-layout='screen'] {
-    grid-column: 6 / -1;
-  }
-  .work-item[data-layout='wide'] {
-    grid-column: 1 / span 7;
-  }
-  .work-item[data-layout='coda'] {
-    grid-column: 7 / span 5;
   }
 }

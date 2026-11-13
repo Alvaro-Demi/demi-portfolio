@@ -1,0 +1,50 @@
+<!-- Escenario: las tarjetas cuelgan de su centro y el bucle de video-ribbon.ts coloca cada
+     franja en la onda. Arrastrar, deslizar o la rueda horizontal mueven la cinta. -->
+<div class="rib-stage" #stage>
+  @if (near()) {
+    @for (card of layout().cards; track $index; let i = $index) {
+      @let entry = card.entry;
+      <!-- Solo la primera repetición llega al tabulador y a los lectores de pantalla -->
+      <a
+        class="rib-card"
+        [attr.href]="entry.youtubeUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        [attr.aria-label]="linkLabel(entry)"
+        [attr.tabindex]="card.copy > 0 ? -1 : null"
+        [attr.aria-hidden]="card.copy > 0 ? 'true' : null"
+        [style.--w]="card.width"
+        (pointerenter)="hover($event, i)"
+        (pointerleave)="hover($event, -1)"
+      >
+        @for (k of slices; track k) {
+          <!-- Cada franja enseña su trozo de la tarjeta entera (la cara) -->
+          <span class="rib-slice" aria-hidden="true">
+            <span class="rib-face" [style.--k]="k">
+              <img
+                [ngSrc]="entry.photo.src"
+                alt=""
+                fill
+                sizes="(min-width: 64rem) 48vw, (min-width: 48rem) 72vw, 100vw"
+                loading="eager"
+                draggable="false"
+              />
+              <span class="rib-text">
+                <span class="rib-title">{{ heading(entry) }}</span>
+                <span class="rib-meta">{{ meta(entry) }}</span>
+              </span>
+              @if (entry.youtubeUrl) {
+                <span class="rib-go">↗</span>
+              }
+            </span>
+          </span>
+        }
+      </a>
+    }
+  }
+</div>
+
+<div class="rib-footer" aria-hidden="true">
+  <p class="rib-count">{{ number(active()) }} <span>/ {{ number(count() - 1) }}</span></p>
+  <p class="rib-hint">Arrastra o desliza para ver más</p>
+</div>

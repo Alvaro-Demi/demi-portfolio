@@ -24,13 +24,13 @@ interface NavItem {
 export class SiteHeader {
   /** Una entrada por sección de la Home, en su orden. */
   protected readonly navItems: readonly NavItem[] = [
-    { label: 'Videoclip', fragment: 'work', lang: 'es' },
-    { label: 'Backstage', fragment: 'backstage', lang: 'en' },
+    { label: 'Videoclips', fragment: 'work', lang: 'es' },
     { label: 'Conciertos', fragment: 'conciertos', lang: 'es' },
     { label: 'Retrato', fragment: 'retrato', lang: 'es' },
-    { label: 'Boxeo', fragment: 'boxeo', lang: 'es' },
-    { label: 'About', fragment: 'about', lang: 'en' },
-    { label: 'Contact', fragment: 'contact', lang: 'en' },
+    { label: 'Eventos', fragment: 'boxeo', lang: 'es' },
+    { label: 'Backstage', fragment: 'backstage', lang: 'en' },
+    { label: 'Sobre mí', fragment: 'about', lang: 'en' },
+    { label: 'Contacto', fragment: 'contact', lang: 'en' },
   ];
 
   /** Estado del menú móvil. Más adelante abrirá el menú a pantalla completa. */

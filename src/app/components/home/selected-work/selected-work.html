@@ -1,21 +1,17 @@
 <section id="work" class="work" aria-labelledby="work-title">
   <div class="work-header">
     <div appReveal>
-      <p class="eyebrow">01 — Videoclip</p>
-      <h2 id="work-title" class="work-title" lang="en">Selected work</h2>
+      <p class="eyebrow">01 — Rodajes</p>
+      <h2 id="work-title" class="work-title" lang="en">Videoclips</h2>
     </div>
-    <div class="work-intro" appReveal [revealDelay]="120">
+    <!--<div class="work-intro" appReveal [revealDelay]="120">
       <p>Rodajes, videoclips, eventos, sesiones de fotos, redes sociales y conciertos.</p>
       <p> "Plasmar ideas sin perder la esencia."</p>
       <p>Da un salto de imagen como artista.</p>
-    </div>
+    </div>-->
   </div>
 
-  <ol class="work-grid" role="list">
-    @for (entry of entries(); track entry.id; let i = $index) {
-      <li class="work-item" [attr.data-layout]="entry.layout">
-        <app-work-piece [entry]="entry" [index]="i + 1" />
-      </li>
-    }
-  </ol>
+  <!-- Las portadas en una cinta 3D que se arrastra; cada una enlaza a su videoclip -->
+  <app-video-ribbon class="work-ribbon" [entries]="entries()" />
+
 </section>

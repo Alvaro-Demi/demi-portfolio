@@ -1,12 +1,12 @@
 import { Component, input } from '@angular/core';
 import { WorkEntry } from '../../../models/photo';
 import { Reveal } from '../../../shared/reveal';
-import { WorkPiece } from '../work-piece/work-piece';
+import { VideoRibbon } from '../video-ribbon/video-ribbon';
 
 /** 01 — Videoclip: el trabajo alrededor del videoclip, justo después del hero. */
 @Component({
   selector: 'app-selected-work',
-  imports: [Reveal, WorkPiece],
+  imports: [Reveal, VideoRibbon],
   templateUrl: './selected-work.html',
   styleUrl: './selected-work.css',
 })

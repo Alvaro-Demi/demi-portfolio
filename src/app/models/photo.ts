@@ -27,12 +27,6 @@ export interface MobileCrop {
   readonly focus: string;
 }
 
-/**
- * Papel de cada pieza de videoclip dentro de su sección:
- * screen (pantalla a sangre) · wide (panorámica secundaria) · coda (cierre).
- */
-export type WorkLayout = 'screen' | 'wide' | 'coda';
-
 export type WorkType = 'photo' | 'video';
 
 export interface WorkEntry {
@@ -48,7 +42,7 @@ export interface WorkEntry {
   readonly year: number | null;
   /** Solo para `type: 'video'`. `null` mientras no exista el enlace. */
   readonly youtubeUrl: string | null;
-  readonly layout: WorkLayout;
+  /** La portada. En la cinta de videoclips se ve entera: conserva su proporción. */
   readonly photo: Photo;
 }
 
