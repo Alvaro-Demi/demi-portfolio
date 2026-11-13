@@ -2,7 +2,7 @@
  * Comprime los reels que usa la Home y saca su póster.
  *
  *   videos-src/{id}.mp4  →  public/videos/{id}.mp4        720 px de ancho, con sonido (se ve en grande)
- *                        →  public/videos/{id}-loop.mp4   8 s mudos desde `highlight` (bucle de la tarjeta)
+ *                        →  public/videos/{id}-loop.mp4   15 s desde `highlight` (bucle de la tarjeta)
  *                        →  images-src/{id}.jpg           fotograma en `highlight` (después: npm run images)
  *
  * Lee src/app/data/home.data.ts (Node ejecuta TypeScript sin compilar) para saber qué
@@ -22,7 +22,8 @@ const run = promisify(execFile);
 const SRC_DIR = 'videos-src';
 const OUT_DIR = 'public/videos';
 const POSTER_DIR = 'images-src';
-const LOOP_SECONDS = 8;
+/** Largo del bucle de las tarjetas: da para desfasar las copias del mismo reel. */
+const LOOP_SECONDS = 15;
 const INPUT_EXTENSIONS = new Set(['.mp4', '.mov', '.m4v', '.webm', '.mkv']);
 const force = process.argv.includes('--force');
 
@@ -66,10 +67,11 @@ for (const reel of SOCIAL_REELS) {
     '-i', input, '-vf', 'scale=720:-2', ...h264,
     '-crf', '27', '-maxrate', '1200k', '-bufsize', '2400k', '-c:a', 'aac', '-b:a', '128k',
   ]);
-  // Bucle de la tarjeta: mudo, pequeño y corto.
+  // Bucle de la tarjeta: pequeño y con el sonido bajo (suena al pasar el ratón por la central).
   await make(loop, input, [
     '-ss', String(reel.highlight), '-t', String(LOOP_SECONDS), '-i', input,
-    '-vf', 'scale=540:-2', ...h264, '-crf', '30', '-an',
+    '-vf', 'scale=480:-2', ...h264, '-crf', '30', '-maxrate', '900k', '-bufsize', '1800k',
+    '-c:a', 'aac', '-b:a', '96k',
   ]);
   // Póster a tamaño completo: npm run images genera sus variantes webp.
   await make(poster, input, ['-ss', String(reel.highlight), '-i', input, '-frames:v', '1', '-q:v', '2']);

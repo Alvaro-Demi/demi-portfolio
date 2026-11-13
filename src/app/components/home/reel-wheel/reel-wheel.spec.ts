@@ -114,20 +114,45 @@ describe('ReelWheel', () => {
     expect(cards()[0].getAttribute('aria-haspopup')).toBe('dialog');
   });
 
-  it('empieza con la primera en el centro, recta, delante y con su bucle mudo', async () => {
+  it('empieza con la primera en el centro, recta y delante', async () => {
     const { cards, count } = await render();
     const [first, second] = cards();
-    const video = first.querySelector('video')!;
 
     expect(first.hasAttribute('data-active')).toBe(true);
     expect(first.style.transform).toBe('rotate(0.000deg)');
     expect(second.style.transform).toBe('rotate(24.000deg)');
     expect(Number(first.style.zIndex)).toBeGreaterThan(Number(second.style.zIndex));
+    expect(count()).toBe('01 / 03');
+  });
+
+  it('todas las tarjetas que se ven reproducen su bucle, en silencio', async () => {
+    const { cards } = await render();
+    const playing = cards().filter((card) => card.querySelector('video'));
+    const video = cards()[0].querySelector('video')!;
+
+    // El centro y dos a cada lado (casillas 13, 14, 0, 1 y 2)
+    expect(playing.map((card) => cards().indexOf(card))).toEqual([0, 1, 2, 13, 14]);
     expect(video.muted).toBe(true);
     expect(video.loop).toBe(true);
     expect(video.getAttribute('src')).toBe('videos/uno-loop.mp4');
-    expect(cards().filter((card) => card.querySelector('video')).length).toBe(1);
-    expect(count()).toBe('01 / 03');
+  });
+
+  it('las copias del mismo reel arrancan en otro punto del bucle', async () => {
+    const { cards } = await render();
+    const seek = (slot: number) => {
+      const video = cards()[slot].querySelector('video')!;
+      let time = 0;
+      Object.defineProperty(video, 'duration', { configurable: true, value: 10 });
+      Object.defineProperty(video, 'currentTime', { configurable: true, get: () => time, set: (t: number) => (time = t) });
+      video.dispatchEvent(new Event('loadedmetadata'));
+      return time;
+    };
+
+    // Las casillas 2 y 14 son el mismo reel («tres») y se ven a la vez, a ambos lados del centro:
+    // la 2 es su primera copia y la 14, la quinta.
+    expect(seek(2)).toBe(0);
+    expect(seek(14)).toBeCloseTo(((4 * 0.38) % 1) * 10);
+    expect(seek(0)).toBe(0);
   });
 
   it('un clic en una lateral gira hasta ella en vez de abrir nada', async () => {
@@ -167,7 +192,7 @@ describe('ReelWheel', () => {
     expect(element.querySelector('app-video-tv')).toBeNull();
   });
 
-  it('gira sola cada pocos segundos, y el botón de pausa la detiene', async () => {
+  it('gira sola cada pocos segundos, y el botón de pausa la detiene (también los vídeos)', async () => {
     vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'performance'] });
     const { fixture, element, count } = await render();
     const pause = element.querySelector<HTMLButtonElement>('.reel-pause')!;
@@ -179,7 +204,8 @@ describe('ReelWheel', () => {
 
     pause.click();
     await fixture.whenStable();
-    expect(pause.textContent).toContain('Reanudar giro');
+    expect(pause.textContent).toContain('Reanudar');
+    expect(element.querySelector('.reel-card video')).toBeNull();
     vi.advanceTimersByTime(9000);
     flushFrames(120);
     await fixture.whenStable();

@@ -22,6 +22,11 @@ const OMEGA = (2 * Math.PI) / 0.7;
 const DRAG_THRESHOLD = 6;
 /** Inercia al soltar: casillas que avanza por cada casilla/s de velocidad. */
 const FLING = 0.18;
+/** Volumen del bucle de la central al pasar el ratón (bajito) y duración de su fundido. */
+const LOOP_VOLUME = 0.35;
+const SOUND_FADE_MS = 400;
+/** Desfase entre copias del mismo reel, como fracción del bucle. */
+const LOOP_SHIFT = 0.38;
 const MAX_FLING = 2;
 /** Radio de las esquinas de las tarjetas, como fracción de su alto (ver .reel-card). */
 export const CARD_RADIUS = 0.035;
@@ -43,7 +48,9 @@ interface Playing {
  *     foco dentro, un arrastre en curso, la pestaña oculta o la tele abierta. El botón de pausa
  *     la detiene del todo (WCAG 2.2.2); con movimiento reducido empieza en pausa.
  *   - Se arrastra (ratón o dedo) con inercia, y encaja en la casilla más cercana.
- *   - La del centro reproduce su bucle mudo; las demás enseñan el póster.
+ *   - Todas las que se ven reproducen su bucle en silencio; las copias del mismo reel van
+ *     desfasadas. Con el ratón sobre la central, su bucle suena bajito. La pausa también
+ *     detiene los vídeos (vuelven los pósters).
  *   - Clic en la del centro: se transforma en la tele (vertical) y suena el reel completo.
  *     Clic en otra: gira hasta ella. Con Ctrl/⌘/Mayús o la rueda, el enlace abre Instagram.
  *
@@ -74,8 +81,12 @@ export class ReelWheel {
     }));
   });
 
-  /** Casilla del centro (su vídeo es el único que suena, mudo). */
+  /** Casilla del centro. */
   protected readonly active = signal(0);
+  /** Casillas que se ven en pantalla: cada una reproduce su bucle. */
+  protected readonly shown = signal<ReadonlySet<number>>(new Set());
+  /** Casilla cuyo bucle suena (la central, con el ratón encima). */
+  protected readonly sounding = signal(-1);
   protected readonly activeIndex = computed(() => {
     const count = this.reels().length;
     return count ? this.active() % count : 0;
@@ -83,10 +94,8 @@ export class ReelWheel {
   protected readonly count = computed(() => this.reels().length);
   /** La sección está en pantalla: solo entonces gira y reproduce. */
   protected readonly visible = signal(false);
-  /** Pausa pedida por el usuario (o por movimiento reducido). */
+  /** Pausa pedida por el usuario (o por movimiento reducido): ni giro ni vídeos (WCAG 2.2.2). */
   protected readonly paused = signal(false);
-  /** El bucle de la tarjeta central ya se está viendo (se funde sobre el póster). */
-  protected readonly loopPlaying = signal(false);
 
   protected readonly playing = signal<Playing | null>(null);
   /** Casilla oculta mientras «es» la tele (vuelve a verse en cuanto empieza el cierre). */
@@ -114,6 +123,12 @@ export class ReelWheel {
   private last = 0;
   private cards: HTMLElement[] = [];
   private slotWidth = 0;
+  /** Medidas para saber qué tarjetas caen dentro de la pantalla (se recalculan al redimensionar). */
+  private geometry: { width: number; height: number; radius: number; halfView: number } | null = null;
+  /** Casilla con el ratón encima (solo ratón). */
+  private hoveredSlot = -1;
+  /** Fundido de volumen en curso de cada vídeo: el último manda. */
+  private readonly fades = new WeakMap<HTMLVideoElement, number>();
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -139,6 +154,7 @@ export class ReelWheel {
 
       const onResize = () => {
         this.slotWidth = 0;
+        this.geometry = null;
         this.kick();
       };
       addEventListener('resize', onResize);
@@ -162,6 +178,28 @@ export class ReelWheel {
   protected togglePause(): void {
     this.paused.update((paused) => !paused);
     this.lastGesture = performance.now();
+  }
+
+  /**
+   * Cada copia de un reel arranca en otro punto del bucle: si se ven dos tarjetas del mismo
+   * reel, no enseñan la misma imagen.
+   */
+  protected startAt(video: HTMLVideoElement, slot: number): void {
+    const copy = Math.floor(slot / Math.max(1, this.reels().length));
+    if (copy > 0 && Number.isFinite(video.duration)) video.currentTime = ((copy * LOOP_SHIFT) % 1) * video.duration;
+  }
+
+  /** El bucle ya se mueve: se funde sobre el póster (y suena si es el que toca). */
+  protected loopStarted(video: HTMLVideoElement, slot: number): void {
+    video.classList.add('is-playing');
+    if (slot === this.sounding()) this.fade(video, LOOP_VOLUME);
+  }
+
+  /** Ratón sobre una tarjeta: si es la central, su reel suena bajito. */
+  protected hoverCard(event: PointerEvent, slot: number): void {
+    if (event.pointerType !== 'mouse') return;
+    this.hoveredSlot = slot;
+    this.updateSound();
   }
 
   /** La tele terminó de cerrarse. */
@@ -211,26 +249,99 @@ export class ReelWheel {
       }
     }
 
-    // 2. Cada tarjeta, en su ángulo de la rueda. Delante, la más cercana al centro.
+    // 2. Cada tarjeta, en su ángulo de la rueda. Delante, la más cercana al centro. Las que
+    //    caen fuera de la pantalla se ocultan (y no reproducen nada).
+    const geometry = this.measure(stage);
+    const shown = new Set<number>();
     this.cards.forEach((card, slot) => {
       const offset = offsetFromCenter(slot, this.position, slots);
-      const hidden = Math.abs(offset) > VISIBLE_SIDE;
-      card.style.visibility = hidden ? 'hidden' : 'visible';
-      if (hidden) return;
+      const angle = (offset * STEP * Math.PI) / 180;
+      // Centro de la tarjeta respecto al eje vertical, y su medio ancho una vez girada
+      const x = geometry.radius * Math.sin(angle);
+      const extent = (geometry.width / 2) * Math.cos(angle) + (geometry.height / 2) * Math.abs(Math.sin(angle));
+      const onScreen = Math.abs(offset) <= VISIBLE_SIDE && Math.abs(x) - extent < geometry.halfView;
+      card.style.visibility = onScreen ? 'visible' : 'hidden';
+      if (!onScreen) return;
+      shown.add(slot);
       card.style.transform = `rotate(${(offset * STEP).toFixed(3)}deg)`;
       card.style.zIndex = String(100 - Math.round(Math.abs(offset) * 10));
       card.style.setProperty('--f', Math.max(0, 1 - Math.abs(offset)).toFixed(3));
     });
+    const current = this.shown();
+    if (shown.size !== current.size || [...shown].some((slot) => !current.has(slot))) this.shown.set(shown);
 
-    // 3. La del centro: su vídeo y el contador.
+    // 3. La del centro: el contador y, si tiene el ratón encima, el sonido.
     const center = centerSlot(this.position, slots);
     if (center !== this.active()) {
       this.active.set(center);
-      this.loopPlaying.set(false);
+      this.updateSound();
     }
 
     const moving = this.dragging || this.position !== this.target;
     if (moving) this.kick();
+  }
+
+  /**
+   * Alto y ancho de las tarjetas, distancia de su centro al eje de la rueda y media pantalla.
+   * Sin medidas todavía (antes de maquetar), todas las cercanas cuentan como visibles.
+   */
+  private measure(stage: HTMLElement) {
+    if (!this.geometry) {
+      const height = this.cards[0]?.offsetHeight ?? 0;
+      const pivot = parseFloat(getComputedStyle(stage).getPropertyValue('--pivot-ratio')) || 1.3;
+      const halfView = stage.clientWidth / 2 || Infinity;
+      const geometry = { width: (height * 9) / 16, height, radius: height * pivot, halfView };
+      if (!height) return geometry;
+      this.geometry = geometry;
+    }
+    return this.geometry;
+  }
+
+  /**
+   * Suena (bajito) el bucle de la central si tiene el ratón encima, sin arrastre ni tele.
+   * Los navegadores solo dejan sonar audio después de que el usuario haya interactuado con la
+   * página (un clic, una tecla); hasta entonces, sigue en silencio.
+   */
+  private updateSound(): void {
+    const activated = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }).userActivation
+      ?.hasBeenActive ?? true;
+    const wanted =
+      activated && !this.dragging && !this.playing() && this.hoveredSlot === this.active() ? this.hoveredSlot : -1;
+    const previous = this.sounding();
+    if (wanted === previous) return;
+    this.sounding.set(wanted);
+    const videoOf = (slot: number) => this.cards[slot]?.querySelector('video') ?? null;
+    const before = videoOf(previous);
+    if (before) this.fade(before, 0);
+    const after = videoOf(wanted);
+    if (after?.classList.contains('is-playing')) this.fade(after, LOOP_VOLUME);
+  }
+
+  /** Sube o baja el volumen de un bucle con un fundido corto; a 0, queda en silencio. */
+  private fade(video: HTMLVideoElement, to: number): void {
+    const token = (this.fades.get(video) ?? 0) + 1;
+    this.fades.set(video, token);
+    const from = video.muted ? 0 : video.volume;
+    if (to > 0 && video.muted) {
+      video.volume = 0;
+      video.muted = false;
+      // Si el navegador no deja sonar, se queda mudo y sigue reproduciéndose.
+      video.play()?.catch(() => {
+        video.muted = true;
+        video.play()?.catch(() => {});
+      });
+    }
+    let start = 0;
+    const step = (now: number) => {
+      if (this.fades.get(video) !== token) return;
+      start ||= now;
+      // Acotado: el volumen fuera de [0, 1] lanza un error y cortaría el fundido.
+      const t = Math.min(1, Math.max(0, (now - start) / SOUND_FADE_MS));
+      video.volume = Math.min(1, Math.max(0, from + (to - from) * t));
+      if (t < 1) requestAnimationFrame(step);
+      else if (to === 0) video.muted = true;
+    };
+    requestAnimationFrame(step);
   }
 
   /** Lleva al centro la casilla `slot` por el camino corto. */
@@ -257,6 +368,8 @@ export class ReelWheel {
       origin: () => (card?.isConnected && card.style.visibility !== 'hidden' ? card.getBoundingClientRect() : null),
     });
     this.lent.set(slot);
+    // La tele suena con su propio vídeo: el bucle se calla.
+    this.updateSound();
   }
 
   /** Arrastre, clics, foco y hover. Devuelve cómo desmontarlo. */
@@ -301,6 +414,7 @@ export class ReelWheel {
         startX = event.clientX;
         stage.setPointerCapture?.(event.pointerId);
         stage.dataset['dragging'] = '';
+        this.updateSound();
       }
       const elapsed = (event.timeStamp - lastTime) / 1000;
       if (elapsed > 0) {
@@ -327,6 +441,7 @@ export class ReelWheel {
       this.target = Math.round(this.position + fling);
       this.velocity = 0;
       this.lastGesture = performance.now();
+      this.updateSound();
       this.kick();
     };
 
@@ -365,6 +480,8 @@ export class ReelWheel {
     const leave = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse') return;
       this.hovering = false;
+      this.hoveredSlot = -1;
+      this.updateSound();
       this.lastGesture = performance.now();
     };
 

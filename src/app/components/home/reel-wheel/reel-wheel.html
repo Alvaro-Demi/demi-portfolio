@@ -14,6 +14,9 @@
       [attr.aria-hidden]="s.first ? null : 'true'"
       [attr.data-active]="active() === s.slot ? '' : null"
       [attr.data-lent]="lent() === s.slot ? '' : null"
+      [attr.data-sound]="sounding() === s.slot ? '' : null"
+      (pointerenter)="hoverCard($event, s.slot)"
+      (pointerleave)="hoverCard($event, -1)"
     >
       <img
         class="reel-poster"
@@ -23,11 +26,11 @@
         [sizes]="posterSizes"
         draggable="false"
       />
-      @if (active() === s.slot && visible()) {
-        <!-- El bucle mudo, solo en la del centro y solo mientras la sección se ve -->
+      @if (visible() && !paused() && shown().has(s.slot)) {
+        <!-- Su bucle, en silencio, mientras la tarjeta se ve en pantalla (y sin pausa) -->
         <video
+          #loop
           class="reel-loop"
-          [class.is-playing]="loopPlaying()"
           [src]="loopUrl(s.reel)"
           muted
           [muted]="true"
@@ -38,9 +41,17 @@
           disablepictureinpicture
           aria-hidden="true"
           tabindex="-1"
-          (playing)="loopPlaying.set(true)"
+          (loadedmetadata)="startAt(loop, s.slot)"
+          (playing)="loopStarted(loop, s.slot)"
         ></video>
       }
+      <!-- Indicador de sonido: aparece mientras suena con el ratón encima -->
+      <span class="reel-sound" aria-hidden="true">
+        <svg viewBox="0 0 16 16" width="16" height="16" focusable="false">
+          <path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor" />
+          <path d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.5a6.3 6.3 0 0 1 0 9" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round" />
+        </svg>
+      </span>
       <span class="reel-text" aria-hidden="true">
         <span class="reel-title">{{ s.reel.title }}</span>
         <span class="reel-meta">{{ meta(s.reel) }}</span>
@@ -61,12 +72,12 @@
       <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false">
         <path d="M4 2.5v11l9-5.5z" fill="currentColor" />
       </svg>
-      Reanudar giro
+      Reanudar
     } @else {
       <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false">
         <path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor" />
       </svg>
-      Pausar giro
+      Pausar
     }
   </button>
   <p class="reel-hint" aria-hidden="true">Arrastra o desliza para ver más</p>
