@@ -60,8 +60,14 @@ export interface SocialReel {
    * public/videos/{video}.mp4 (con sonido) y public/videos/{video}-loop.mp4 (bucle mudo).
    */
   readonly video: string;
-  /** Segundo del reel del que salen el póster y el bucle mudo de la tarjeta. */
+  /** Segundo del reel del que sale el póster. */
   readonly highlight: number;
+  /**
+   * Tramos de las tarjetas: segundo en que empieza cada uno (duran 15 s). Las copias del reel
+   * en la rueda los van alternando, así dos tarjetas del mismo reel no enseñan lo mismo.
+   * De 1 a 3 tramos.
+   */
+  readonly loops: readonly number[];
   /** Póster: un fotograma del reel que `npm run videos` deja en images-src/{video}.jpg. */
   readonly photo: Photo;
   /** Publicación en Instagram. */

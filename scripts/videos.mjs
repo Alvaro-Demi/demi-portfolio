@@ -2,7 +2,7 @@
  * Comprime los reels que usa la Home y saca su póster.
  *
  *   videos-src/{id}.mp4  →  public/videos/{id}.mp4        720 px de ancho, con sonido (se ve en grande)
- *                        →  public/videos/{id}-loop.mp4   15 s desde `highlight` (bucle de la tarjeta)
+ *                        →  public/videos/{id}-loop-{n}.mp4  un tramo de 15 s por cada `loops` (tarjetas)
  *                        →  images-src/{id}.jpg           fotograma en `highlight` (después: npm run images)
  *
  * Lee src/app/data/home.data.ts (Node ejecuta TypeScript sin compilar) para saber qué
@@ -57,7 +57,6 @@ const report = [];
 for (const reel of SOCIAL_REELS) {
   const input = originals.get(reel.video);
   const full = join(OUT_DIR, `${reel.video}.mp4`);
-  const loop = join(OUT_DIR, `${reel.video}-loop.mp4`);
   const poster = join(POSTER_DIR, `${reel.video}.jpg`);
   const h264 = ['-c:v', 'libx264', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-movflags', '+faststart'];
 
@@ -67,23 +66,29 @@ for (const reel of SOCIAL_REELS) {
     '-i', input, '-vf', 'scale=720:-2', ...h264,
     '-crf', '27', '-maxrate', '1200k', '-bufsize', '2400k', '-c:a', 'aac', '-b:a', '128k',
   ]);
-  // Bucle de la tarjeta: pequeño y con el sonido bajo (suena al pasar el ratón por la central).
-  await make(loop, input, [
-    '-ss', String(reel.highlight), '-t', String(LOOP_SECONDS), '-i', input,
-    '-vf', 'scale=480:-2', ...h264, '-crf', '30', '-maxrate', '900k', '-bufsize', '1800k',
-    '-c:a', 'aac', '-b:a', '96k',
-  ]);
+  // Tramos de las tarjetas: pequeños y con sonido (suena bajito al pasar el ratón por la central).
+  const loopKB = [];
+  for (const [n, start] of reel.loops.entries()) {
+    const loop = join(OUT_DIR, `${reel.video}-loop-${n + 1}.mp4`);
+    await make(loop, input, [
+      '-ss', String(start), '-t', String(LOOP_SECONDS), '-i', input,
+      '-vf', 'scale=480:-2', ...h264, '-crf', '30', '-maxrate', '900k', '-bufsize', '1800k',
+      '-c:a', 'aac', '-b:a', '96k',
+    ]);
+    loopKB.push(await kb(loop));
+  }
   // Póster a tamaño completo: npm run images genera sus variantes webp.
   await make(poster, input, ['-ss', String(reel.highlight), '-i', input, '-frames:v', '1', '-q:v', '2']);
 
-  report.push({ id: reel.video, 'vídeo KB': await kb(full), 'bucle KB': await kb(loop), póster: poster });
+  report.push({ id: reel.video, 'vídeo KB': await kb(full), 'tramos KB': loopKB.join(' + '), póster: poster });
 }
 
-// Borra vídeos de reels que ya no se usan.
-const used = new Set(SOCIAL_REELS.map((reel) => reel.video));
+// Borra lo que ya no se usa: reels quitados y tramos sobrantes (o del formato anterior).
+const used = new Set(
+  SOCIAL_REELS.flatMap((reel) => [`${reel.video}.mp4`, ...reel.loops.map((_, n) => `${reel.video}-loop-${n + 1}.mp4`)]),
+);
 for (const file of await readdir(OUT_DIR)) {
-  const id = basename(file, '.mp4').replace(/-loop$/, '');
-  if (!used.has(id)) await rm(join(OUT_DIR, file));
+  if (!used.has(file)) await rm(join(OUT_DIR, file));
 }
 
 console.table(report);

@@ -89,7 +89,8 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
  *
  * Para cambiar o añadir un reel:
  *   1. Copia el vídeo a videos-src/ con un id (p. ej. videos-src/reel-04.mp4).
- *   2. Añádelo aquí: `video` → el id; `highlight` → el segundo para el póster y el bucle;
+ *   2. Añádelo aquí: `video` → el id; `highlight` → el segundo para el póster;
+ *      `loops` → dónde empiezan los tramos de 15 s de las tarjetas (de 1 a 3, sin repetirse);
  *      `photo.src` → el mismo id; `instagramUrl` → el enlace de la publicación (sin ?…).
  *   3. Ejecuta `npm run videos` (comprime y saca el póster) y luego `npm run images`.
  */
@@ -101,6 +102,7 @@ export const SOCIAL_REELS: readonly SocialReel[] = [
     year: null,
     video: 'reel-01',
     highlight: 5,
+    loops: [5, 16], // 31 s: dos mitades
     photo: {
       src: 'reel-01',
       alt: 'Un boxeador con equipación rosa camina hacia el ring en una velada, rodeado de su equipo',
@@ -116,6 +118,7 @@ export const SOCIAL_REELS: readonly SocialReel[] = [
     year: null,
     video: 'reel-02',
     highlight: 15,
+    loops: [15, 40, 65], // 90 s: tres tramos distintos
     photo: {
       src: 'reel-02',
       alt: 'El artista canta con camiseta blanca sobre el escenario, junto a una bailarina y frente a una pantalla gigante',
@@ -131,6 +134,7 @@ export const SOCIAL_REELS: readonly SocialReel[] = [
     year: null,
     video: 'reel-03',
     highlight: 15,
+    loops: [15, 0], // 31 s: el ring primero y luego el vestuario
     photo: {
       src: 'reel-03',
       alt: 'Un boxeador tatuado con equipación rosa y guantes rojos en guardia sobre el ring, junto al árbitro',

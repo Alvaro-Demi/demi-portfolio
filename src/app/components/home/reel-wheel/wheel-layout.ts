@@ -10,11 +10,22 @@ export const STEP = 24;
 export const VISIBLE_SIDE = 2.6;
 /** Casillas mínimas en la rueda: con menos, se verían los huecos de detrás. */
 const MIN_SLOTS = 15;
+/**
+ * Las vueltas (copias de cada reel) son múltiplo de 6: así, con 1, 2 o 3 tramos por reel, dos
+ * copias vecinas nunca repiten tramo, tampoco donde la rueda se cierra.
+ */
+const COPIES_MULTIPLE = 6;
 
 /** Número de casillas: múltiplo del número de reels, para que la rueda cierre sin saltos. */
 export function slotCount(reels: number): number {
   if (reels <= 0) return 0;
-  return Math.ceil(MIN_SLOTS / reels) * reels;
+  const copies = Math.ceil(Math.ceil(MIN_SLOTS / reels) / COPIES_MULTIPLE) * COPIES_MULTIPLE;
+  return copies * reels;
+}
+
+/** Tramo (empezando en 0) que enseña la copia `copy` de un reel con `loops` tramos. */
+export function loopFor(copy: number, loops: number): number {
+  return loops > 0 ? copy % loops : 0;
 }
 
 /**

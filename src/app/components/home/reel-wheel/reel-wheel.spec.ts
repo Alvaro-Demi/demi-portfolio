@@ -3,35 +3,51 @@ import { TestBed } from '@angular/core/testing';
 import { SocialReel } from '../../../models/photo';
 import { photoLoader } from '../../../shared/image-loader';
 import { ReelWheel } from './reel-wheel';
-import { centerSlot, offsetFromCenter, positionFor, slotCount } from './wheel-layout';
+import { centerSlot, loopFor, offsetFromCenter, positionFor, slotCount } from './wheel-layout';
 
-const reel = (id: string, title: string): SocialReel => ({
+const reel = (id: string, title: string, loops: readonly number[]): SocialReel => ({
   id,
   title,
   context: 'Reel',
   year: 2026,
   video: id,
   highlight: 0,
+  loops,
   photo: { src: 'images/placeholders/foto-01.svg', alt: 'Póster', width: 1080, height: 1920 },
   instagramUrl: `https://www.instagram.com/reel/${id}/`,
 });
 
-const REELS: readonly SocialReel[] = [reel('uno', 'Uno'), reel('dos', 'Dos'), reel('tres', 'Tres')];
+const REELS: readonly SocialReel[] = [
+  reel('uno', 'Uno', [0, 15]),
+  reel('dos', 'Dos', [0, 30, 60]),
+  reel('tres', 'Tres', [0, 15]),
+];
 
 describe('wheel-layout', () => {
-  it('llena la rueda repitiendo los reels (múltiplo exacto, para cerrar sin saltos)', () => {
-    expect(slotCount(3)).toBe(15);
-    expect(slotCount(4)).toBe(16);
+  it('llena la rueda repitiendo los reels: 6 vueltas (o múltiplos), para cerrar sin saltos', () => {
+    expect(slotCount(3)).toBe(18);
+    expect(slotCount(4)).toBe(24);
+    expect(slotCount(1)).toBe(18);
     expect(slotCount(0)).toBe(0);
   });
 
+  it('con 1, 2 o 3 tramos, dos copias vecinas nunca repiten tramo (tampoco al cerrar la rueda)', () => {
+    const copies = slotCount(3) / 3;
+    for (const loops of [2, 3]) {
+      for (let copy = 0; copy < copies; copy++) {
+        expect(loopFor(copy, loops)).not.toBe(loopFor((copy + 1) % copies, loops));
+      }
+    }
+    expect(loopFor(4, 1)).toBe(0);
+  });
+
   it('mide la distancia al centro por el camino corto del bucle', () => {
-    expect(offsetFromCenter(1, 0, 15)).toBe(1);
-    expect(offsetFromCenter(14, 0, 15)).toBe(-1);
-    expect(offsetFromCenter(0, 14, 15)).toBe(1);
-    expect(centerSlot(-1, 15)).toBe(14);
-    expect(centerSlot(16.2, 15)).toBe(1);
-    expect(positionFor(14, 0, 15)).toBe(-1);
+    expect(offsetFromCenter(1, 0, 18)).toBe(1);
+    expect(offsetFromCenter(17, 0, 18)).toBe(-1);
+    expect(offsetFromCenter(0, 17, 18)).toBe(1);
+    expect(centerSlot(-1, 18)).toBe(17);
+    expect(centerSlot(19.2, 18)).toBe(1);
+    expect(positionFor(17, 0, 18)).toBe(-1);
   });
 });
 
@@ -103,13 +119,13 @@ describe('ReelWheel', () => {
     const { cards } = await render();
     const announced = cards().filter((card) => !card.hasAttribute('aria-hidden'));
 
-    expect(cards().length).toBe(15);
+    expect(cards().length).toBe(18);
     expect(announced.map((card) => card.getAttribute('aria-label'))).toEqual([
       'Uno, Reel · 2026. Reproducir reel',
       'Dos, Reel · 2026. Reproducir reel',
       'Tres, Reel · 2026. Reproducir reel',
     ]);
-    expect(cards().filter((card) => card.getAttribute('tabindex') === '-1').length).toBe(12);
+    expect(cards().filter((card) => card.getAttribute('tabindex') === '-1').length).toBe(15);
     expect(cards()[0].getAttribute('href')).toBe('https://www.instagram.com/reel/uno/');
     expect(cards()[0].getAttribute('aria-haspopup')).toBe('dialog');
   });
@@ -130,14 +146,25 @@ describe('ReelWheel', () => {
     const playing = cards().filter((card) => card.querySelector('video'));
     const video = cards()[0].querySelector('video')!;
 
-    // El centro y dos a cada lado (casillas 13, 14, 0, 1 y 2)
-    expect(playing.map((card) => cards().indexOf(card))).toEqual([0, 1, 2, 13, 14]);
+    // El centro y dos a cada lado (casillas 16, 17, 0, 1 y 2)
+    expect(playing.map((card) => cards().indexOf(card))).toEqual([0, 1, 2, 16, 17]);
     expect(video.muted).toBe(true);
     expect(video.loop).toBe(true);
-    expect(video.getAttribute('src')).toBe('videos/uno-loop.mp4');
+    expect(video.getAttribute('src')).toBe('videos/uno-loop-1.mp4');
   });
 
-  it('las copias del mismo reel arrancan en otro punto del bucle', async () => {
+  it('dos tarjetas del mismo reel que se ven a la vez enseñan tramos distintos', async () => {
+    const { cards } = await render();
+    const src = (slot: number) => cards()[slot].querySelector('video')?.getAttribute('src');
+
+    // A ambos lados del centro: «dos» en las casillas 1 y 16, «tres» en las 2 y 17
+    expect(src(1)).toBe('videos/dos-loop-1.mp4');
+    expect(src(16)).toBe('videos/dos-loop-3.mp4');
+    expect(src(2)).toBe('videos/tres-loop-1.mp4');
+    expect(src(17)).toBe('videos/tres-loop-2.mp4');
+  });
+
+  it('cada copia arranca, además, en otro punto de su tramo', async () => {
     const { cards } = await render();
     const seek = (slot: number) => {
       const video = cards()[slot].querySelector('video')!;
@@ -148,10 +175,9 @@ describe('ReelWheel', () => {
       return time;
     };
 
-    // Las casillas 2 y 14 son el mismo reel («tres») y se ven a la vez, a ambos lados del centro:
-    // la 2 es su primera copia y la 14, la quinta.
+    // Casilla 2: primera copia de «tres»; casilla 17: su sexta copia.
     expect(seek(2)).toBe(0);
-    expect(seek(14)).toBeCloseTo(((4 * 0.38) % 1) * 10);
+    expect(seek(17)).toBeCloseTo(((5 * 0.38) % 1) * 10);
     expect(seek(0)).toBe(0);
   });
 

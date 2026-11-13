@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { SocialReel } from '../../../models/photo';
 import { TvMedia, VideoTv } from '../video-tv/video-tv';
-import { centerSlot, offsetFromCenter, positionFor, slotCount, STEP, VISIBLE_SIDE } from './wheel-layout';
+import { centerSlot, loopFor, offsetFromCenter, positionFor, slotCount, STEP, VISIBLE_SIDE } from './wheel-layout';
 
 /** Giro automático: una casilla cada AUTO_MS, y no antes de AUTO_MS desde el último gesto. */
 const AUTO_MS = 4000;
@@ -48,8 +48,8 @@ interface Playing {
  *     foco dentro, un arrastre en curso, la pestaña oculta o la tele abierta. El botón de pausa
  *     la detiene del todo (WCAG 2.2.2); con movimiento reducido empieza en pausa.
  *   - Se arrastra (ratón o dedo) con inercia, y encaja en la casilla más cercana.
- *   - Todas las que se ven reproducen su bucle en silencio; las copias del mismo reel van
- *     desfasadas. Con el ratón sobre la central, su bucle suena bajito. La pausa también
+ *   - Todas las que se ven reproducen su bucle en silencio; las copias del mismo reel alternan
+ *     tramos distintos del vídeo (`loops`), así no parece que se repita. Con el ratón sobre la central, su bucle suena bajito. La pausa también
  *     detiene los vídeos (vuelven los pósters).
  *   - Clic en la del centro: se transforma en la tele (vertical) y suena el reel completo.
  *     Clic en otra: gira hasta ella. Con Ctrl/⌘/Mayús o la rueda, el enlace abre Instagram.
@@ -72,13 +72,19 @@ export class ReelWheel {
   /** Casillas de la rueda: cada una con su reel (los reels se repiten en orden). */
   protected readonly slots = computed(() => {
     const reels = this.reels();
-    return Array.from({ length: slotCount(reels.length) }, (_, slot) => ({
-      slot,
-      index: slot % reels.length,
-      reel: reels[slot % reels.length],
-      /** Solo la primera vuelta llega al tabulador y a los lectores de pantalla. */
-      first: slot < reels.length,
-    }));
+    return Array.from({ length: slotCount(reels.length) }, (_, slot) => {
+      const reel = reels[slot % reels.length];
+      const copy = Math.floor(slot / reels.length);
+      return {
+        slot,
+        index: slot % reels.length,
+        reel,
+        /** Su tramo: las copias vecinas del mismo reel enseñan partes distintas. */
+        loopUrl: `videos/${reel.video}-loop-${loopFor(copy, reel.loops.length) + 1}.mp4`,
+        /** Solo la primera vuelta llega al tabulador y a los lectores de pantalla. */
+        first: slot < reels.length,
+      };
+    });
   });
 
   /** Casilla del centro. */
@@ -105,7 +111,6 @@ export class ReelWheel {
   protected readonly meta = (reel: SocialReel) =>
     [reel.context, reel.year].filter((part) => part !== null).join(' · ');
   protected readonly label = (reel: SocialReel) => `${reel.title}, ${this.meta(reel)}. Reproducir reel`;
-  protected readonly loopUrl = (reel: SocialReel) => `videos/${reel.video}-loop.mp4`;
 
   private readonly stage = viewChild.required<ElementRef<HTMLElement>>('stage');
 
@@ -181,8 +186,8 @@ export class ReelWheel {
   }
 
   /**
-   * Cada copia de un reel arranca en otro punto del bucle: si se ven dos tarjetas del mismo
-   * reel, no enseñan la misma imagen.
+   * Además de alternar tramos, cada copia arranca en otro punto de su tramo: las que comparten
+   * tramo (nunca vecinas) tampoco van sincronizadas.
    */
   protected startAt(video: HTMLVideoElement, slot: number): void {
     const copy = Math.floor(slot / Math.max(1, this.reels().length));
