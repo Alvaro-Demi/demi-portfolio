@@ -20,7 +20,7 @@ describe('layoutStrip', () => {
 
     expect(Number.isInteger(copies)).toBe(true);
     expect(copies).toBeGreaterThanOrEqual(2);
-    expect(radius).toBeGreaterThanOrEqual(2.5);
+    expect(radius).toBeGreaterThanOrEqual(3.6);
     expect(period).toBeCloseTo(360 / copies);
   });
 
@@ -130,6 +130,47 @@ describe('FilmStrip', () => {
     const stopped = spin(element);
     flushFrames(10);
     expect(spin(element)).toBe(stopped);
+  });
+
+  /** jsdom no tiene PointerEvent: un MouseEvent con el mismo nombre trae clientX y timeStamp. */
+  const pointer = (type: string, clientX: number) => new MouseEvent(type, { clientX, bubbles: true });
+
+  it('arrastrar mueve la tira con el gesto, en su sentido', async () => {
+    const { element } = await render();
+    const stage = element.querySelector<HTMLElement>('.film-stage')!;
+    flushFrames(2);
+    const before = parseFloat(spin(element));
+
+    stage.dispatchEvent(pointer('pointerdown', 300));
+    expect(stage.hasAttribute('data-dragging')).toBe(true);
+    stage.dispatchEvent(pointer('pointermove', 240)); // hacia la izquierda
+    const dragged = parseFloat(spin(element));
+    flushFrames(5); // mientras se arrastra, la tira no avanza sola
+    expect(parseFloat(spin(element))).toBe(dragged);
+    stage.dispatchEvent(pointer('pointerup', 240));
+
+    expect(dragged).toBeLessThan(before);
+    expect(stage.hasAttribute('data-dragging')).toBe(false);
+  });
+
+  it('las flechas mueven la tira una foto', async () => {
+    const { fixture, element } = await render();
+    flushFrames(2);
+    const start = parseFloat(spin(element));
+    const cruise = (() => {
+      flushFrames(60);
+      return start - parseFloat(spin(element));
+    })();
+
+    element.querySelector<HTMLButtonElement>('[aria-label="Foto siguiente"]')!.click();
+    await fixture.whenStable();
+    const before = parseFloat(spin(element));
+    flushFrames(60);
+    const travelled = before - parseFloat(spin(element));
+
+    // Una foto de media: un periodo entre el número de fotos, más lo que avanza sola
+    const oneFrame = layoutStrip(FRAMES).period / FRAMES.length;
+    expect(travelled).toBeGreaterThan(cruise + oneFrame * 0.9);
   });
 
   it('con movimiento reducido no anima ni muestra el botón', async () => {

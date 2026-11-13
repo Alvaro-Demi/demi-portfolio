@@ -7,7 +7,7 @@
 >
   <div class="story-pin">
     <header class="story-header" appReveal>
-      <p class="eyebrow" [id]="eyebrowId()">{{ chapter() }} — <span lang="en">conciertos</span></p>
+      <p class="eyebrow" [id]="eyebrowId()">{{ chapter() }} — <span lang="en">{{ story().category }}</span></p>
       <div class="story-heading">
         <h2 class="story-artist" [id]="titleId()">{{ story().artist }}</h2>
         <p class="story-meta">{{ meta() }}</p>

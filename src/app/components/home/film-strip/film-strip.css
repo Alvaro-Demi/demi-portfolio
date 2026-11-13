@@ -6,32 +6,43 @@
 
 /*
  * Dimensiones estables (sin saltos de layout mientras cargan las fotos). Todo lo de dentro
- * se mide en --film-u, el alto de la película, que es una fracción del ancho del escenario.
+ * se mide en --film-u, el alto de las fotos, que es una fracción del ancho del escenario.
  * Los lados se funden con el fondo: las fotos se pierden en la oscuridad al girar.
+ *
+ * Se arrastra en horizontal; en táctil, el gesto vertical sigue siendo scroll de la página
+ * (touch-action: pan-y).
  */
 .film-stage {
-  --film-u: 62cqi;
+  --film-u: 46cqi;
   position: relative;
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   container-type: inline-size;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
   mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+}
+
+.film-stage[data-dragging] {
+  cursor: grabbing;
 }
 
 @media (min-width: 48rem) {
   .film-stage {
-    --film-u: 40cqi;
-    aspect-ratio: 16 / 10;
+    --film-u: 30cqi;
+    aspect-ratio: 2 / 1;
   }
 }
 
 @media (min-width: 64rem) {
   .film-stage {
     /* En pantallas anchas pero bajas, manda el alto: la tira siempre cabe */
-    --film-u: min(28cqi, 48svh);
+    --film-u: min(21cqi, 36svh);
     aspect-ratio: auto;
     /* Mismo valor que --film-u, en unidades de la ventana: el escenario va a sangre */
-    block-size: calc(min(28vw, 48svh) * 1.45);
+    block-size: calc(min(21vw, 36svh) * 1.6);
   }
 }
 
@@ -39,7 +50,7 @@
 .film-scene {
   position: absolute;
   inset: 0;
-  perspective: calc(var(--film-u) * 4.5);
+  perspective: calc(var(--film-u) * 6.6);
   perspective-origin: 50% 40%;
 }
 
@@ -50,7 +61,7 @@
   inset: 0;
   z-index: 1;
   background: radial-gradient(
-    ellipse calc(var(--film-u) * 1.1) calc(var(--film-u) * 0.75) at 50% 50%,
+    ellipse calc(var(--film-u) * 1.6) calc(var(--film-u) * 1.1) at 50% 50%,
     rgb(255 255 255 / 0.07),
     transparent 70%
   );
@@ -70,39 +81,28 @@
     rotateY(var(--spin, 0deg));
 }
 
-/* --- Fotogramas ---------------------------------------------------------- */
+/* --- Fotos --------------------------------------------------------------- */
 
-/*
- * Cada fotograma: un trozo de película (bandas perforadas arriba y abajo) con la foto.
- * Los fotogramas se tocan, así la película es continua; la separación está en la foto.
- */
+/* Cada hueco del anillo: la foto con su separación a los lados */
 .film-frame {
-  --film-hole: calc(var(--film-u) * 0.075);
   --film-lift: 0px;
   position: absolute;
   inset-inline-start: 50%;
   inset-block-start: 50%;
-  inline-size: calc(var(--w) * var(--film-u) + 1px); /* +1 px: sin rendijas entre fotogramas */
+  inline-size: calc(var(--w) * var(--film-u));
   block-size: var(--film-u);
   margin-inline-start: calc(var(--w) * var(--film-u) / -2);
   margin-block-start: calc(var(--film-u) / -2);
   transform: rotateY(var(--a)) translateZ(calc(var(--film-r) * var(--film-u) + var(--film-lift)));
   backface-visibility: hidden;
-  /* Perforaciones: rectángulos del color del fondo, repetidos sin cortarse en los bordes */
-  background:
-    linear-gradient(to right, transparent 28%, var(--color-bg) 28% 72%, transparent 72%) 0
-      calc(var(--film-u) * 0.03) / var(--film-hole) calc(var(--film-u) * 0.045) round no-repeat,
-    linear-gradient(to right, transparent 28%, var(--color-bg) 28% 72%, transparent 72%) 0
-      calc(100% - var(--film-u) * 0.03) / var(--film-hole) calc(var(--film-u) * 0.045) round no-repeat,
-    #151515;
   transition: transform 500ms var(--ease-out);
 }
 
 .film-photo {
   position: absolute;
-  inset: 16% calc(var(--film-u) * 0.025);
+  inset: 0 calc(var(--film-u) * 0.035);
   overflow: hidden;
-  border-radius: calc(var(--film-u) * 0.02);
+  border-radius: calc(var(--film-u) * 0.03);
   background-color: var(--color-surface);
 }
 
@@ -113,45 +113,24 @@
     scale 600ms var(--ease-out);
 }
 
-/* Marcas del borde de la película, junto a la foto: «DEMI 03A» */
-.film-print {
-  position: absolute;
-  inset-inline-start: calc(var(--film-u) * 0.03);
-  inset-block-end: calc(var(--film-u) * 0.083);
-  color: var(--color-text-muted);
-  font-size: calc(var(--film-u) * 0.042);
-  font-weight: var(--weight-medium);
-  line-height: 1;
-  letter-spacing: 0.14em;
-  white-space: nowrap;
-  transition: color 300ms var(--ease-out);
-}
-
-.film-print span {
-  font-variant-numeric: tabular-nums;
-}
-
 /* --- Hover: la foto señalada se adelanta; las demás se apagan ------------- */
 
+/* Mientras se arrastra no: las fotos pasan bajo el cursor y parpadearían */
 @media (hover: hover) and (pointer: fine) {
-  .film-frame:hover {
-    --film-lift: calc(var(--film-u) * 0.14);
+  .film-stage:not([data-dragging]) .film-frame:hover {
+    --film-lift: calc(var(--film-u) * 0.2);
   }
 
-  .film-frame:hover img {
+  .film-stage:not([data-dragging]) .film-frame:hover img {
     scale: 1.06;
   }
 
-  .film-frame:hover .film-print {
-    color: var(--color-accent);
-  }
-
-  .film-ring:has(.film-frame:hover) .film-frame:not(:hover) img {
+  .film-stage:not([data-dragging]) .film-ring:has(.film-frame:hover) .film-frame:not(:hover) img {
     filter: brightness(0.4) saturate(0.5);
   }
 }
 
-/* --- Pie: título y pausa --------------------------------------------------- */
+/* --- Pie: título, flechas y pausa ------------------------------------------ */
 
 .film-controls {
   display: flex;
@@ -165,6 +144,46 @@
 .film-title {
   font-family: var(--font-body);
   line-height: var(--leading-normal);
+}
+
+.film-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Móvil: no cabe todo en una línea. Título arriba; flechas a la izquierda y pausa a la derecha */
+@media (max-width: 47.99rem) {
+  .film-controls {
+    flex-wrap: wrap;
+    row-gap: var(--space-2);
+  }
+
+  .film-title {
+    flex-basis: 100%;
+  }
+
+  .film-buttons {
+    flex: 1;
+  }
+
+  .film-toggle {
+    margin-inline-start: auto;
+  }
+}
+
+.film-arrow {
+  display: grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  background: none;
+  font-size: var(--text-base);
+  line-height: 1;
+  transition: border-color var(--duration-fast) var(--ease-out);
 }
 
 .film-toggle {
@@ -187,6 +206,10 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .film-arrow:hover {
+    border-color: var(--color-text-muted);
+  }
+
   .film-toggle:hover {
     text-decoration-color: var(--color-accent);
   }

@@ -69,6 +69,9 @@ export interface PhotoStory {
   /** También es el ancla de la sección (#live-01). */
   readonly id: string;
   readonly artist: string;
+  /** Etiqueta de la sección, junto al número: 'Conciertos', 'Velada de boxeo'… */
+  readonly category: string;
+
   /** 'Live', 'Gira'… */
   readonly context: string;
   /** `null` mientras no se confirme. */

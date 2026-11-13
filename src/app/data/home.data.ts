@@ -9,7 +9,7 @@ import type { Photo, PhotoStory, Portrait, SequenceFrame, WorkEntry } from '../m
  *   3. Copia aquí `width` y `height` de la tabla que imprime, y escribe el `alt`.
  *   4. Ajusta `focus` (y `mobile`) si el recorte corta lo importante.
  *
- * Orden de la Home: Hero → 01 Videoclip → Detrás de las cámaras → 02 Live → 03 Retrato → 04 Live → 05 Archivo
+ * Orden de la Home: Hero → 01 Videoclip → Detrás de las cámaras → 02 Live → 03 Retrato → 04 Live
  * → 06 About → 07 Contact.
  */
 
@@ -94,6 +94,7 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
   {
     id: 'live-01',
     artist: 'AL SAFIR EN CONCIERTO',
+    category: 'Conciertos',
     context: 'Live',
     place: null, // Pendiente: ciudad o sala.
     year: null,
@@ -107,12 +108,13 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
   {
     id: 'live-02',
     artist: 'COMBATE DE DOMÍNGUEZ SEVILLANO',
+    category: 'Velada de boxeo',
     context: 'Live',
     place: null, // Pendiente: ciudad o sala.
     year: null,
     photo: {
       src: 'composicion3',
-      alt: 'Secuencia en blanco y negro de un directo: el artista canta de perfil con gorra, posa con su equipo frente al público y saluda de espaldas a la multitud',
+      alt: 'velada de boxeo: varias imagenes de Dominguez Sevillano en su combate',
       width: 6480,
       height: 1350,
     },
@@ -262,34 +264,7 @@ export const INTERLUDE_SEQUENCE: readonly SequenceFrame[] = [
   },
 ];
 
-/** Fotograma del interludio por su id (falla al arrancar si se renombra). */
-function interludeFrame(src: string): Photo {
-  const frame = INTERLUDE_SEQUENCE.find((f) => f.src === src);
-  if (!frame) throw new Error(`No hay ninguna foto "${src}" en INTERLUDE_SEQUENCE`);
-  return frame;
-}
 
-/*
- * 05 — Archivo. Animación isométrica: las fotos pasan en diagonal como tarjetas, de arriba
- * a la derecha hacia un montón abajo a la izquierda. Cierra el recorrido antes del About.
- *
- * Son fotos que ya están en la web (se reutilizan sus archivos). Las tarjetas son verticales
- * (4:5): para las horizontales, `focus` decide qué parte se ve.
- * Hacen falta al menos 8 fotos; puedes añadir, quitar o reordenar libremente.
- * Alterna color y blanco y negro para que el paso de una a otra se note.
- */
-export const ARCHIVE_CARDS: readonly Photo[] = [
-  PORTRAITS[0].photo, // retrato del águila
-  PORTRAITS[2].photo, // retrato con la bufanda
-  { ...HERO_PHOTO, focus: '26% 50%' }, // DEMI grabando el concierto (B/N)
-  PORTRAITS[1].photo, // la pistola
-  INTERLUDE_PHOTO, // Cabo Sunión
-  interludeFrame('BTS2'), // estadio
-  interludeFrame('BTS7'), // preparando el estabilizador
-  interludeFrame('BTS3'), // rodaje en la montaña
-  interludeFrame('BTS5'), // plaza de toros
-  interludeFrame('BTS8'), // sesión de producto en el monte
-];
 
 export const ABOUT_PHOTO: Photo = {
   src: 'about',
