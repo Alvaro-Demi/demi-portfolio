@@ -97,7 +97,7 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
 export const SOCIAL_REELS: readonly SocialReel[] = [
   {
     id: 'reel-velada',
-    title: PENDING_TITLE, // Pendiente: título del reel.
+    title: 'Velada de Boxeo', // Pendiente: título del reel.
     context: 'Reel',
     year: null,
     video: 'reel-01',
@@ -113,7 +113,7 @@ export const SOCIAL_REELS: readonly SocialReel[] = [
   },
   {
     id: 'reel-directo',
-    title: PENDING_TITLE, // Pendiente: título del reel.
+    title: 'Concierto', // Pendiente: título del reel.
     context: 'Reel',
     year: null,
     video: 'reel-02',
@@ -129,7 +129,7 @@ export const SOCIAL_REELS: readonly SocialReel[] = [
   },
   {
     id: 'reel-combate',
-    title: PENDING_TITLE, // Pendiente: título del reel.
+    title: 'Velda de Boxeo', // Pendiente: título del reel.
     context: 'Reel',
     year: null,
     video: 'reel-03',
