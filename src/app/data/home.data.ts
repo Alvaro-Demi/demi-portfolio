@@ -56,7 +56,7 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
     context: 'Videoclip',
     type: 'video',
     year: 2026,
-    youtubeUrl:'https://www.youtube.com/watch?v=k1-Gh7qZDlc&list=RDk1-Gh7qZDlc&start_radio=1', // Pendiente: URL de YouTube del videoclip.
+    youtubeUrl: 'https://www.youtube.com/watch?v=k1-Gh7qZDlc&list=RDk1-Gh7qZDlc&start_radio=1', // Pendiente: URL de YouTube del videoclip.
     photo: {
       src: 'work-05',
       alt: 'Tríptico de rodaje: un grupo posa en una nave, dos artistas junto a una mujer mayor sentada en un trono y una escena en un interior',
@@ -90,7 +90,7 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
 export const PHOTO_STORIES: readonly PhotoStory[] = [
   {
     id: 'conciertos', // ancla: el menú enlaza a #conciertos
-    artist: 'AL SAFIR EN CONCIERTO',
+    artist: 'AL SAFIR EN DIRECTO',
     category: 'Conciertos',
     context: 'Live',
     place: null, // Pendiente: ciudad o sala.
@@ -126,7 +126,11 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
  */
 export const PORTRAITS_INTRO: SectionIntro = {
   // Solo se ve en escritorio, bajo el título «Retrato»: rellena la columna junto a las fotos.
-  lead: 'No retrato caras: retrato actitud.',
+  paragraphs: [
+    'Congelar tu mirada en el momento adecuado.',
+    'Trascender sin perder la esencia.',
+    'No retrato caras, retrato actitud.',
+  ],
   tags: ['Marcas de ropa', 'Artistas', 'Modelos', 'Productos'],
 };
 

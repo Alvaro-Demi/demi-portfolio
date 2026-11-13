@@ -93,10 +93,13 @@ describe('Portraits', () => {
     const { fixture, element } = await render();
     expect(element.querySelector('.portraits-intro')).toBeNull();
 
-    fixture.componentRef.setInput('intro', { lead: 'Frase', tags: ['Marcas', 'Artistas'] });
+    fixture.componentRef.setInput('intro', { paragraphs: ['Uno', 'Dos'], tags: ['Marcas', 'Artistas'] });
     await fixture.whenStable();
 
-    expect(element.querySelector('.portraits-lead')?.textContent?.trim()).toBe('Frase');
+    expect([...element.querySelectorAll('.portraits-lead p')].map((p) => p.textContent?.trim())).toEqual([
+      'Uno',
+      'Dos',
+    ]);
     expect([...element.querySelectorAll('.portraits-tags li')].map((li) => li.textContent?.trim())).toEqual([
       'Marcas',
       'Artistas',

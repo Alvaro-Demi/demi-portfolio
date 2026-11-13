@@ -5,46 +5,34 @@
 
     <!-- Solo en escritorio: llena la columna junto a las fotos (ver portraits.css) -->
     @if (intro(); as intro) {
-      <div class="portraits-intro">
-        <p class="portraits-lead">{{ intro.lead }}</p>
-        <ul class="portraits-tags" role="list">
-          @for (tag of intro.tags; track tag) {
-            <li>{{ tag }}</li>
-          }
-        </ul>
+    <div class="portraits-intro">
+      <div class="portraits-lead">
+        @for (paragraph of intro.paragraphs; track $index) {
+        <p>{{ paragraph }}</p>
+        }
       </div>
+
+      <ul class="portraits-tags" role="list">
+        @for (tag of intro.tags; track tag) {
+        <li>{{ tag }}</li>
+        }
+      </ul>
+    </div>
     }
   </header>
 
   <!-- Marco estable: los retratos cambian de hueco y el CSS anima posición y tamaño -->
-  <div
-    class="portraits-stage"
-    #stage
-    appReveal
-    [revealDelay]="120"
-    [style.--count]="count()"
-    (pointerenter)="hover($event, true)"
-    (pointerleave)="hover($event, false)"
-  >
+  <div class="portraits-stage" #stage appReveal [revealDelay]="120" [style.--count]="count()"
+    (pointerenter)="hover($event, true)" (pointerleave)="hover($event, false)">
     @for (card of cards(); track card.portrait.id) {
-      <button
-        type="button"
-        class="portraits-card"
-        [attr.data-slot]="card.slot === 0 ? 'main' : 'thumb'"
-        [style.--k]="card.slot - 1"
-        [attr.aria-current]="card.slot === 0 ? 'true' : null"
-        (click)="go(card.i)"
-      >
-        <img
-          [ngSrc]="card.portrait.photo.src"
-          [alt]="card.portrait.photo.alt"
-          fill
-          sizes="(min-width: 64rem) 40vw, (min-width: 48rem) 64vw, 72vw"
-          [style.object-position]="card.portrait.photo.focus ?? null"
-        />
-        <!-- Visor de cámara: esquinas de enfoque y cruz; aparece con el ratón sobre la grande -->
-        <span class="portraits-viewfinder" aria-hidden="true"></span>
-      </button>
+    <button type="button" class="portraits-card" [attr.data-slot]="card.slot === 0 ? 'main' : 'thumb'"
+      [style.--k]="card.slot - 1" [attr.aria-current]="card.slot === 0 ? 'true' : null" (click)="go(card.i)">
+      <img [ngSrc]="card.portrait.photo.src" [alt]="card.portrait.photo.alt" fill
+        sizes="(min-width: 64rem) 40vw, (min-width: 48rem) 64vw, 72vw"
+        [style.object-position]="card.portrait.photo.focus ?? null" />
+      <!-- Visor de cámara: esquinas de enfoque y cruz; aparece con el ratón sobre la grande -->
+      <span class="portraits-viewfinder" aria-hidden="true"></span>
+    </button>
     }
   </div>
 
@@ -52,7 +40,7 @@
     <!-- La línea marca el ritmo: al llenarse, pasa al siguiente retrato -->
     <div class="portraits-progress" aria-hidden="true">
       @for (key of [active()]; track key) {
-        <span (animationend)="advance()"></span>
+      <span (animationend)="advance()"></span>
       }
     </div>
 
@@ -61,17 +49,17 @@
     </p>
 
     @for (key of [active()]; track key) {
-      <p class="portraits-caption">
-        <span class="portraits-artist">{{ current().artist }}</span>&ngsp;<span class="portraits-meta">{{
-          meta()
+    <p class="portraits-caption">
+      <span class="portraits-artist">{{ current().artist }}</span>&ngsp;<span class="portraits-meta">{{
+        meta()
         }}</span>
-      </p>
+    </p>
     }
 
     @if (!reducedMotion() && count() > 1) {
-      <button type="button" class="portraits-toggle" (click)="toggle()">
-        {{ userPaused() ? 'Reproducir' : 'Pausar' }}<span class="visually-hidden"> los retratos</span>
-      </button>
+    <button type="button" class="portraits-toggle" (click)="toggle()">
+      {{ userPaused() ? 'Reproducir' : 'Pausar' }}<span class="visually-hidden"> los retratos</span>
+    </button>
     }
   </div>
 

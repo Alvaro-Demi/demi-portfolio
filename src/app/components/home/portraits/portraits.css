@@ -221,7 +221,8 @@
   letter-spacing: 0.12em;
 }
 
-.portraits-count span {
+.portraits-count span,
+.portraits-meta {
   color: var(--color-text-muted);
 }
 
@@ -243,10 +244,6 @@
   gap: 0 var(--space-3);
   min-inline-size: 0;
   animation: portraits-caption 500ms var(--ease-out) both;
-}
-
-.portraits-meta {
-  color: var(--color-text-muted);
 }
 
 @keyframes portraits-caption {
@@ -300,28 +297,45 @@
     display: flex;
     flex-direction: column;
     grid-column: 1 / span 5;
-    grid-row: 1;
+    /* Baja también por la fila del pie: las etiquetas quedan a la altura del pie de las fotos */
+    grid-row: 1 / span 2;
+  }
+
+  /* El número arriba del todo: su interlineado no lo separa del borde de la foto */
+  .portraits-header .eyebrow {
+    margin-block-start: -0.3em;
   }
 
   .portraits-intro {
-    display: block;
-    margin-block-start: auto;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     padding-block-start: var(--space-12);
   }
 
   .portraits-lead {
     max-inline-size: 16ch;
     font-size: var(--text-xl);
-    line-height: 1.25;
+    line-height: 1.1;
     text-wrap: balance;
   }
 
-  /* Como la lista de servicios del About: línea fina encima */
+  .portraits-lead p + p {
+    margin-block-start: var(--space-4);
+  }
+
+  /*
+   * Mismas medidas que el pie de las fotos: línea fina, el mismo aire (2 × --space-2) y una
+   * fila del alto del botón Pausar con el texto centrado. Así la línea cae sobre la línea de
+   * progreso y las etiquetas sobre «01 / 04 · AL SAFIR…».
+   */
   .portraits-tags {
     display: flex;
     flex-wrap: wrap;
+    align-content: center;
     gap: var(--space-2) var(--space-6);
-    margin-block-start: var(--space-8);
+    min-block-size: calc(2.75rem + var(--space-4) + 1px); /* +1 px: la línea */
+    margin-block-start: auto;
     padding-block-start: var(--space-4);
     border-block-start: 1px solid var(--color-line);
     color: var(--color-text-muted);

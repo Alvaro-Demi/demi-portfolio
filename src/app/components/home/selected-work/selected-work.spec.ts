@@ -41,7 +41,7 @@ describe('SelectedWork', () => {
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelector('#work-title')?.textContent?.trim()).toBe('Selected work');
+    expect(element.querySelector('#work-title')?.textContent?.trim()).toBe('Videoclips');
     expect(element.querySelector('app-video-ribbon')).not.toBeNull();
     expect(element.querySelector('.rib-count')?.textContent?.replace(/\s+/g, ' ').trim()).toBe('01 / 01');
   });

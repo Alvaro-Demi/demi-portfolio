@@ -60,7 +60,7 @@ export interface Portrait {
 
 /** Texto de presentación de una sección: una frase destacada y una lista de etiquetas. */
 export interface SectionIntro {
-  readonly lead: string;
+  readonly paragraphs: string[];
   readonly tags: readonly string[];
 }
 

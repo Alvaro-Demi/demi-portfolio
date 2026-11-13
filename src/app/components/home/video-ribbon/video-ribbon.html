@@ -16,6 +16,7 @@
         [style.--w]="card.width"
         (pointerenter)="hover($event, i)"
         (pointerleave)="hover($event, -1)"
+        draggable="false"
       >
         @for (k of slices; track k) {
           <!-- Cada franja enseña su trozo de la tarjeta entera (la cara) -->
