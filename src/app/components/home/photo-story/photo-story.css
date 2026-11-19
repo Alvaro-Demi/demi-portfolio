@@ -134,3 +134,20 @@
 .story.is-tracking .story-progress {
   display: block;
 }
+
+/* --- Escritorio: una pantalla, con el mismo aire que el resto de secciones --- */
+
+@media (min-width: 64rem) {
+  /* Sin efecto (movimiento reducido): cabecera y tira centradas en vertical */
+  .story:not(.is-tracking) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: var(--section-pad-block);
+  }
+
+  .story.is-tracking .story-pin {
+    block-size: var(--screen-block);
+    padding-block: var(--section-pad-block);
+  }
+}

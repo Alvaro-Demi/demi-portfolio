@@ -44,9 +44,13 @@
 
 /* Escritorio: el lema junto a la marca y el copyright al extremo derecho */
 @media (min-width: 64rem) {
+  /* Alto fijo (--footer-block): Contacto le resta este alto para que ambos quepan en pantalla */
   .site-footer {
     display: flex;
+    align-items: center;
     gap: var(--space-8);
+    block-size: var(--footer-block);
+    padding-block: 0;
   }
 
   .legal {

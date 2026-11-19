@@ -43,6 +43,13 @@
   }
 }
 
+/* Escritorio: la rueda y la cabecera de la sección (≈ 12 rem con su aire) caben en una pantalla */
+@media (min-width: 64rem) {
+  .reel-stage {
+    --reel-h: min(34rem, calc((var(--screen-block) - 12rem) / 1.12));
+  }
+}
+
 /* --- Tarjetas --------------------------------------------------------------- */
 
 /* Ocultas hasta que el bucle las coloca (y de nuevo si salen de la vista) */

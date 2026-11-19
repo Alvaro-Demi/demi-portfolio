@@ -82,7 +82,9 @@
  */
 @media (min-width: 64rem) {
   .about {
-    --photo-h: calc(100svh - var(--header-height) - 6rem);
+    /* La foto llena la pantalla menos el aire común */
+    --photo-h: calc(var(--screen-block) - 2 * var(--section-pad-block));
+    padding-block: var(--section-pad-block);
     grid-template-columns: repeat(12, 1fr);
     /* La fila del texto absorbe el alto que sobra: los servicios bajan hasta el pie de la foto */
     grid-template-rows: auto 1fr;

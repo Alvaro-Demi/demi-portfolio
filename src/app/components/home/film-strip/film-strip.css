@@ -98,6 +98,14 @@
     /* Mismo valor que --film-u, en unidades de la ventana: el escenario va a sangre */
     block-size: calc(min(21vw, 36svh) * 1.6);
   }
+
+  /* Una pantalla: cabecera y escenario centrados, con el aire común arriba y abajo */
+  .film {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: var(--section-pad-block);
+  }
 }
 
 /* Cámara: un poco por encima del centro, así el borde inferior dibuja el arco */

@@ -8,7 +8,7 @@ import { ReelWheel } from '../reel-wheel/reel-wheel';
   selector: 'app-social-media',
   imports: [Reveal, ReelWheel],
   template: `
-    <section id="social" class="social" aria-labelledby="social-title">
+    <section id="social" class="social screen" aria-labelledby="social-title">
       <div class="social-header" appReveal>
         <p class="eyebrow">{{ chapter() }} — Reels</p>
         <h2 id="social-title" class="social-title" lang="en">Social Media</h2>
@@ -41,6 +41,16 @@ import { ReelWheel } from '../reel-wheel/reel-wheel';
     /* La rueda, a sangre: de borde a borde */
     .social-wheel {
       margin-inline: calc(var(--page-gutter) * -1);
+    }
+
+    /* Escritorio: una pantalla, con la cabecera y la rueda centradas en vertical */
+    @media (min-width: 64rem) {
+      .social {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-block: var(--section-pad-block);
+      }
     }
   `,
 })

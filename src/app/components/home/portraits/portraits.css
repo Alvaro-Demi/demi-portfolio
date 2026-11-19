@@ -282,7 +282,13 @@
 
 @media (min-width: 64rem) {
   .portraits {
-    --stage-size: min(100%, calc(100svh - var(--header-height) - 9rem));
+    /* La pantalla menos su aire, el pie (2.75rem + --space-4 + 1px ≈ 4.5rem) y el row-gap */
+    --stage-size: min(
+      100%,
+      calc(var(--screen-block) - 2 * var(--section-pad-block) - 4.5rem - var(--space-6))
+    );
+    align-content: center;
+    padding-block: var(--section-pad-block);
     grid-template-columns: repeat(12, 1fr);
     column-gap: var(--space-6);
     row-gap: var(--space-6);
