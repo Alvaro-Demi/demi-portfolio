@@ -147,6 +147,15 @@ select.field-input option {
   }
 }
 
+/* Tablet y escritorio: Contacto + footer = una pantalla; al encajar aquí, el footer queda al pie */
+@media (min-width: 48rem) {
+  .contact {
+    align-content: center;
+    min-block-size: calc(var(--screen-block) - var(--footer-block));
+    padding-block: var(--section-pad-block);
+  }
+}
+
 /*
  * Escritorio: dos columnas. A la izquierda, el título; a la derecha, el texto y el formulario.
  * El texto arranca a la altura del título (no de la etiqueta «06 — Contact»): se baja lo que
@@ -157,10 +166,6 @@ select.field-input option {
     grid-template-columns: 7fr 4fr;
     grid-template-rows: auto 1fr;
     align-items: start;
-    /* Contacto + footer = una pantalla: al encajar aquí, el footer queda visible al pie */
-    min-block-size: calc(var(--screen-block) - var(--footer-block));
-    /* La fila 1fr absorbe el alto que sobra; aquí, solo el aire común */
-    padding-block: var(--section-pad-block);
     column-gap: var(--space-16);
   }
 

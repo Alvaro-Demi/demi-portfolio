@@ -57,7 +57,7 @@
     }
 
     @if (!reducedMotion() && count() > 1) {
-    <button type="button" class="portraits-toggle" (click)="toggle()">
+    <button type="button" class="portraits-toggle text-toggle" (click)="toggle()">
       {{ userPaused() ? 'Reproducir' : 'Pausar' }}<span class="visually-hidden"> los retratos</span>
     </button>
     }

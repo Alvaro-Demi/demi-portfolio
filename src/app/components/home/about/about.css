@@ -75,21 +75,23 @@
 }
 
 /*
- * --- Escritorio: título y texto | foto ---------------------------------------
- * Como en Retrato, la foto cabe entera en pantalla y la columna izquierda mide lo mismo que
- * ella: el número y el título arriba (a la altura de su borde superior) y los servicios abajo
- * (a la altura de su borde inferior).
+ * --- Tablet y escritorio: título y texto | foto ------------------------------
+ * Una pantalla, con el aire común. Como en Retrato, la foto cabe entera en pantalla y la
+ * columna izquierda mide lo mismo que ella: el número y el título arriba (a la altura de su
+ * borde superior) y los servicios abajo (a la altura de su borde inferior).
  */
-@media (min-width: 64rem) {
+@media (min-width: 48rem) {
   .about {
+    padding-block: var(--section-pad-block);
     /* La foto llena la pantalla menos el aire común */
     --photo-h: calc(var(--screen-block) - 2 * var(--section-pad-block));
-    padding-block: var(--section-pad-block);
+    /* Aire entre bloques: se aprieta en pantallas bajas para que el texto no supere a la foto */
+    --about-gap: min(var(--space-8), 2.5svh);
     grid-template-columns: repeat(12, 1fr);
     /* La fila del texto absorbe el alto que sobra: los servicios bajan hasta el pie de la foto */
     grid-template-rows: auto 1fr;
     column-gap: var(--space-6);
-    row-gap: var(--space-8);
+    row-gap: var(--about-gap);
   }
 
   .about-header,
@@ -110,14 +112,13 @@
     grid-row: 2;
   }
 
-
   .about-services {
     margin-block-start: auto;
   }
 
   /* El hueco que sobra queda entre el botón y los servicios (como mínimo, el de siempre) */
   .about-cta {
-    margin-block-end: var(--space-8);
+    margin-block: var(--about-gap);
   }
 
   .about-media {
@@ -127,10 +128,45 @@
     inline-size: auto;
   }
 
-  /* Alta como la pantalla (menos el header y un margen), sin pasar de su tamaño natural */
+  /*
+   * Alta como la pantalla (menos el aire común), sin pasar de su tamaño natural. En tablet
+   * manda el ancho: 66vw de alto (foto 2:3) = 44vw de ancho, y el texto conserva su columna.
+   */
   .about-media img {
     inline-size: auto;
-    block-size: min(var(--photo-h), 52rem);
+    block-size: min(var(--photo-h), 52rem, 66vw);
+  }
+}
+
+/*
+ * Tablet y pantallas verticales: la foto, limitada por el ancho, es más baja que la pantalla.
+ * En vez de estirar el texto hasta su pie, texto y foto se centran juntos en vertical: las
+ * filas 1fr de los extremos se reparten el alto que sobra.
+ */
+@media (min-width: 48rem) and (max-width: 63.99rem), (min-width: 48rem) and (orientation: portrait) {
+  .about {
+    grid-template-rows: 1fr auto auto 1fr;
+  }
+
+  .about-header {
+    grid-row: 2;
+  }
+
+  .about-body {
+    grid-row: 3;
+  }
+
+  .about-media {
+    grid-row: 1 / -1;
+    align-self: center;
+  }
+
+  .about-cta {
+    margin-block-end: 0;
+  }
+
+  .about-services {
+    margin-block-start: var(--space-8);
   }
 }
 

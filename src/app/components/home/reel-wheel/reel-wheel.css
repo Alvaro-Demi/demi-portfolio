@@ -43,10 +43,11 @@
   }
 }
 
-/* Escritorio: la rueda y la cabecera de la sección (≈ 12 rem con su aire) caben en una pantalla */
-@media (min-width: 64rem) {
+/* Tablet y escritorio: la rueda, la cabecera de la sección y la fila de controles bajo la rueda
+   (≈ 16 rem con su aire) caben en una pantalla */
+@media (min-width: 48rem) {
   .reel-stage {
-    --reel-h: min(34rem, calc((var(--screen-block) - 12rem) / 1.12));
+    --reel-h: min(34rem, calc((var(--screen-block) - 16rem) / 1.12));
   }
 }
 

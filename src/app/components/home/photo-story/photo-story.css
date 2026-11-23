@@ -135,10 +135,10 @@
   display: block;
 }
 
-/* --- Escritorio: una pantalla, con el mismo aire que el resto de secciones --- */
+/* --- Tablet y escritorio: una pantalla, con el mismo aire que el resto de secciones --- */
 
-@media (min-width: 64rem) {
-  /* Sin efecto (movimiento reducido): cabecera y tira centradas en vertical */
+@media (min-width: 48rem) {
+  /* Sin efecto fijado (tablet, o movimiento reducido): cabecera y tira centradas en vertical */
   .story:not(.is-tracking) {
     display: flex;
     flex-direction: column;

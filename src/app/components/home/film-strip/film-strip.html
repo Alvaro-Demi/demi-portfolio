@@ -5,7 +5,7 @@
     <p class="eyebrow">{{ chapter() }} — <span lang="en">Backstage</span></p>
     <h2 id="film-title" class="film-title">Detrás de las cámaras</h2>
     @if (!reducedMotion()) {
-      <button type="button" class="film-toggle" (click)="toggle()">
+      <button type="button" class="film-toggle text-toggle" (click)="toggle()">
         {{ userPaused() ? 'Reproducir' : 'Pausar' }}<span class="visually-hidden"> la tira de fotos</span>
       </button>
     }

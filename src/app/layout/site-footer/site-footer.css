@@ -36,21 +36,23 @@
   font-size: inherit;
 }
 
+/* Alto fijo (--footer-block): Contacto le resta este alto para que ambos quepan en pantalla */
 @media (min-width: 48rem) {
   .site-footer {
+    /* La fila, centrada en el alto fijo; dentro, las tres partes siguen en la línea base */
+    align-content: center;
+    block-size: var(--footer-block);
+    padding-block: 0;
     letter-spacing: var(--tracking-wide);
   }
 }
 
 /* Escritorio: el lema junto a la marca y el copyright al extremo derecho */
 @media (min-width: 64rem) {
-  /* Alto fijo (--footer-block): Contacto le resta este alto para que ambos quepan en pantalla */
   .site-footer {
     display: flex;
     align-items: center;
     gap: var(--space-8);
-    block-size: var(--footer-block);
-    padding-block: 0;
   }
 
   .legal {

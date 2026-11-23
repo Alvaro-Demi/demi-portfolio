@@ -36,13 +36,6 @@
 }
 
 @media (min-width: 48rem) {
-  .work-header {
-    grid-template-columns: 1fr auto;
-    align-items: end;
-  }
-}
-
-@media (min-width: 64rem) {
   /* Una pantalla: cabecera y cinta centradas en vertical */
   .work {
     display: flex;
@@ -51,6 +44,13 @@
     padding-block: var(--section-pad-block);
   }
 
+  .work-header {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+}
+
+@media (min-width: 64rem) {
   /* El texto, justo a la derecha del título: su última línea comparte la línea base
      de «SELECTED WORK», sea cual sea el tamaño del título */
   .work-header {

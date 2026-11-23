@@ -43,8 +43,8 @@ import { ReelWheel } from '../reel-wheel/reel-wheel';
       margin-inline: calc(var(--page-gutter) * -1);
     }
 
-    /* Escritorio: una pantalla, con la cabecera y la rueda centradas en vertical */
-    @media (min-width: 64rem) {
+    /* Tablet y escritorio: una pantalla, con la cabecera y la rueda centradas en vertical */
+    @media (min-width: 48rem) {
       .social {
         display: flex;
         flex-direction: column;

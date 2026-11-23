@@ -74,11 +74,11 @@
   --page-gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
   --header-height: 4.5rem;
 
-  /* Escritorio: cada sección ocupa una pantalla (el alto visible bajo el header fijo) */
+  /* Tablet y escritorio: cada sección ocupa una pantalla (el alto visible bajo el header fijo) */
   --screen-block: calc(100svh - var(--header-height) - env(safe-area-inset-top, 0px));
   /* Aire arriba y abajo dentro de cada pantalla: crece con el alto de la ventana */
   --section-pad-block: clamp(var(--space-6), 4svh, var(--space-12));
-  /* Escritorio: alto fijo del footer, para que Contacto + footer midan juntos una pantalla */
+  /* Tablet y escritorio: alto fijo del footer, para que Contacto + footer midan juntos una pantalla */
   --footer-block: 7.5rem;
 
   /* Movimiento */
@@ -226,12 +226,40 @@ a {
   }
 }
 
+/* Botón de texto «Pausar / Reanudar» (Retrato y Film strip): área táctil de 2.75rem y
+   subrayado rojo al pasar el ratón */
+.text-toggle {
+  min-block-size: 2.75rem;
+  min-inline-size: 6.5rem;
+  padding-inline: var(--space-2);
+  margin-inline-end: calc(var(--space-2) * -1);
+  border: 0;
+  background: none;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-align: end;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .text-toggle:hover {
+    text-decoration-color: var(--color-accent);
+  }
+}
+
 /*
- * Escritorio: una sección = una pantalla. Cada sección mide como mínimo el alto visible bajo
- * el header (si no cabe, crece) y el scroll encaja suavemente en su inicio al soltarlo cerca.
- * El centrado y el padding vertical de cada una viven en su CSS (--section-pad-block).
+ * Tablet y escritorio: una sección = una pantalla. Cada sección mide como mínimo el alto
+ * visible bajo el header (si no cabe, crece) y el scroll encaja suavemente en su inicio al
+ * soltarlo cerca. El centrado y el padding vertical de cada una viven en su CSS
+ * (--section-pad-block).
  */
-@media (min-width: 64rem) {
+@media (min-width: 48rem) {
   html {
     scroll-snap-type: y proximity;
   }
