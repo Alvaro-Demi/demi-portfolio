@@ -13,10 +13,6 @@ import type { Photo, PhotoStory, Portrait, SectionIntro, SequenceFrame, SocialRe
  * → 05 Velada de boxeo → 06 Backstage → 07 About → 08 Contact.
  */
 
-/** Marcas visibles de dato pendiente: búscalas para completar el contenido. */
-const PENDING_ARTIST = '[Artista]';
-const PENDING_TITLE = '[Título del reel]';
-
 export const HERO_PHOTO: Photo = {
   src: 'hero',
   alt: 'Concierto en blanco y negro: DEMI graba con un estabilizador mientras dos artistas se abrazan sobre el escenario frente al público',
@@ -37,12 +33,12 @@ export const HERO_PHOTO: Photo = {
 export const VIDEOCLIPS: readonly WorkEntry[] = [
   {
     id: 'mirame',
-    artist: '·',
-    title: 'Mírame - Al Safir X Jime',
+    artist: 'Al Safir',
+    title: 'Mírame — Al Safir x Jime',
     context: 'Videoclip',
     type: 'video',
     year: 2026,
-    youtubeUrl: 'https://www.youtube.com/watch?v=x-do0kjojXc&list=RDx-do0kjojXc&start_radio=1', // Pendiente: URL de YouTube del videoclip.
+    youtubeUrl: 'https://www.youtube.com/watch?v=x-do0kjojXc&list=RDx-do0kjojXc&start_radio=1',
     photo: {
       src: 'work-01',
       alt: 'Tríptico del videoclip «Mírame»: una mujer, una pareja a contraluz al atardecer y un retrato del artista',
@@ -52,12 +48,12 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
   },
   {
     id: 'abuela',
-    artist: PENDING_ARTIST,
-    title: 'ABUELA - AL SAFIR X OMAR MONTES', // Pendiente: título del videoclip.
+    artist: 'Al Safir',
+    title: 'Abuela — Al Safir x Omar Montes',
     context: 'Videoclip',
     type: 'video',
     year: 2026,
-    youtubeUrl: 'https://www.youtube.com/watch?v=k1-Gh7qZDlc&list=RDk1-Gh7qZDlc&start_radio=1', // Pendiente: URL de YouTube del videoclip.
+    youtubeUrl: 'https://www.youtube.com/watch?v=k1-Gh7qZDlc&list=RDk1-Gh7qZDlc&start_radio=1',
     photo: {
       src: 'work-05',
       alt: 'Tríptico de rodaje: un grupo posa en una nave, dos artistas junto a una mujer mayor sentada en un trono y una escena en un interior',
@@ -67,12 +63,12 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
   },
   {
     id: 'odiseo',
-    artist: PENDING_ARTIST,
-    title: 'Odiseo - al safir',
+    artist: 'Al Safir',
+    title: 'Odiseo — Al Safir',
     context: 'Videoclip',
     type: 'video',
     year: 2025,
-    youtubeUrl: 'https://www.youtube.com/watch?v=8mCN0b5XTSw&list=RD8mCN0b5XTSw&start_radio=1', // Pendiente: URL de YouTube del videoclip.
+    youtubeUrl: 'https://www.youtube.com/watch?v=8mCN0b5XTSw&list=RD8mCN0b5XTSw&start_radio=1',
     photo: {
       src: 'work-03',
       alt: 'Portada del videoclip «Odiseo»: título dorado sobre Atenas y dos retratos del artista',
@@ -97,7 +93,7 @@ export const VIDEOCLIPS: readonly WorkEntry[] = [
 export const SOCIAL_REELS: readonly SocialReel[] = [
   {
     id: 'reel-velada',
-    title: 'Velada de Boxeo', // Pendiente: título del reel.
+    title: 'Velada de Boxeo',
     context: 'Reel',
     year: null,
     video: 'reel-01',
@@ -113,7 +109,7 @@ export const SOCIAL_REELS: readonly SocialReel[] = [
   },
   {
     id: 'reel-directo',
-    title: 'Concierto', // Pendiente: título del reel.
+    title: 'Concierto',
     context: 'Reel',
     year: null,
     video: 'reel-02',
@@ -129,7 +125,7 @@ export const SOCIAL_REELS: readonly SocialReel[] = [
   },
   {
     id: 'reel-combate',
-    title: 'Velada de Boxeo', // Pendiente: título del reel.
+    title: 'Velada de Boxeo',
     context: 'Reel',
     year: null,
     video: 'reel-03',
@@ -156,7 +152,7 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
     artist: 'AL SAFIR EN DIRECTO',
     category: 'Conciertos',
     context: 'Live',
-    place: null, // Pendiente: ciudad o sala.
+    place: null,
     year: null,
     photo: {
       src: 'composicion1',
@@ -170,7 +166,7 @@ export const PHOTO_STORIES: readonly PhotoStory[] = [
     artist: 'COMBATE DE DOMÍNGUEZ SEVILLANO',
     category: 'Velada de boxeo',
     context: 'Boxeo',
-    place: null, // Pendiente: ciudad o sala.
+    place: null,
     year: null,
     photo: {
       src: 'composicion3',
@@ -235,15 +231,13 @@ export const PORTRAITS: readonly Portrait[] = [
     },
   },
   {
-    // Pendiente: cuarta foto. Copia el original a images-src/, ejecuta `npm run images`
-    // y cambia `src` (por su id), `width`, `height`, `alt`, `artist` y `year`.
-    id: 'portrait-pendiente',
+    id: 'portrait-chain',
     artist: 'AL SAFIR',
     context: 'Sesión de fotos',
     year: 2026,
     photo: {
       src: 'work-07',
-      alt: 'Retrato del artista con sudadera negra y un águila dorada, sobre fondo verde oscuro',
+      alt: 'Retrato del artista mirando a cámara, con camiseta negra y una cadena de oro con un colgante de águila, sobre fondo gris',
       width: 2216,
       height: 3936,
     },
@@ -351,7 +345,7 @@ export const ABOUT_PHOTO: Photo = {
 export const SERVICES: readonly string[] = [
   'Imagen corporativa',
   'Videoclips',
-  'rodajes',
+  'Rodajes',
   'Sesiones de fotos',
   'Dron',
   'Conciertos',
@@ -361,8 +355,18 @@ export const SERVICES: readonly string[] = [
   
 ];
 
-/** Dirección a la que llegan los mensajes del formulario de contacto. */
-export const CONTACT_EMAIL = 'alvarodemiguel1997@gmail.com';
+/**
+ * Email de contacto: se muestra si el envío del formulario falla (con «Copiar» y «Abrir en mi
+ * correo»). Es también el email de la cuenta de Formspree, al que llegan los mensajes.
+ */
+export const CONTACT_EMAIL = 'demi.info2027@gmail.com';
+
+/**
+ * Formspree: dirección a la que el formulario envía los mensajes (formulario «Web DEMI · Contacto»,
+ * en formspree.io → pestaña Integration). Si se vacía, el formulario no envía y enseña el email.
+ * Al publicar: activar «Restrict to domain» en Settings con el dominio definitivo.
+ */
+export const CONTACT_FORM_ENDPOINT = 'https://formspree.io/f/mzerykry';
 
 /** Usuario de Instagram, sin la @. */
 export const INSTAGRAM_HANDLE = 'alvaro.demi';

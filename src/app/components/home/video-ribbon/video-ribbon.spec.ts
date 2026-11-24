@@ -2,7 +2,7 @@ import { IMAGE_LOADER } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { WorkEntry } from '../../../models/photo';
 import { photoLoader } from '../../../shared/image-loader';
-import { COPIES, layoutRibbon, wrap } from './ribbon-layout';
+import { COPIES, layoutRibbon, reachableCards, wrap } from './ribbon-layout';
 import { VideoRibbon } from './video-ribbon';
 
 const entry = (id: string, title: string | null, youtubeUrl: string | null, width = 2000): WorkEntry => ({
@@ -30,6 +30,14 @@ describe('layoutRibbon', () => {
     expect(cards[0].width).toBe(2);
     expect(cards[1].width).toBe(2.4);
     expect(cards[ENTRIES.length].start).toBeCloseTo(cards[0].start + period);
+  });
+
+  it('accesibles: la repetición de la tarjeta del centro, una por videoclip', () => {
+    const { cards } = layoutRibbon(ENTRIES);
+
+    expect([...reachableCards(cards, 0)]).toEqual([0, 1, 2]);
+    expect([...reachableCards(cards, 4)]).toEqual([3, 4, 5]);
+    expect([...reachableCards(cards, 8)]).toEqual([6, 7, 8]);
   });
 
   it('wrap lleva cualquier posición a la ventana centrada del bucle', () => {
@@ -143,7 +151,23 @@ describe('VideoRibbon', () => {
     expect(element.querySelector('app-video-tv')).toBeNull();
   });
 
-  it('solo la primera repetición llega al tabulador y a los lectores de pantalla', async () => {
+  it('al mover la cinta, las accesibles pasan a ser las de la repetición del centro, y se ven', async () => {
+    const { fixture, cards } = await render();
+    const click = new MouseEvent('click', { bubbles: true, cancelable: true });
+
+    cards()[4].querySelector('.rib-face')!.dispatchEvent(click);
+    flushFrames(200);
+    await fixture.whenStable();
+
+    expect(cards()[4].hasAttribute('data-active')).toBe(true);
+    const announced = cards().filter((card) => !card.hasAttribute('aria-hidden'));
+    expect(announced).toEqual(cards().slice(3, 6));
+    // Una tarjeta oculta (visibility: hidden) no recibiría el foco
+    expect(announced.every((card) => card.style.visibility === 'visible')).toBe(true);
+    expect(cards()[0].getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('al empezar, solo la primera repetición llega al tabulador y a los lectores de pantalla', async () => {
     const { cards } = await render();
     const announced = cards().filter((card) => !card.hasAttribute('aria-hidden'));
 

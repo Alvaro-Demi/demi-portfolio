@@ -7,6 +7,7 @@ import {
   ElementRef,
   inject,
   input,
+  linkedSignal,
   signal,
   viewChild,
 } from '@angular/core';
@@ -14,7 +15,7 @@ import { WorkEntry } from '../../../models/photo';
 import { unionRect } from '../../../shared/rect';
 import { parseYoutubeUrl } from '../../../shared/youtube';
 import { TvMedia, VideoTv } from '../video-tv/video-tv';
-import { COPIES, COVER_SIZES, layoutRibbon, RibbonCard, wrap } from './ribbon-layout';
+import { COPIES, COVER_SIZES, layoutRibbon, reachableCards, RibbonCard, wrap } from './ribbon-layout';
 
 /** El videoclip que suena en la tele y la tarjeta de la que salió. */
 interface Playing {
@@ -82,6 +83,13 @@ export class VideoRibbon {
 
   /** Índice (en la lista original) de la tarjeta del centro: para el contador. */
   protected readonly active = signal(0);
+  /**
+   * Tarjetas que llegan al tabulador y a los lectores de pantalla: de cada videoclip, la copia
+   * más cercana al centro, más la que tenga el foco. Antes de medir, la primera repetición.
+   */
+  protected readonly reachable = linkedSignal<ReadonlySet<number>>(
+    () => new Set(this.layout().cards.flatMap((card, i) => (card.copy === 0 ? [i] : []))),
+  );
   protected readonly near = signal(false);
 
   /** El vídeo de cada entrada (en la lista original), o `null` si no se puede reproducir aquí. */
@@ -123,6 +131,8 @@ export class VideoRibbon {
   private cards: HTMLElement[] = [];
   private sliceNodes: HTMLElement[][] = [];
   private activeCard = -1;
+  /** Tarjeta con el foco: sigue siendo accesible aunque un arrastre la aleje del centro. */
+  private focusedCard = -1;
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -273,8 +283,16 @@ export class VideoRibbon {
     let settled = !this.dragging && this.velocity === 0 && this.offset === this.target && now > this.wheelUntil;
     settled &&= Math.abs(this.amplitude - wanted) < 0.002;
 
+    const positions = layout.cards.map((card) => wrap(card.start * unit + this.offset, total));
+    const center = this.nearest(layout.cards, unit);
+    const reachable = reachableCards(layout.cards, center.i);
+    if (this.focusedCard >= 0) reachable.add(this.focusedCard);
+    if (reachable.size !== this.reachable().size || [...reachable].some((i) => !this.reachable().has(i))) {
+      this.reachable.set(reachable);
+    }
+
     layout.cards.forEach((card, i) => {
-      const x = wrap(card.start * unit + this.offset, total);
+      const x = positions[i];
       const width = card.width * unit;
       const focus = clamp(1 - Math.abs(x) / (width * 0.8), 0, 1);
       this.cards[i].style.setProperty('--f', focus.toFixed(3));
@@ -283,8 +301,9 @@ export class VideoRibbon {
       this.lifts[i] += (lift - this.lifts[i]) * (this.reducedMotion ? 1 : 1 - Math.exp(-LIFT_RESPONSE * dt));
       if (Math.abs(lift - this.lifts[i]) > 0.3) settled = false;
 
-      // Fuera de la vista: oculta (sus franjas no se recolocan y no deben tapar nada)
-      const hidden = Math.abs(x) - width / 2 > halfView + width / 2;
+      // Fuera de la vista: oculta (sus franjas no se recolocan y no deben tapar nada). Las
+      // accesibles se colocan siempre: una tarjeta oculta no podría recibir el foco.
+      const hidden = !reachable.has(i) && Math.abs(x) - width / 2 > halfView + width / 2;
       this.cards[i].style.visibility = hidden ? 'hidden' : 'visible';
       if (hidden) return;
 
@@ -303,8 +322,7 @@ export class VideoRibbon {
       });
     });
 
-    // 4. La del centro: enlace activo y contador.
-    const center = this.nearest(layout.cards, unit);
+    // 4. La del centro (medida antes de colocar: el desplazamiento no cambia): enlace activo y contador.
     if (center.i !== this.activeCard) {
       this.cards[this.activeCard]?.removeAttribute('data-active');
       this.cards[center.i]?.setAttribute('data-active', '');
@@ -422,7 +440,13 @@ export class VideoRibbon {
 
     const focus = (event: FocusEvent) => {
       const i = indexOf(event.target);
+      this.focusedCard = i;
       if (i >= 0 && i !== this.activeCard) this.center(i);
+    };
+    const blur = (event: FocusEvent) => {
+      if (stage.contains(event.relatedTarget as Node | null)) return;
+      this.focusedCard = -1;
+      this.kick();
     };
 
     stage.addEventListener('pointerdown', down);
@@ -432,6 +456,7 @@ export class VideoRibbon {
     stage.addEventListener('wheel', wheel, { passive: false });
     stage.addEventListener('click', click, true);
     stage.addEventListener('focusin', focus);
+    stage.addEventListener('focusout', blur);
     return () => {
       stage.removeEventListener('pointerdown', down);
       stage.removeEventListener('pointermove', move);
@@ -440,6 +465,7 @@ export class VideoRibbon {
       stage.removeEventListener('wheel', wheel);
       stage.removeEventListener('click', click, true);
       stage.removeEventListener('focusin', focus);
+      stage.removeEventListener('focusout', blur);
     };
   }
 }

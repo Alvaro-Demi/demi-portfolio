@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { SocialReel } from '../../../models/photo';
 import { photoLoader } from '../../../shared/image-loader';
 import { ReelWheel } from './reel-wheel';
-import { centerSlot, loopFor, offsetFromCenter, positionFor, slotCount } from './wheel-layout';
+import { centerSlot, loopFor, offsetFromCenter, positionFor, reachableSlots, slotCount } from './wheel-layout';
 
 const reel = (id: string, title: string, loops: readonly number[]): SocialReel => ({
   id,
@@ -39,6 +39,13 @@ describe('wheel-layout', () => {
       }
     }
     expect(loopFor(4, 1)).toBe(0);
+  });
+
+  it('accesibles: la vuelta de reels de la casilla del centro, una por reel', () => {
+    expect([...reachableSlots(0, 18, 3)]).toEqual([0, 1, 2]);
+    expect([...reachableSlots(7, 18, 3)]).toEqual([6, 7, 8]);
+    expect([...reachableSlots(-1, 18, 3)]).toEqual([15, 16, 17]);
+    expect([...reachableSlots(0, 0, 0)]).toEqual([]);
   });
 
   it('mide la distancia al centro por el camino corto del bucle', () => {
@@ -115,7 +122,27 @@ describe('ReelWheel', () => {
     return { fixture, element, cards, count, clickCard };
   }
 
-  it('repite los reels alrededor de la rueda; solo la primera vuelta es accesible', async () => {
+  it('al girar, las accesibles pasan a ser las de la vuelta del centro, y se ven', async () => {
+    const { fixture, cards, clickCard } = await render();
+
+    clickCard(cards()[4]);
+    flushFrames(120);
+    await fixture.whenStable();
+
+    const announced = cards().filter((card) => !card.hasAttribute('aria-hidden'));
+    expect(announced).toEqual(cards().slice(3, 6));
+    expect(announced.map((card) => card.getAttribute('aria-label'))).toEqual([
+      'Uno, Reel · 2026. Reproducir reel',
+      'Dos, Reel · 2026. Reproducir reel',
+      'Tres, Reel · 2026. Reproducir reel',
+    ]);
+    // Una tarjeta oculta (visibility: hidden) no recibiría el foco
+    expect(announced.every((card) => card.style.visibility === 'visible')).toBe(true);
+    expect(announced.every((card) => !card.hasAttribute('tabindex'))).toBe(true);
+    expect(cards()[0].getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('repite los reels alrededor de la rueda; al empezar, la primera vuelta es la accesible', async () => {
     const { cards } = await render();
     const announced = cards().filter((card) => !card.hasAttribute('aria-hidden'));
 

@@ -1,7 +1,7 @@
 <!-- Escenario: las tarjetas cuelgan de una rueda con el eje por debajo; reel-wheel.ts las gira -->
 <div class="reel-stage" #stage>
   @for (s of slots(); track s.slot) {
-    <!-- Solo la primera vuelta llega al tabulador y a los lectores de pantalla -->
+    <!-- De cada reel, solo la copia más cercana al centro llega al tabulador y a los lectores de pantalla -->
     <a
       class="reel-card"
       [href]="s.reel.instagramUrl"
@@ -10,8 +10,8 @@
       draggable="false"
       [attr.aria-label]="label(s.reel)"
       aria-haspopup="dialog"
-      [attr.tabindex]="s.first ? null : -1"
-      [attr.aria-hidden]="s.first ? null : 'true'"
+      [attr.tabindex]="reachable().has(s.slot) ? null : -1"
+      [attr.aria-hidden]="reachable().has(s.slot) ? null : 'true'"
       [attr.data-active]="active() === s.slot ? '' : null"
       [attr.data-lent]="lent() === s.slot ? '' : null"
       [attr.data-sound]="sounding() === s.slot ? '' : null"

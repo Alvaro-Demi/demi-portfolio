@@ -4,7 +4,7 @@
   @if (near()) {
     @for (card of layout().cards; track $index; let i = $index) {
       @let entry = card.entry;
-      <!-- Solo la primera repetición llega al tabulador y a los lectores de pantalla -->
+      <!-- De cada videoclip, solo la copia más cercana al centro llega al tabulador y a los lectores de pantalla -->
       <a
         class="rib-card"
         [attr.href]="entry.youtubeUrl"
@@ -12,8 +12,8 @@
         rel="noopener noreferrer"
         [attr.aria-label]="linkLabel(entry, card.index)"
         [attr.aria-haspopup]="videos()[card.index] ? 'dialog' : null"
-        [attr.tabindex]="card.copy > 0 ? -1 : null"
-        [attr.aria-hidden]="card.copy > 0 ? 'true' : null"
+        [attr.tabindex]="reachable().has(i) ? null : -1"
+        [attr.aria-hidden]="reachable().has(i) ? null : 'true'"
         [attr.data-lent]="lent() === i ? '' : null"
         [style.--w]="card.width"
         (pointerenter)="hover($event, i)"

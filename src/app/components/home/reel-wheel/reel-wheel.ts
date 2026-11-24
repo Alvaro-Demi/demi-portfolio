@@ -7,12 +7,22 @@ import {
   ElementRef,
   inject,
   input,
+  linkedSignal,
   signal,
   viewChild,
 } from '@angular/core';
 import { SocialReel } from '../../../models/photo';
 import { TvMedia, VideoTv } from '../video-tv/video-tv';
-import { centerSlot, loopFor, offsetFromCenter, positionFor, slotCount, STEP, VISIBLE_SIDE } from './wheel-layout';
+import {
+  centerSlot,
+  loopFor,
+  offsetFromCenter,
+  positionFor,
+  reachableSlots,
+  slotCount,
+  STEP,
+  VISIBLE_SIDE,
+} from './wheel-layout';
 
 /** Giro automático: una casilla cada AUTO_MS, y no antes de AUTO_MS desde el último gesto. */
 const AUTO_MS = 4000;
@@ -81,14 +91,19 @@ export class ReelWheel {
         reel,
         /** Su tramo: las copias vecinas del mismo reel enseñan partes distintas. */
         loopUrl: `videos/${reel.video}-loop-${loopFor(copy, reel.loops.length) + 1}.mp4`,
-        /** Solo la primera vuelta llega al tabulador y a los lectores de pantalla. */
-        first: slot < reels.length,
       };
     });
   });
 
   /** Casilla del centro. */
   protected readonly active = signal(0);
+  /**
+   * Casillas que llegan al tabulador y a los lectores de pantalla: de cada reel, la copia más
+   * cercana al centro (siempre a la vista), más la que tenga el foco. Las demás son decorado.
+   */
+  protected readonly reachable = linkedSignal<ReadonlySet<number>>(() =>
+    reachableSlots(0, slotCount(this.reels().length), this.reels().length),
+  );
   /** Casillas que se ven en pantalla: cada una reproduce su bucle. */
   protected readonly shown = signal<ReadonlySet<number>>(new Set());
   /** Casilla cuyo bucle suena (la central, con el ratón encima). */
@@ -130,6 +145,8 @@ export class ReelWheel {
   private slotWidth = 0;
   /** Medidas para saber qué tarjetas caen dentro de la pantalla (se recalculan al redimensionar). */
   private geometry: { width: number; height: number; radius: number; halfView: number } | null = null;
+  /** Casilla con el foco: sigue siendo accesible aunque un arrastre la aleje del centro. */
+  private focusedSlot = -1;
   /** Casilla con el ratón encima (solo ratón). */
   private hoveredSlot = -1;
   /** Fundido de volumen en curso de cada vídeo: el último manda. */
@@ -258,6 +275,8 @@ export class ReelWheel {
     //    caen fuera de la pantalla se ocultan (y no reproducen nada).
     const geometry = this.measure(stage);
     const shown = new Set<number>();
+    const reachable = reachableSlots(this.position, slots, this.reels().length);
+    if (this.focusedSlot >= 0) reachable.add(this.focusedSlot);
     this.cards.forEach((card, slot) => {
       const offset = offsetFromCenter(slot, this.position, slots);
       const angle = (offset * STEP * Math.PI) / 180;
@@ -265,15 +284,17 @@ export class ReelWheel {
       const x = geometry.radius * Math.sin(angle);
       const extent = (geometry.width / 2) * Math.cos(angle) + (geometry.height / 2) * Math.abs(Math.sin(angle));
       const onScreen = Math.abs(offset) <= VISIBLE_SIDE && Math.abs(x) - extent < geometry.halfView;
-      card.style.visibility = onScreen ? 'visible' : 'hidden';
-      if (!onScreen) return;
-      shown.add(slot);
+      // Las accesibles se colocan siempre: una tarjeta oculta no podría recibir el foco
+      const placed = onScreen || reachable.has(slot);
+      card.style.visibility = placed ? 'visible' : 'hidden';
+      if (!placed) return;
+      if (onScreen) shown.add(slot);
       card.style.transform = `rotate(${(offset * STEP).toFixed(3)}deg)`;
       card.style.zIndex = String(100 - Math.round(Math.abs(offset) * 10));
       card.style.setProperty('--f', Math.max(0, 1 - Math.abs(offset)).toFixed(3));
     });
-    const current = this.shown();
-    if (shown.size !== current.size || [...shown].some((slot) => !current.has(slot))) this.shown.set(shown);
+    if (!sameSet(shown, this.shown())) this.shown.set(shown);
+    if (!sameSet(reachable, this.reachable())) this.reachable.set(reachable);
 
     // 3. La del centro: el contador y, si tiene el ratón encima, el sonido.
     const center = centerSlot(this.position, slots);
@@ -474,10 +495,15 @@ export class ReelWheel {
     const focusIn = (event: FocusEvent) => {
       this.focused = true;
       const slot = slotOf(event.target);
+      this.focusedSlot = slot;
       if (slot >= 0 && slot !== this.active()) this.center(slot);
     };
     const focusOut = (event: FocusEvent) => {
-      if (!stage.contains(event.relatedTarget as Node | null)) this.focused = false;
+      if (!stage.contains(event.relatedTarget as Node | null)) {
+        this.focused = false;
+        this.focusedSlot = -1;
+        this.kick();
+      }
     };
     const enter = (event: PointerEvent) => {
       if (event.pointerType === 'mouse') this.hovering = true;
@@ -507,3 +533,6 @@ export class ReelWheel {
     };
   }
 }
+
+const sameSet = (a: ReadonlySet<number>, b: ReadonlySet<number>) =>
+  a.size === b.size && [...a].every((value) => b.has(value));

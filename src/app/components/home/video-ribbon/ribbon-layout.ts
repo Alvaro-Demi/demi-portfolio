@@ -57,6 +57,16 @@ export function layoutRibbon(entries: readonly WorkEntry[]): RibbonLayout {
 }
 
 /**
+ * Tarjetas accesibles (tabulador y lectores de pantalla): la repetición a la que pertenece la
+ * tarjeta del centro (`center`). Una por videoclip, en orden: con el tabulador se recorren una
+ * vez (centrándose cada una al recibir el foco) y se sale de la cinta.
+ */
+export function reachableCards(cards: readonly RibbonCard[], center: number): Set<number> {
+  const copy = cards[center]?.copy ?? 0;
+  return new Set(cards.flatMap((card, i) => (card.copy === copy ? [i] : [])));
+}
+
+/**
  * Lleva una posición a la ventana [-total/2, total/2): la cinta es un bucle y cada tarjeta
  * aparece siempre en la repetición más cercana al centro.
  */

@@ -38,7 +38,7 @@
 }
 
 .contact-text {
-  max-inline-size: 34ch;
+  max-inline-size: 38ch;
   color: var(--color-text-muted);
 }
 
@@ -476,10 +476,57 @@
   stroke: none;
 }
 
+/* Enviando: el botón se apaga un poco (sigue enfocable; un segundo clic no hace nada) */
+.contact-send[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
 .contact-hint {
   color: var(--color-text-muted);
   font-size: var(--text-xs);
   text-align: center;
+}
+
+/* Resultado del envío: en blanco roto, para que se distinga de la nota en reposo */
+.contact-status[data-status='sent'] .contact-hint,
+.contact-status[data-status='error'] .contact-hint {
+  color: var(--color-text);
+}
+
+/* Si falla: el email a la vista con «Copiar», y el enlace que abre el correo */
+.contact-fallback {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.contact-fallback-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: var(--space-2);
+}
+
+.contact-fallback-email {
+  font-size: var(--text-sm);
+  user-select: all;
+  overflow-wrap: anywhere;
+}
+
+/* .text-toggle (styles.css) con un área táctil algo menor para caber en la tarjeta */
+.contact-copy {
+  min-block-size: 2.25rem;
+  min-inline-size: 0;
+  margin-inline-end: 0;
+}
+
+.contact-fallback-link {
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 0.3em;
 }
 
 @container card (min-width: 22rem) {
@@ -488,8 +535,8 @@
   }
 }
 
-/* Móviles bajos (iPhone SE y similares): menos aire y sin la nota bajo el botón, para que todo
-   quepa en la pantalla */
+/* Móviles bajos (iPhone SE y similares): menos aire y sin la nota en reposo bajo el botón, para
+   que todo quepa en la pantalla (el resultado del envío sí se ve) */
 @media (max-width: 47.99rem) and (max-height: 45rem) {
   .contact {
     gap: var(--space-3);
@@ -500,7 +547,8 @@
     font-size: min(13vw, 6svh);
   }
 
-  .contact-hint {
+  .contact-status[data-status='idle'],
+  .contact-status[data-status='sending'] {
     display: none;
   }
 }

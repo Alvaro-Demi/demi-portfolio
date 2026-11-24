@@ -5,7 +5,8 @@
   </div>
 
   <p class="contact-text" appReveal>
-Te ayudo a lo que sea que tengas en mente, ponte en contacto conmigo sin compromiso   </p>
+    Te ayudo con lo que sea que tengas en mente. Ponte en contacto conmigo sin compromiso.
+  </p>
 
   <div class="contact-actions" appReveal [revealDelay]="120">
     <!--
@@ -15,14 +16,21 @@ Te ayudo a lo que sea que tengas en mente, ponte en contacto conmigo sin comprom
     -->
     <div class="contact-card">
       <div class="contact-card-inner">
-        <!-- No envía nada: abre el correo de quien visita con el mensaje ya escrito -->
+        <!-- Envía el mensaje a Formspree (contact-form.ts); si falla, enseña el email -->
         <form class="contact-form" novalidate (submit)="send($event)">
           <p class="contact-form-heading">Cuéntame tu proyecto</p>
 
           @let name = contactForm.name();
+          @let mail = contactForm.email();
           @let message = contactForm.message();
 
-          <!-- Nombre y tipo de proyecto, uno debajo del otro -->
+          <!-- Campo trampa para bots: ni se ve ni llega al tabulador ni a lectores de pantalla -->
+          <div class="visually-hidden" aria-hidden="true">
+            <label for="contact-botcheck">No rellenes este campo</label>
+            <input id="contact-botcheck" type="text" tabindex="-1" autocomplete="off" [formField]="contactForm.botcheck" />
+          </div>
+
+          <!-- Nombre, email y tipo de proyecto, uno debajo del otro -->
           <div class="field-row">
             <div class="field">
               <label class="field-label" for="contact-name">Nombre</label>
@@ -40,6 +48,26 @@ Te ayudo a lo que sea que tengas en mente, ponte en contacto conmigo sin comprom
               </div>
               @if (name.touched() && name.invalid()) {
                 <p class="field-error" id="contact-name-error">{{ name.errors()[0]?.message }}</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="contact-email">Email</label>
+              <div class="field-well" [class.is-invalid]="mail.touched() && mail.invalid()">
+                <input
+                  id="contact-email"
+                  class="field-input"
+                  type="email"
+                  inputmode="email"
+                  autocomplete="email"
+                  placeholder="Para poder responderte"
+                  [formField]="contactForm.email"
+                  [attr.aria-invalid]="mail.touched() && mail.invalid()"
+                  [attr.aria-describedby]="mail.touched() && mail.invalid() ? 'contact-email-error' : null"
+                />
+              </div>
+              @if (mail.touched() && mail.invalid()) {
+                <p class="field-error" id="contact-email-error">{{ mail.errors()[0]?.message }}</p>
               }
             </div>
 
@@ -83,7 +111,9 @@ Te ayudo a lo que sea que tengas en mente, ponte en contacto conmigo sin comprom
           </div>
 
           <div class="contact-submit">
-            <button class="contact-send" type="submit">Escríbeme</button>
+            <button class="contact-send" type="submit" [attr.aria-disabled]="status() === 'sending' ? 'true' : null">
+              {{ status() === 'sending' ? 'Enviando…' : 'Escríbeme' }}
+            </button>
 
             <!-- Instagram: solo el logo, con su nombre accesible -->
             <a
@@ -100,7 +130,29 @@ Te ayudo a lo que sea que tengas en mente, ponte en contacto conmigo sin comprom
               </svg>
             </a>
           </div>
-          <p class="contact-hint">Se abrirá tu correo con el mensaje listo para enviar.</p>
+          <!-- Estado del envío: se anuncia y recibe el foco al terminar -->
+          <div class="contact-status" role="status" [attr.data-status]="status()">
+            @switch (status()) {
+              @case ('sent') {
+                <p class="contact-hint" #statusText tabindex="-1">Mensaje enviado. Te respondo pronto.</p>
+              }
+              @case ('error') {
+                <div class="contact-fallback" #statusText tabindex="-1">
+                  <p class="contact-hint">No se ha podido enviar. Escríbeme directamente:</p>
+                  <p class="contact-fallback-row">
+                    <span class="contact-fallback-email">{{ email() }}</span>
+                    <button type="button" class="text-toggle contact-copy" (click)="copyEmail()">
+                      {{ copied() ? 'Copiado' : 'Copiar' }}<span class="visually-hidden"> el email</span>
+                    </button>
+                  </p>
+                  <a class="contact-fallback-link" [href]="mailtoLink()">Abrir en mi correo con el mensaje</a>
+                </div>
+              }
+              @default {
+                <p class="contact-hint">Te respondo a tu email lo antes posible.</p>
+              }
+            }
+          </div>
         </form>
       </div>
     </div>

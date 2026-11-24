@@ -41,6 +41,18 @@ export function centerSlot(position: number, slots: number): number {
   return ((Math.round(position) % slots) + slots) % slots;
 }
 
+/**
+ * Casillas accesibles (tabulador y lectores de pantalla): la vuelta de reels a la que pertenece
+ * la casilla del centro. Una por reel, en orden: con el tabulador se recorren los reels una vez
+ * (centrándose cada uno al recibir el foco) y se sale de la rueda.
+ */
+export function reachableSlots(position: number, slots: number, reels: number): Set<number> {
+  if (reels <= 0 || slots <= 0) return new Set();
+  const center = centerSlot(position, slots);
+  const first = center - (center % reels);
+  return new Set(Array.from({ length: reels }, (_, i) => first + i));
+}
+
 /** Posición más cercana a `position` en la que `slot` queda en el centro (el camino corto). */
 export function positionFor(slot: number, position: number, slots: number): number {
   return position + offsetFromCenter(slot, position, slots);
