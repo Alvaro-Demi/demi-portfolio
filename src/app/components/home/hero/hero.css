@@ -229,7 +229,10 @@
 @media (min-width: 64rem) {
   .hero-title {
     grid-template-columns: auto 1fr;
+    /* Mismo "suelo": DEMI y la palabra que cambia se apoyan en la misma línea base,
+       sea cual sea su tamaño (last baseline = la última línea, no la frase de arriba) */
     align-items: end;
+    align-items: last baseline;
     column-gap: var(--space-8);
   }
 
@@ -239,6 +242,6 @@
     --concept-intro-size: 0.38em;
 
     order: 0;
-    margin-block: 0 0.08em;
+    margin-block: 0;
   }
 }

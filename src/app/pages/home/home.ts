@@ -4,6 +4,7 @@ import { Backdrop } from '../../components/home/backdrop/backdrop';
 import { Contact } from '../../components/home/contact/contact';
 import { FilmStrip } from '../../components/home/film-strip/film-strip';
 import { Hero } from '../../components/home/hero/hero';
+import { NextSection } from '../../components/home/next-section/next-section';
 import { PhotoStory } from '../../components/home/photo-story/photo-story';
 import { Portraits } from '../../components/home/portraits/portraits';
 import { SelectedWork } from '../../components/home/selected-work/selected-work';
@@ -25,7 +26,18 @@ import {
 /** Página contenedora: reúne los datos y se los pasa a cada sección. */
 @Component({
   selector: 'app-home',
-  imports: [Backdrop, Hero, SelectedWork, SocialMedia, FilmStrip, PhotoStory, Portraits, About, Contact],
+  imports: [
+    Backdrop,
+    Hero,
+    SelectedWork,
+    SocialMedia,
+    FilmStrip,
+    PhotoStory,
+    Portraits,
+    About,
+    Contact,
+    NextSection,
+  ],
   templateUrl: './home.html',
 })
 export class Home {

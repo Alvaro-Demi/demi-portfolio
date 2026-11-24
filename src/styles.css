@@ -259,6 +259,12 @@ a {
  * soltarlo cerca. El centrado y el padding vertical de cada una viven en su CSS
  * (--section-pad-block).
  */
+/* El botón "siguiente sección" lleva el foco a la sección (tabindex="-1") para que teclado y
+   lector de pantalla sigan desde ahí; no es un control, así que no se le pinta contorno */
+.screen[tabindex='-1']:focus {
+  outline: none;
+}
+
 @media (min-width: 48rem) {
   html {
     scroll-snap-type: y proximity;
