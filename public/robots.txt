@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.demi.com/sitemap.xml
+Sitemap: https://demi-web.netlify.app/sitemap.xml
