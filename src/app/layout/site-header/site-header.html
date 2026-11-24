@@ -1,6 +1,19 @@
 <header class="site-header" [class.is-solid]="solid() || menuOpen()">
   <a class="brand" routerLink="/" (click)="closeMenu()">DEMI</a>
 
+  <!-- Móvil y tablet: Instagram centrado (en escritorio está en el footer) -->
+  <a class="instagram" [href]="instagramUrl" target="_blank" rel="noopener noreferrer">
+    <span class="instagram-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <rect x="2.75" y="2.75" width="18.5" height="18.5" rx="5.25" />
+        <circle cx="12" cy="12" r="4.25" />
+        <circle class="instagram-dot" cx="17.4" cy="6.6" r="1.1" />
+      </svg>
+    </span>
+    <span><span class="visually-hidden">Instagram </span>{{ instagramHandle }}</span>
+    <span class="visually-hidden"> (se abre en una pestaña nueva)</span>
+  </a>
+
   <button
     #menuButton
     type="button"

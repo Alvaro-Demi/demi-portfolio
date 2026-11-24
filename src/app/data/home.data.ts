@@ -357,7 +357,8 @@ export const SERVICES: readonly string[] = [
   'Conciertos',
   'Eventos',
   'Social Media', 
-  'Reels'
+  'Reels',
+  
 ];
 
 /** Dirección a la que llegan los mensajes del formulario de contacto. */

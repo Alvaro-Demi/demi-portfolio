@@ -75,6 +75,60 @@
   }
 }
 
+/*
+ * --- Móvil y tablet: Instagram en el centro exacto del header ---
+ * Posición absoluta: no ocupa sitio en la fila, así que DEMI y MENU no se mueven. Es el
+ * pozo hundido de Contacto, más pequeño para caber en el alto del header. Al pasar el ratón
+ * solo se pone rojo el icono (3:1 como gráfico): el texto en rojo no llegaría a 4.5:1.
+ */
+.instagram {
+  position: absolute;
+  inset-block-start: calc(50% + env(safe-area-inset-top, 0px) / 2);
+  inset-inline-start: 50%;
+  translate: -50% -50%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.instagram-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-surface);
+  box-shadow: inset 2px 5px 10px rgb(5 5 5);
+  transition:
+    color var(--duration-base) ease,
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.instagram svg {
+  inline-size: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+.instagram .instagram-dot {
+  fill: currentColor;
+  stroke: none;
+}
+
+.instagram:active .instagram-icon {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .instagram:hover .instagram-icon {
+    color: var(--color-accent);
+  }
+}
+
 /* --- Móvil y tablet: DEMI + MENU; la navegación se despliega bajo el header --- */
 
 .nav {
@@ -112,7 +166,8 @@
    (en tablet no caben las siete en una línea: usa el desplegable) */
 
 @media (min-width: 64rem) {
-  .menu-button {
+  .menu-button,
+  .instagram {
     display: none;
   }
 

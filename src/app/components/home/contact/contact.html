@@ -8,73 +8,101 @@
 Te ayudo a lo que sea que tengas en mente, ponte en contacto conmigo sin compromiso   </p>
 
   <div class="contact-actions" appReveal [revealDelay]="120">
-    <!-- No envía nada: abre el correo de quien visita con el mensaje ya escrito -->
-    <form class="contact-form" novalidate (submit)="send($event)">
-      @let name = contactForm.name();
-      <div class="field">
-        <label class="field-label" for="contact-name">Nombre</label>
-        <input
-          id="contact-name"
-          class="field-input"
-          type="text"
-          autocomplete="name"
-          [formField]="contactForm.name"
-          [attr.aria-invalid]="name.touched() && name.invalid()"
-          [attr.aria-describedby]="name.touched() && name.invalid() ? 'contact-name-error' : null"
-        />
-        @if (name.touched() && name.invalid()) {
-          <p class="field-error" id="contact-name-error">{{ name.errors()[0]?.message }}</p>
-        }
-      </div>
+    <!--
+      Tarjeta del formulario basada en:
+      From Uiverse.io by DavidTM96 - https://uiverse.io/DavidTM96/empty-skunk-88
+      MIT License, Copyright (c) Phelix652 - https://uiverse.io/Phelix652/selfish-pug-28, DavidTM96 (David Torrez)
+    -->
+    <div class="contact-card">
+      <div class="contact-card-inner">
+        <!-- No envía nada: abre el correo de quien visita con el mensaje ya escrito -->
+        <form class="contact-form" novalidate (submit)="send($event)">
+          <p class="contact-form-heading">Cuéntame tu proyecto</p>
 
-      <div class="field">
-        <label class="field-label" for="contact-project">Tipo de proyecto <span>(opcional)</span></label>
-        <select id="contact-project" class="field-input" [formField]="contactForm.project">
-          <option value="">Sin especificar</option>
-          @for (type of projectTypes(); track type) {
-            <option [value]="type">{{ type }}</option>
-          }
-          <option value="Otro">Otro</option>
-        </select>
-      </div>
+          @let name = contactForm.name();
+          @let message = contactForm.message();
 
-      @let message = contactForm.message();
-      <div class="field">
-        <label class="field-label" for="contact-message">Mensaje</label>
-        <textarea
-          id="contact-message"
-          class="field-input"
-          rows="4"
-          [formField]="contactForm.message"
-          [attr.aria-invalid]="message.touched() && message.invalid()"
-          [attr.aria-describedby]="message.touched() && message.invalid() ? 'contact-message-error' : null"
-        ></textarea>
-        @if (message.touched() && message.invalid()) {
-          <p class="field-error" id="contact-message-error">{{ message.errors()[0]?.message }}</p>
-        }
-      </div>
+          <!-- Nombre y tipo de proyecto, uno debajo del otro -->
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="contact-name">Nombre</label>
+              <div class="field-well" [class.is-invalid]="name.touched() && name.invalid()">
+                <input
+                  id="contact-name"
+                  class="field-input"
+                  type="text"
+                  autocomplete="name"
+                  placeholder="¿Cómo te llamas?"
+                  [formField]="contactForm.name"
+                  [attr.aria-invalid]="name.touched() && name.invalid()"
+                  [attr.aria-describedby]="name.touched() && name.invalid() ? 'contact-name-error' : null"
+                />
+              </div>
+              @if (name.touched() && name.invalid()) {
+                <p class="field-error" id="contact-name-error">{{ name.errors()[0]?.message }}</p>
+              }
+            </div>
 
-      <div class="contact-submit">
-        <button class="cta" type="submit">
-          Escríbeme <span class="cta-arrow" aria-hidden="true">→</span>
-        </button>
+            <div class="field">
+              <label class="field-label" for="contact-project">Tipo de proyecto <span class="field-optional">(opcional)</span></label>
+              <div class="field-well">
+                <select id="contact-project" class="field-input field-select" [formField]="contactForm.project">
+                  <option value="">Sin especificar</option>
+                  @for (type of projectTypes(); track type) {
+                    <option [value]="type">{{ type }}</option>
+                  }
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
-        <!-- Instagram: solo el logo, con su nombre accesible -->
-        <a
-          class="contact-instagram"
-          [href]="instagramUrl()"
-          target="_blank"
-          rel="noopener noreferrer"
-          [attr.aria-label]="'Instagram @' + instagram() + ' (se abre en una pestaña nueva)'"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <rect x="2.75" y="2.75" width="18.5" height="18.5" rx="5.25" />
-            <circle cx="12" cy="12" r="4.25" />
-            <circle class="contact-instagram-dot" cx="17.4" cy="6.6" r="1.1" />
-          </svg>
-        </a>
+          <!-- El mensaje es la parte elástica: crece o se encoge para que todo quepa en pantalla -->
+          <div class="field field-message">
+            <label class="field-label" for="contact-message">Mensaje</label>
+            <div class="field-well field-well-message" [class.is-invalid]="message.touched() && message.invalid()">
+              <textarea
+                id="contact-message"
+                class="field-input field-textarea"
+                rows="2"
+                placeholder="Cuéntame tu idea: qué tienes en mente, para cuándo…"
+                [formField]="contactForm.message"
+                [attr.aria-invalid]="message.touched() && message.invalid()"
+                [attr.aria-describedby]="message.touched() && message.invalid() ? 'contact-message-error' : null"
+              ></textarea>
+            </div>
+            <div class="field-meta">
+              @if (message.touched() && message.invalid()) {
+                <p class="field-error" id="contact-message-error">{{ message.errors()[0]?.message }}</p>
+              }
+              <!-- Contador solo visual: el límite ya lo anuncia el mensaje de error -->
+              <span class="field-count" [class.is-over]="message.value().length > maxMessage" aria-hidden="true"
+                >{{ message.value().length }} / {{ maxMessage }}</span
+              >
+            </div>
+          </div>
+
+          <div class="contact-submit">
+            <button class="contact-send" type="submit">Escríbeme</button>
+
+            <!-- Instagram: solo el logo, con su nombre accesible -->
+            <a
+              class="contact-instagram"
+              [href]="instagramUrl()"
+              target="_blank"
+              rel="noopener noreferrer"
+              [attr.aria-label]="'Instagram @' + instagram() + ' (se abre en una pestaña nueva)'"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <rect x="2.75" y="2.75" width="18.5" height="18.5" rx="5.25" />
+                <circle cx="12" cy="12" r="4.25" />
+                <circle class="contact-instagram-dot" cx="17.4" cy="6.6" r="1.1" />
+              </svg>
+            </a>
+          </div>
+          <p class="contact-hint">Se abrirá tu correo con el mensaje listo para enviar.</p>
+        </form>
       </div>
-      <p class="contact-hint">Se abrirá tu correo con el mensaje listo para enviar.</p>
-    </form>
+    </div>
   </div>
 </section>

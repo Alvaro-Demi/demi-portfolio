@@ -1,6 +1,7 @@
 import { DOCUMENT, ViewportScroller } from '@angular/common';
 import { afterNextRender, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { INSTAGRAM_HANDLE } from '../../data/home.data';
 
 interface NavItem {
   readonly label: string;
@@ -33,6 +34,9 @@ export class SiteHeader {
     { label: 'Sobre mí', fragment: 'about', lang: 'es' },
     { label: 'Contacto', fragment: 'contact', lang: 'es' },
   ];
+
+  protected readonly instagramHandle = INSTAGRAM_HANDLE;
+  protected readonly instagramUrl = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
 
   /** Estado del menú móvil. Más adelante abrirá el menú a pantalla completa. */
   protected readonly menuOpen = signal(false);
