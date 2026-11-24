@@ -3,7 +3,9 @@
   <div class="contact-intro">
     <div class="contact-heading" appReveal>
       <p class="eyebrow">{{ chapter() }} — <span lang="en">Contact</span></p>
-      <h2 id="contact-title" class="contact-title"><span class="contact-qmark">¿</span>QUIERES PLASMAR TU IDEA?</h2>
+      <h2 id="contact-title" class="contact-title">
+        <span class="contact-qmark">¿</span>QUIERES PLASMAR TU IDEA?
+      </h2>
     </div>
 
     <!-- Cada frase en su línea -->
@@ -15,160 +17,264 @@
 
   <div class="contact-actions" appReveal [revealDelay]="120">
     <!--
-      Tarjeta del formulario basada en:
-      From Uiverse.io by DavidTM96 - https://uiverse.io/DavidTM96/empty-skunk-88
-      MIT License, Copyright (c) Phelix652 - https://uiverse.io/Phelix652/selfish-pug-28, DavidTM96 (David Torrez)
+      From Uiverse.io by santhosh_2608 - https://uiverse.io/santhosh_2608/tricky-goat-65
+      MIT License, Copyright (c) santhosh_2608 (Santhosh Reddy)
     -->
-    <div class="contact-card">
-      <div class="contact-card-inner">
-        <!-- Envía el mensaje a Formspree (contact-form.ts); si falla, enseña el email -->
-        <form class="contact-form" novalidate (submit)="send($event)">
-          <p class="contact-form-heading">Cuéntame tu proyecto</p>
+    @let name = contactForm.name();
+    @let mail = contactForm.email();
+    @let project = contactForm.project();
+    @let message = contactForm.message();
 
-          @let name = contactForm.name();
-          @let mail = contactForm.email();
-          @let message = contactForm.message();
+    <!-- Envía el mensaje a Formspree (contact-form.ts); si falla, enseña el email -->
+    <form class="inquiry" novalidate aria-labelledby="inquiry-title" (submit)="send($event)">
+      <!-- Cabecera: título con el obturador rojo (gira con el foco) y la regla debajo -->
+      <header class="inquiry__header">
+        <div class="inquiry__meta-row">
+          <p class="inquiry__title" id="inquiry-title">Cuéntame tu proyecto</p>
+          <span class="inquiry__signal-mark" aria-hidden="true">
+            <!-- Obturador: aro y seis láminas (un disco al que la máscara quita el hexágono
+                 central y las seis rendijas) -->
+            <svg class="inquiry__signal-svg" viewBox="0 0 24 24" focusable="false">
+              <defs>
+                <mask id="inquiry-shutter-mask">
+                  <circle cx="12" cy="12" r="8.6" fill="#fff" />
+                  <polygon
+                    points="15.2,12 13.6,14.77 10.4,14.77 8.8,12 10.4,9.23 13.6,9.23"
+                    fill="#000"
+                  />
+                  <g stroke="#000" stroke-width="0.75">
+                    <line x1="15.2" y1="12" x2="8.8" y2="23.08" />
+                    <line x1="13.6" y1="14.77" x2="0.8" y2="14.77" />
+                    <line x1="10.4" y1="14.77" x2="4" y2="3.69" />
+                    <line x1="8.8" y1="12" x2="15.2" y2="0.92" />
+                    <line x1="10.4" y1="9.23" x2="23.2" y2="9.23" />
+                    <line x1="13.6" y1="9.23" x2="20" y2="20.31" />
+                  </g>
+                </mask>
+              </defs>
+              <circle
+                cx="12"
+                cy="12"
+                r="11.1"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.4"
+              />
+              <circle cx="12" cy="12" r="8.6" mask="url(#inquiry-shutter-mask)" />
+            </svg>
+          </span>
+        </div>
+        <div class="inquiry__datum" aria-hidden="true"></div>
+      </header>
 
-          <!-- Campo trampa para bots: ni se ve ni llega al tabulador ni a lectores de pantalla -->
-          <div class="visually-hidden" aria-hidden="true">
-            <label for="contact-botcheck">No rellenes este campo</label>
-            <input id="contact-botcheck" type="text" tabindex="-1" autocomplete="off" [formField]="contactForm.botcheck" />
+      <!-- Puente entre cabecera y cuerpo: su barra roja crece con el foco -->
+      <div class="inquiry__channel" aria-hidden="true">
+        <div class="inquiry__bridge">
+          <span class="inquiry__bridge-track"></span>
+        </div>
+      </div>
+
+      <div class="inquiry__body">
+        <!-- Campo trampa para bots: ni se ve ni llega al tabulador ni a lectores de pantalla -->
+        <div class="visually-hidden" aria-hidden="true">
+          <label for="contact-botcheck">No rellenes este campo</label>
+          <input
+            id="contact-botcheck"
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+            [formField]="contactForm.botcheck"
+          />
+        </div>
+
+        <div class="inquiry__fields">
+          <!-- El error va en la línea de la etiqueta: no alarga el formulario -->
+          <div class="inquiry__field" [class.is-done]="name.value() && name.valid()">
+            <div class="inquiry__label-row">
+              <label class="inquiry__label" for="contact-name">
+                <span class="inquiry__field-marker" aria-hidden="true"></span>
+                <span>Nombre</span>
+              </label>
+              @if (name.touched() && name.invalid()) {
+                <p class="inquiry__error" id="contact-name-error">
+                  {{ name.errors()[0]?.message }}
+                </p>
+              }
+              <span class="inquiry__field-index" aria-hidden="true">01</span>
+            </div>
+            <div class="inquiry__control-wrap">
+              <input
+                id="contact-name"
+                class="inquiry__input"
+                [class.is-invalid]="name.touched() && name.invalid()"
+                type="text"
+                autocomplete="name"
+                [formField]="contactForm.name"
+                [attr.aria-invalid]="name.touched() && name.invalid()"
+                [attr.aria-describedby]="
+                  name.touched() && name.invalid() ? 'contact-name-error' : null
+                "
+              />
+            </div>
           </div>
 
-          <!-- Nombre, email y tipo de proyecto, uno debajo del otro -->
-          <div class="field-row">
-            <div class="field">
-              <!-- El error va en la línea de la etiqueta: no alarga la tarjeta -->
-              <div class="field-head">
-                <label class="field-label" for="contact-name">Nombre</label>
-                @if (name.touched() && name.invalid()) {
-                  <p class="field-error" id="contact-name-error">{{ name.errors()[0]?.message }}</p>
-                }
-              </div>
-              <div class="field-well" [class.is-invalid]="name.touched() && name.invalid()">
-                <input
-                  id="contact-name"
-                  class="field-input"
-                  type="text"
-                  autocomplete="name"
-                  placeholder="Tu nombre"
-                  [formField]="contactForm.name"
-                  [attr.aria-invalid]="name.touched() && name.invalid()"
-                  [attr.aria-describedby]="name.touched() && name.invalid() ? 'contact-name-error' : null"
-                />
-              </div>
+          <div class="inquiry__field" [class.is-done]="mail.value() && mail.valid()">
+            <div class="inquiry__label-row">
+              <label class="inquiry__label" for="contact-email">
+                <span class="inquiry__field-marker" aria-hidden="true"></span>
+                <span>Email</span>
+              </label>
+              @if (mail.touched() && mail.invalid()) {
+                <p class="inquiry__error" id="contact-email-error">
+                  {{ mail.errors()[0]?.message }}
+                </p>
+              }
+              <span class="inquiry__field-index" aria-hidden="true">02</span>
             </div>
-
-            <div class="field">
-              <div class="field-head">
-                <label class="field-label" for="contact-email">Email</label>
-                @if (mail.touched() && mail.invalid()) {
-                  <p class="field-error" id="contact-email-error">{{ mail.errors()[0]?.message }}</p>
-                }
-              </div>
-              <div class="field-well" [class.is-invalid]="mail.touched() && mail.invalid()">
-                <input
-                  id="contact-email"
-                  class="field-input"
-                  type="email"
-                  inputmode="email"
-                  autocomplete="email"
-                  placeholder="Tu email"
-                  [formField]="contactForm.email"
-                  [attr.aria-invalid]="mail.touched() && mail.invalid()"
-                  [attr.aria-describedby]="mail.touched() && mail.invalid() ? 'contact-email-error' : null"
-                />
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="field-label" for="contact-project">Tipo de proyecto <span class="field-optional">(opcional)</span></label>
-              <div class="field-well">
-                <select id="contact-project" class="field-input field-select" [formField]="contactForm.project">
-                  <option value="">Sin especificar</option>
-                  @for (type of projectTypes(); track type) {
-                    <option [value]="type">{{ type }}</option>
-                  }
-                  <option value="Otro">Otro</option>
-                </select>
-              </div>
+            <div class="inquiry__control-wrap">
+              <input
+                id="contact-email"
+                class="inquiry__input"
+                [class.is-invalid]="mail.touched() && mail.invalid()"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                [formField]="contactForm.email"
+                [attr.aria-invalid]="mail.touched() && mail.invalid()"
+                [attr.aria-describedby]="
+                  mail.touched() && mail.invalid() ? 'contact-email-error' : null
+                "
+              />
             </div>
           </div>
 
-          <!-- El mensaje es la parte elástica: ocupa el alto que sobra en la tarjeta -->
-          <div class="field field-message">
+          <div class="inquiry__field" [class.is-done]="!!project.value()">
+            <div class="inquiry__label-row">
+              <label class="inquiry__label" for="contact-project">
+                <span class="inquiry__field-marker" aria-hidden="true"></span>
+                <span>Proyecto <span class="inquiry__optional">(opcional)</span></span>
+              </label>
+              <span class="inquiry__field-index" aria-hidden="true">03</span>
+            </div>
+            <div class="inquiry__control-wrap">
+              <select
+                id="contact-project"
+                class="inquiry__input inquiry__select"
+                [formField]="contactForm.project"
+              >
+                <option value="">Sin especificar</option>
+                @for (type of projectTypes(); track type) {
+                  <option [value]="type">{{ type }}</option>
+                }
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="inquiry__field" [class.is-done]="message.value() && message.valid()">
             <!-- Etiqueta, error y contador en una línea -->
-            <div class="field-head">
-              <label class="field-label" for="contact-message">Mensaje</label>
+            <div class="inquiry__label-row">
+              <label class="inquiry__label" for="contact-message">
+                <span class="inquiry__field-marker" aria-hidden="true"></span>
+                <span>Mensaje</span>
+              </label>
               @if (message.touched() && message.invalid()) {
-                <p class="field-error" id="contact-message-error">{{ message.errors()[0]?.message }}</p>
+                <p class="inquiry__error" id="contact-message-error">
+                  {{ message.errors()[0]?.message }}
+                </p>
               }
               <!-- Contador solo visual: el límite ya lo anuncia el mensaje de error -->
-              <span class="field-count" [class.is-over]="message.value().length > maxMessage" aria-hidden="true"
-                >{{ message.value().length }} / {{ maxMessage }}</span
+              <span
+                class="inquiry__field-index"
+                [class.is-over]="message.value().length > maxMessage"
+                aria-hidden="true"
+                >{{ message.value().length }}/{{ maxMessage }} · 04</span
               >
             </div>
-            <div class="field-well field-well-message" [class.is-invalid]="message.touched() && message.invalid()">
+            <!-- Empieza con dos líneas y crece al escribir (hasta un máximo; luego, scroll) -->
+            <div class="inquiry__control-wrap">
               <textarea
+                #messageBox
                 id="contact-message"
-                class="field-input field-textarea"
+                class="inquiry__input inquiry__input--textarea"
+                [class.is-invalid]="message.touched() && message.invalid()"
                 rows="2"
-                placeholder="Cuéntame tu idea: qué tienes en mente, para cuándo…"
+                (input)="autoGrow()"
                 [formField]="contactForm.message"
                 [attr.aria-invalid]="message.touched() && message.invalid()"
-                [attr.aria-describedby]="message.touched() && message.invalid() ? 'contact-message-error' : null"
+                [attr.aria-describedby]="
+                  message.touched() && message.invalid() ? 'contact-message-error' : null
+                "
               ></textarea>
             </div>
           </div>
+        </div>
 
-          <div class="contact-submit">
-            <button class="contact-send" type="submit" [attr.aria-disabled]="status() === 'sending' ? 'true' : null">
-              {{ status() === 'sending' ? 'Enviando…' : 'Escríbeme' }}
-            </button>
-
-            <!-- Instagram: solo el logo, con su nombre accesible -->
-            <a
-              class="contact-instagram"
-              [href]="instagramUrl()"
-              target="_blank"
-              rel="noopener noreferrer"
-              [attr.aria-label]="'Instagram @' + instagram() + ' (se abre en una pestaña nueva)'"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <rect x="2.75" y="2.75" width="18.5" height="18.5" rx="5.25" />
-                <circle cx="12" cy="12" r="4.25" />
-                <circle class="contact-instagram-dot" cx="17.4" cy="6.6" r="1.1" />
-              </svg>
-            </a>
-          </div>
-          <!-- Estado del envío: se anuncia y recibe el foco al terminar -->
-          <div class="contact-status" role="status" [attr.data-status]="status()">
+        <div class="inquiry__footer">
+          <!-- Estado en letra pequeña (visual: el resultado se anuncia abajo) -->
+          <span class="inquiry__status" aria-hidden="true">
             @switch (status()) {
+              @case ('sending') {
+                Enviando…
+              }
               @case ('sent') {
-                <p class="contact-hint" #statusText tabindex="-1">Mensaje enviado. Te respondo pronto.</p>
+                Enviado
               }
               @case ('error') {
-                <!-- Dos líneas: el aviso, y el email con sus dos acciones -->
-                <div class="contact-fallback" #statusText tabindex="-1">
-                  <p class="contact-hint">No se ha podido enviar. Escríbeme a:</p>
-                  <p class="contact-fallback-row">
-                    <span class="contact-fallback-email">{{ email() }}</span>
-                    <button type="button" class="text-toggle contact-copy" (click)="copyEmail()">
-                      {{ copied() ? 'Copiado' : 'Copiar' }}<span class="visually-hidden"> el email</span>
-                    </button>
-                    <a class="contact-fallback-link" [href]="mailtoLink()">
-                      Abrir en mi correo<span class="visually-hidden"> con el mensaje ya escrito</span>
-                    </a>
-                  </p>
-                </div>
+                Sin enviar
               }
               @default {
-                <p class="contact-hint">Te respondo a tu email lo antes posible.</p>
+                Listo
               }
             }
-          </div>
-        </form>
+          </span>
+
+          <button
+            class="inquiry__submit"
+            type="submit"
+            [attr.aria-disabled]="status() === 'sending' ? 'true' : null"
+          >
+            <span class="inquiry__submit-label">{{
+              status() === 'sending' ? 'Enviando…' : 'Enviar mensaje'
+            }}</span>
+            <span class="inquiry__submit-marker" aria-hidden="true">
+              <span class="inquiry__submit-dash"></span>
+              <svg class="inquiry__submit-arrow" viewBox="0 0 12 12" focusable="false">
+                <path d="M2.5 9.5L9.5 2.5M9.5 2.5H4M9.5 2.5V8" stroke-linecap="square" />
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        <!-- Resultado del envío: se anuncia y recibe el foco al terminar -->
+        <div class="contact-status" role="status" [attr.data-status]="status()">
+          @switch (status()) {
+            @case ('sent') {
+              <p class="contact-hint" #statusText tabindex="-1">
+                Mensaje enviado. Te respondo pronto.
+              </p>
+            }
+            @case ('error') {
+              <!-- Dos líneas: el aviso, y el email con sus dos acciones -->
+              <div class="contact-fallback" #statusText tabindex="-1">
+                <p class="contact-hint">No se ha podido enviar. Escríbeme a:</p>
+                <p class="contact-fallback-row">
+                  <span class="contact-fallback-email">{{ email() }}</span>
+                  <button type="button" class="text-toggle contact-copy" (click)="copyEmail()">
+                    {{ copied() ? 'Copiado' : 'Copiar'
+                    }}<span class="visually-hidden"> el email</span>
+                  </button>
+                  <a class="contact-fallback-link" [href]="mailtoLink()">
+                    Abrir en mi correo<span class="visually-hidden">
+                      con el mensaje ya escrito</span
+                    >
+                  </a>
+                </p>
+              </div>
+            }
+          }
+        </div>
       </div>
-    </div>
+    </form>
   </div>
 </section>

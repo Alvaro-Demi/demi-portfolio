@@ -22,7 +22,6 @@ describe('Contact', () => {
     });
     const fixture = TestBed.createComponent(Contact);
     fixture.componentRef.setInput('email', 'hola@example.com');
-    fixture.componentRef.setInput('instagram', 'usuario');
     fixture.componentRef.setInput('projectTypes', ['Videoclips y rodajes', 'Dron']);
     fixture.componentRef.setInput('chapter', '08');
     await fixture.whenStable();
@@ -53,7 +52,7 @@ describe('Contact', () => {
   }
 
   const errors = (element: HTMLElement) =>
-    [...element.querySelectorAll('.field-error')].map((e) => e.textContent?.trim());
+    [...element.querySelectorAll('.inquiry__error')].map((e) => e.textContent?.trim());
 
   it('enviado vacío, señala los campos obligatorios', async () => {
     const fetch = vi.spyOn(globalThis, 'fetch');
@@ -137,14 +136,5 @@ describe('Contact', () => {
     await submitForm(fixture, element);
 
     expect(fetch).not.toHaveBeenCalled();
-  });
-
-  it('enlaza Instagram en una pestaña nueva y segura', async () => {
-    const { element } = await render();
-    const link = element.querySelector<HTMLAnchorElement>('a[href*="instagram.com"]')!;
-
-    expect(link.href).toBe('https://www.instagram.com/usuario/');
-    expect(link.target).toBe('_blank');
-    expect(link.rel).toBe('noopener noreferrer');
   });
 });

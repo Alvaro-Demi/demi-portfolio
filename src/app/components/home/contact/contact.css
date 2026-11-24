@@ -3,20 +3,15 @@
 }
 
 /*
- * Contacto cabe en una pantalla: la sección mide al menos el alto disponible (--contact-block)
- * y la tarjeta se dimensiona con el alto que le queda (--card-h, una estimación: pantalla menos
- * título, texto y aire). Si aun así el contenido no cabe (pantallas muy bajas, mensajes de error),
- * la tarjeta crece y la sección con ella: nunca se sale ni se solapa con el footer.
+ * Contacto cabe en una pantalla: la sección mide al menos el alto disponible (--contact-block).
+ * Si el contenido no cabe (pantallas muy bajas, mensajes de error), la sección crece: nunca se
+ * sale ni se solapa con el footer.
  * Móvil: la pantalla visible bajo el header. Tablet y escritorio: además, deja sitio al footer.
  */
 .contact {
   --contact-block: var(--screen-block);
-  --form-gap: clamp(var(--space-2), 1.4svh, var(--space-3));
-  /* Tamaño del título: también entra en la estimación del alto de la tarjeta */
+  /* Tamaño del título: depende también del alto, para que no se coma el formulario */
   --title-size: min(13vw, 7svh);
-  /* Alto para la tarjeta: lo que deja el título (2 líneas), la etiqueta, el texto y los huecos */
-  --card-h: calc(var(--contact-block) - 2 * var(--section-pad-block) - 1.7 * var(--title-size) - 9rem);
-
   --contact-gap: clamp(var(--space-3), 2.5svh, var(--space-6));
 
   display: grid;
@@ -27,8 +22,7 @@
   border-block-start: 1px solid var(--color-line);
 }
 
-/* Móvil y tablet: dos líneas («¿QUIERES PLASMAR / TU IDEA?»). El tamaño depende también del
-   alto: en pantallas bajas el título no se come el formulario */
+/* Móvil y tablet: dos líneas («¿QUIERES PLASMAR / TU IDEA?») */
 .contact-title {
   max-inline-size: 17ch;
   margin-block-start: var(--space-2);
@@ -66,217 +60,441 @@
   text-wrap: balance;
 }
 
-/* Contenedor del formulario: centra la tarjeta en el hueco que dejan el título y el texto. Solo
-   mide el ancho (container de inline-size): si la tarjeta crece, la fila crece con ella */
+/* Contenedor del formulario: lo centra en el hueco que dejan el título y el texto */
 .contact-actions {
   display: grid;
   place-items: center;
-  container-type: inline-size;
 }
 
 /* ==========================================================================
-   Tarjeta del formulario
-   Basada en: From Uiverse.io by DavidTM96 - https://uiverse.io/DavidTM96/empty-skunk-88
-   MIT License, Copyright (c) Phelix652 - https://uiverse.io/Phelix652/selfish-pug-28,
-   DavidTM96 (David Torrez)
-   Adaptada a DEMI: rojo #E10600 en lugar del turquesa, superficie #111111, radio de 0.5rem
-   (el de las fotos del About y Retratos), etiquetas visibles, foco visible y textos en español.
+   Formulario «terminal»
+   From Uiverse.io by santhosh_2608 - https://uiverse.io/santhosh_2608/tricky-goat-65
+   MIT License, Copyright (c) santhosh_2608 (Santhosh Reddy)
+   Adaptado a DEMI: rojo #E10600, superficie y líneas de la web, Schibsted Grotesk (monoespaciada
+   solo en las etiquetas pequeñas), textos en español, errores y contador junto a la etiqueta,
+   campo de tipo de proyecto, Instagram junto al botón y foco visible (WCAG AA).
+   Todas las medidas van en em: el diseño escala con el font-size del formulario.
    ========================================================================== */
 
-/* Capa exterior roja: al pasar el ratón, la interior se encoge y deja ver un marco rojo.
-   Como mínimo 3:4 en vertical (si el contenido necesita más alto, se alarga en vez de
-   desbordarse). Ancho: el menor entre el hueco (menos aire a los lados), el que permite el
-   alto disponible (--card-h) y 25rem; nunca menos de 16rem. */
-.contact-card {
-  container: card / inline-size;
+.inquiry {
+  --it-panel: var(--color-surface);
+  --it-panel-elevated: #1b1b1a;
+  --it-panel-hover: #212120;
+  --it-panel-focus: #1e1e1d;
+  --it-rule: var(--color-line);
+  --it-rule-strong: #3b3a37;
+  --it-text-primary: var(--color-text);
+  /* Gris secundario de la web: 6.7:1 sobre el panel */
+  --it-text-secondary: var(--color-text-muted);
+  /* Gris más apagado (números, estado): 5:1 sobre el panel, sigue pasando AA */
+  --it-text-muted: #8a857f;
+  --it-red: var(--color-accent);
+  --it-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --it-ease: var(--ease-out);
+
+  position: relative;
+  display: block;
+  inline-size: min(100%, 26rem);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--it-text-primary);
+}
+
+/* --- Cabecera ----------------------------------------------------------- */
+
+.inquiry__header {
+  position: relative;
+  padding: 1.1em 1.35em 1em;
+  background-color: var(--it-panel);
+  border-radius: 0.6em 0.6em 0.25em 0.45em;
+  clip-path: polygon(
+    0.55em 0%,
+    100% 0%,
+    100% calc(100% - 0.38em),
+    calc(100% - 6.75em) calc(100% - 0.38em),
+    calc(100% - 7.15em) 100%,
+    0% 100%,
+    0% 0.55em
+  );
+}
+
+.inquiry__meta-row {
   display: flex;
-  flex-direction: column;
-  inline-size: min(100cqi - 2 * var(--space-4), max(16rem, var(--card-h) * 3 / 4), 25rem);
-  aspect-ratio: 3 / 4;
-  border-radius: 0.9rem;
-  background-color: var(--color-accent);
-  transition: box-shadow 300ms ease;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75em;
+  margin-block-end: 0.75em;
 }
 
-.contact-card-inner {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  border-radius: inherit;
-  transition: transform 200ms ease;
-  transform: scale(0.997);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .contact-card:hover {
-    box-shadow: 0 0 30px 1px rgb(225 6 0 / 0.3);
-  }
-
-  .contact-card:hover .contact-card-inner {
-    transform: scale(0.99);
-  }
-}
-
-.contact-form {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--form-gap);
-  /* El relleno crece con el ancho de la tarjeta */
-  padding: clamp(var(--space-4), 5cqi, var(--space-6));
-  border-radius: inherit;
-  background-color: var(--color-surface);
-}
-
-/* Título de la tarjeta (tablet y escritorio): League Gothic en rojo, texto grande (4:1 ≥ 3:1).
-   En móvil se omite: repetiría el título de la sección y quita alto al formulario. */
-.contact-form-heading {
-  display: none;
-  color: var(--color-accent);
-  font-family: var(--font-display);
-  font-size: clamp(1.375rem, 7cqi, 1.875rem);
-  letter-spacing: var(--tracking-display);
-  line-height: 1;
-  text-align: center;
+/* Título en la línea de arriba, con el cuadradito rojo delante: ahorra una línea */
+.inquiry__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 1.125em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.15;
   text-transform: uppercase;
 }
 
-/* --- Campos: «pozos» hundidos con sombra interior ------------------------ */
-
-.field-row {
-  display: grid;
-  gap: var(--form-gap);
+.inquiry__title::before {
+  content: '';
+  flex-shrink: 0;
+  inline-size: 0.32em;
+  block-size: 0.32em;
+  background-color: var(--it-red);
 }
 
-.field {
-  display: grid;
-  gap: 0.375rem;
+/* Obturador rojo: gira con el foco */
+.inquiry__signal-mark {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.5em;
+  block-size: 1.5em;
+  color: var(--it-red);
+  transition: transform 0.35s var(--it-ease);
 }
 
-/* Etiqueta a la izquierda; el error (y el contador del mensaje) a la derecha, en la misma línea:
-   así un error no alarga la tarjeta. Si no cabe, baja a otra línea */
-.field-head {
+.inquiry__signal-svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: currentColor;
+}
+
+.inquiry:focus-within .inquiry__signal-mark {
+  transform: rotate(45deg);
+}
+
+.inquiry__datum {
+  position: relative;
+  block-size: 0.25em;
+  border-block-start: 0.0625em solid var(--it-rule);
+}
+
+.inquiry__datum::before,
+.inquiry__datum::after {
+  content: '';
+  position: absolute;
+  inset-block-start: -0.15em;
+  inline-size: 0.0625em;
+  block-size: 0.25em;
+  background-color: var(--it-rule-strong);
+}
+
+.inquiry__datum::before {
+  inset-inline-start: 0;
+}
+
+.inquiry__datum::after {
+  inset-inline-end: 0;
+}
+
+/* --- Puente entre cabecera y cuerpo -------------------------------------- */
+
+.inquiry__channel {
+  position: relative;
+  z-index: 2;
+  block-size: 0.45em;
+  margin-block-start: -0.38em;
+  pointer-events: none;
+}
+
+.inquiry__bridge {
+  position: absolute;
+  inset-inline-start: 2.35em;
+  inset-block-start: -0.05em;
+  display: flex;
+  align-items: center;
+  inline-size: 5.4em;
+  block-size: 0.92em;
+  padding: 0 0.55em;
+  background-color: var(--it-panel);
+  clip-path: polygon(
+    0.28em 0%,
+    calc(100% - 0.28em) 0%,
+    100% 50%,
+    calc(100% - 0.28em) 100%,
+    0.28em 100%,
+    0% 50%
+  );
+}
+
+.inquiry__bridge-track {
+  position: relative;
+  inline-size: 100%;
+  block-size: 0.09375em;
+  overflow: hidden;
+  background-color: var(--it-rule-strong);
+}
+
+.inquiry__bridge-track::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  inline-size: 38%;
+  block-size: 100%;
+  background-color: var(--it-red);
+  transition: inline-size 0.3s var(--it-ease);
+}
+
+.inquiry:focus-within .inquiry__bridge-track::after {
+  inline-size: 68%;
+}
+
+/* --- Cuerpo ------------------------------------------------------------- */
+
+.inquiry__body {
+  position: relative;
+  padding: 1.25em 1.35em;
+  background-color: var(--it-panel);
+  border-radius: 0.35em 0.55em 0.65em 0.65em;
+  clip-path: polygon(
+    0% 0.38em,
+    2.15em 0.38em,
+    2.45em 0.72em,
+    7.95em 0.72em,
+    8.25em 0.38em,
+    calc(100% - 7.1em) 0.38em,
+    calc(100% - 6.7em) 0%,
+    100% 0%,
+    100% 4.2em,
+    calc(100% - 0.28em) 4.48em,
+    calc(100% - 0.28em) 5.45em,
+    100% 5.73em,
+    100% calc(100% - 0.6em),
+    calc(100% - 0.6em) 100%,
+    0% 100%
+  );
+}
+
+.inquiry__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85em;
+  margin: 0.15em 0 1.1em;
+}
+
+.inquiry__field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.42em;
+  min-inline-size: 0;
+}
+
+/* Etiqueta a la izquierda; error y número (o contador) a la derecha. Si no cabe, baja de línea */
+.inquiry__label-row {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  column-gap: var(--space-3);
+  gap: 0.25em 0.75em;
 }
 
-.field-head > :nth-child(2) {
-  margin-inline-start: auto;
-}
-
-/* Gris en reposo; blanco roto cuando su campo tiene el foco */
-.field-label {
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
+.inquiry__label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.48em;
+  margin-inline-end: auto;
+  font-family: var(--it-font-mono);
+  font-size: 0.72em;
   font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0.08em;
+  line-height: 1.2;
   text-transform: uppercase;
-  transition: color var(--duration-fast) ease;
+  color: var(--it-text-secondary);
+  cursor: pointer;
+  transition: color 0.2s var(--it-ease);
 }
 
-.field:focus-within .field-label {
-  color: var(--color-text);
-}
-
-.field-optional {
+.inquiry__optional {
+  letter-spacing: 0.02em;
   text-transform: none;
-  letter-spacing: 0.04em;
 }
 
-.field-well {
+.inquiry__field-marker {
+  display: inline-block;
+  flex-shrink: 0;
+  inline-size: 0.35em;
+  block-size: 0.35em;
+  border-radius: 0.05em;
+  background-color: var(--it-rule-strong);
+  transition:
+    background-color 0.22s var(--it-ease),
+    transform 0.22s var(--it-ease);
+}
+
+.inquiry__field-index {
+  font-family: var(--it-font-mono);
+  font-size: 0.625em;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  color: var(--it-text-muted);
+  transition: color 0.2s var(--it-ease);
+}
+
+/* Contador pasado el límite: se aclara (el error lo explica) */
+.inquiry__field-index.is-over {
+  color: var(--it-text-primary);
+}
+
+/* Error: texto claro (el rojo no llega a 4.5:1 en letra pequeña) con una marca roja delante */
+.inquiry__error {
   display: flex;
-  border-radius: 0.5rem;
-  padding: var(--space-1);
-  box-shadow: inset 2px 5px 10px rgb(5 5 5);
-  transition: box-shadow var(--duration-base) ease;
+  align-items: baseline;
+  gap: 0.5em;
+  font-size: 0.75em;
+  letter-spacing: 0.02em;
 }
 
-/* Foco: anillo rojo de 2px alrededor del pozo (4:1, ≥ 3:1 como elemento gráfico) */
-.field-well:focus-within {
-  box-shadow:
-    inset 2px 5px 10px rgb(5 5 5),
-    0 0 0 2px var(--color-accent);
+.inquiry__error::before {
+  content: '';
+  flex: none;
+  inline-size: 0.75em;
+  block-size: 1px;
+  background-color: var(--it-red);
+  transform: translateY(-0.25em);
 }
 
-/* Error: anillo rojo fino; el texto del error lo explica debajo */
-.field-well.is-invalid {
-  box-shadow:
-    inset 2px 5px 10px rgb(5 5 5),
-    0 0 0 1px var(--color-accent);
+.inquiry__control-wrap {
+  position: relative;
 }
 
-/* 1rem de letra como mínimo: iOS no hace zoom al enfocar */
-.field-input {
+/* 16 px de letra en los campos (1rem fijo): iOS no hace zoom al enfocar */
+.inquiry__input {
+  display: block;
   inline-size: 100%;
-  min-block-size: 2rem;
-  padding-inline: 0.75em;
-  border: 0;
-  /* Safari redondea el desplegable por su cuenta: la forma la da el pozo */
-  border-radius: 0;
-  background: none;
-  font-size: var(--text-base);
-  line-height: 1.5;
+  min-block-size: 2.75rem;
+  padding: 0.5em 0.75em;
+  font-family: var(--it-font-mono);
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+  color: var(--it-text-primary);
+  background-color: var(--it-panel-elevated);
+  border: 0.0625rem solid var(--it-rule);
+  border-radius: 0.35em;
+  /* El cambio de borde es el indicador de foco; el contorno transparente reaparece en modo de
+     alto contraste de Windows */
+  outline: 2px solid transparent;
+  transition:
+    background-color 0.18s var(--it-ease),
+    border-color 0.18s var(--it-ease),
+    color 0.18s var(--it-ease);
 }
 
-/* El anillo del pozo es el indicador de foco. El contorno transparente reaparece en modo de
-   alto contraste de Windows. */
-.field-input:focus {
-  outline: 2px solid transparent;
+/* Mensaje: dos líneas al principio; crece al escribir (contact.ts) hasta el máximo y luego
+   hace scroll */
+.inquiry__input--textarea {
+  min-block-size: calc(2 * 1.45em + 1em + 2px);
+  max-block-size: 9rem;
+  overflow-y: auto;
+  resize: none;
+}
+
+/* Raya roja bajo el campo con el foco */
+.inquiry__control-wrap::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0.65em;
+  inset-block-end: -0.0625em;
+  inline-size: 1.85em;
+  block-size: 0.125em;
+  background-color: var(--it-red);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.22s var(--it-ease);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .inquiry__input:hover:not(:focus) {
+    background-color: var(--it-panel-hover);
+    border-color: var(--it-rule-strong);
+  }
+}
+
+.inquiry__field:focus-within .inquiry__label {
+  color: var(--it-text-primary);
+}
+
+.inquiry__field:focus-within .inquiry__field-marker {
+  background-color: var(--it-red);
+  transform: scale(1.15);
+}
+
+.inquiry__field:focus-within .inquiry__field-index {
+  color: var(--it-text-primary);
+}
+
+/* Foco: borde claro (6.7:1 frente al panel) y la raya roja */
+.inquiry__input:focus {
+  background-color: var(--it-panel-focus);
+  border-color: var(--it-text-secondary);
   box-shadow: none;
 }
 
-/* Discreto pero legible: el gris secundario da 6.7:1 (AA) */
-.field-input::placeholder {
-  color: var(--color-text-muted);
-  opacity: 1;
+.inquiry__field:focus-within .inquiry__control-wrap::after {
+  transform: scaleX(1);
 }
 
-/* El autocompletado del navegador no pinta su fondo claro */
-.field-input:-webkit-autofill {
-  -webkit-text-fill-color: var(--color-text);
-  caret-color: var(--color-text);
-  transition: background-color 600000s 0s;
+/* Campo rellenado y válido: borde algo más marcado y la marca en gris */
+.inquiry__field.is-done .inquiry__input:not(:focus) {
+  border-color: var(--it-rule-strong);
 }
 
-/* Desplegable: sin la flecha del sistema; chevrón propio en gris a la derecha */
-.field-select {
+.inquiry__field.is-done .inquiry__field-marker {
+  background-color: var(--it-text-secondary);
+}
+
+/* Campo con error (tras tocarlo o al enviar): borde rojo discontinuo */
+.inquiry__input.is-invalid:not(:focus) {
+  border-color: var(--it-red);
+  border-style: dashed;
+}
+
+/* --- Desplegable de tipo de proyecto ------------------------------------- */
+
+.inquiry__select {
   appearance: none;
   padding-inline-end: var(--space-8);
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239a958f' stroke-width='1.5'/%3E%3C/svg%3E")
+  background: var(--it-panel-elevated)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239a958f' stroke-width='1.5'/%3E%3C/svg%3E")
     no-repeat right 0.75em center / 0.75rem 0.5rem;
   cursor: pointer;
 }
 
-/* Sin select personalizable (Firefox, Safari): la lista nativa, al menos oscura. Chrome pinta
-   la lista con el fondo del select, que es transparente: sin esto saldría blanca */
-.field-select option {
+/* Sin select personalizable (Firefox, Safari): la lista nativa, al menos oscura */
+.inquiry__select option {
   background-color: var(--color-surface);
   color: var(--color-text);
 }
 
 /*
  * Chrome y Edge (135+): select personalizable. Sigue siendo un <select> nativo (teclado,
- * lector de pantalla, formulario), pero la lista se diseña entera: superficie oscura con el
- * hundido de los pozos, radio de la web, opción activa con marca roja y chevrón que gira al
- * abrir.
+ * lector de pantalla, formulario), pero la lista se diseña entera: superficie oscura, opción
+ * activa con marca roja y chevrón que gira al abrir.
  */
 @supports (appearance: base-select) {
-  .field-select,
-  .field-select::picker(select) {
+  .inquiry__select,
+  .inquiry__select::picker(select) {
     appearance: base-select;
   }
 
-  .field-select {
+  .inquiry__select {
     display: flex;
     align-items: center;
     padding-inline-end: 0.75em;
-    background: none;
+    background-image: none;
   }
 
-  /* El chevrón pasa a ser el icono del propio select: gira al abrir la lista */
-  .field-select::picker-icon {
+  .inquiry__select::picker-icon {
     content: '';
     inline-size: 0.75rem;
     block-size: 0.5rem;
@@ -286,24 +504,22 @@
     transition: rotate var(--duration-base) var(--ease-out);
   }
 
-  .field-select:open::picker-icon {
+  .inquiry__select:open::picker-icon {
     rotate: 180deg;
   }
 
-  /* La lista: bajo el campo (o encima, si abajo no cabe). Con muchas opciones no se sale de
-     la pantalla: se desplaza por dentro con una barra fina */
-  .field-select::picker(select) {
+  /* La lista: bajo el campo (o encima, si abajo no cabe); con muchas opciones, se desplaza */
+  .inquiry__select::picker(select) {
     max-block-size: min(18rem, 45svh);
-    margin-block: var(--space-3);
+    margin-block: var(--space-2);
     padding: var(--space-2);
     scrollbar-width: thin;
     scrollbar-color: var(--color-text-muted) transparent;
-    border: 1px solid var(--color-line);
-    border-radius: 0.5rem;
-    background-color: var(--color-surface);
+    border: 1px solid var(--it-rule-strong);
+    border-radius: 0.35rem;
+    background-color: var(--it-panel-elevated);
     box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.6);
     color: var(--color-text);
-    /* Entrada: aparece desde un poco más arriba */
     transition:
       opacity var(--duration-base) var(--ease-out),
       translate var(--duration-base) var(--ease-out),
@@ -312,36 +528,36 @@
   }
 
   @starting-style {
-    .field-select:open::picker(select) {
+    .inquiry__select:open::picker(select) {
       opacity: 0;
       translate: 0 -0.5rem;
     }
   }
 
-  .field-select option {
+  .inquiry__select option {
     gap: var(--space-3);
     min-block-size: 2.75rem;
     padding-inline: var(--space-3);
-    border-radius: 0.375rem;
+    border-radius: 0.25rem;
     background: none;
     font-size: var(--text-sm);
     cursor: pointer;
   }
 
-  .field-select option:hover,
-  .field-select option:focus-visible {
-    background-color: var(--color-line);
+  .inquiry__select option:hover,
+  .inquiry__select option:focus-visible {
+    background-color: var(--it-panel-hover);
   }
 
-  /* Teclado: además del fondo, contorno rojo por dentro (el gris solo no llega a 3:1) */
-  .field-select option:focus-visible {
-    outline: 1px solid var(--color-accent);
+  /* Teclado: además del fondo, contorno rojo por dentro */
+  .inquiry__select option:focus-visible {
+    outline: 1px solid var(--it-red);
     outline-offset: -1px;
     box-shadow: none;
   }
 
   /* Opción elegida: marca roja a la izquierda en lugar del ✓ del sistema */
-  .field-select option::checkmark {
+  .inquiry__select option::checkmark {
     content: '';
     order: -1;
     inline-size: 0.75rem;
@@ -349,177 +565,188 @@
     background-color: transparent;
   }
 
-  .field-select option:checked::checkmark {
-    background-color: var(--color-accent);
+  .inquiry__select option:checked::checkmark {
+    background-color: var(--it-red);
   }
 }
 
-/* Mensaje: la pieza elástica. Ocupa el alto que sobra; como mínimo, sus 2 filas */
-.field-message {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-}
+/* --- Barra de desplazamiento del mensaje (textos largos) ------------------ */
 
-.field-well-message {
-  flex: 1;
-}
-
-.field-textarea {
-  resize: none;
-}
-
-/*
- * Barra de desplazamiento del mensaje (aparece con textos largos): un filete fino y redondeado,
- * sin flechas ni carril claro. Gris en reposo; roja con el foco, a juego con el anillo del pozo.
- * Chrome, Edge y Safari: ::-webkit-scrollbar (si se usara scrollbar-color, Chrome lo
- * preferiría y volvería a dibujar las flechas). Firefox: las propiedades estándar.
- */
-.field-textarea::-webkit-scrollbar {
+.inquiry__input--textarea::-webkit-scrollbar {
   inline-size: 0.375rem;
 }
 
-.field-textarea::-webkit-scrollbar-track {
+.inquiry__input--textarea::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.field-textarea::-webkit-scrollbar-thumb {
+.inquiry__input--textarea::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background-color: var(--color-text-muted);
+  background-color: var(--it-text-muted);
 }
 
-.field-textarea:focus::-webkit-scrollbar-thumb {
-  background-color: var(--color-accent);
+.inquiry__input--textarea:focus::-webkit-scrollbar-thumb {
+  background-color: var(--it-red);
 }
 
 @supports not selector(::-webkit-scrollbar) {
-  .field-textarea {
+  .inquiry__input--textarea {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-text-muted) transparent;
+    scrollbar-color: var(--it-text-muted) transparent;
   }
 
-  .field-textarea:focus {
-    scrollbar-color: var(--color-accent) transparent;
+  .inquiry__input--textarea:focus {
+    scrollbar-color: var(--it-red) transparent;
   }
 }
 
-.field-error {
+/* --- Pie: estado, Instagram y enviar ------------------------------------ */
+
+.inquiry__footer {
+  position: relative;
   display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  font-size: var(--text-xs);
-  letter-spacing: 0.02em;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75em;
+  padding-block-start: 0.9em;
+  border-block-start: 0.0625em solid var(--it-rule);
 }
 
-/* Marca roja delante del error: refuerzo visual, el texto ya lo explica */
-.field-error::before {
-  content: '';
-  flex: none;
-  inline-size: 0.75rem;
-  block-size: 1px;
-  background-color: var(--color-accent);
-  transform: translateY(-0.25em);
-}
-
-.field-count {
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-}
-
-/* Pasado el límite, el contador se aclara (el error lo explica) */
-.field-count.is-over {
-  color: var(--color-text);
-}
-
-/* --- Enviar + Instagram: dos botones de la misma altura ------------------ */
-
-.contact-submit {
-  display: flex;
-  gap: var(--space-3);
+.inquiry__status {
+  font-family: var(--it-font-mono);
+  font-size: 0.625em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--it-text-muted);
+  user-select: none;
 }
 
 /*
- * «Escríbeme»: contorno rojo que se rellena al pasar el ratón. El texto va en blanco roto
- * (el rojo sobre negro no llega a 4.5:1 a este tamaño); relleno: blanco sobre rojo = 5:1.
+ * Botón ancho (ocupa lo que deja el estado) con esquinas cortadas. Colores de la tarjeta
+ * anterior: contorno rojo que se rellena al pasar el ratón. El texto va en blanco roto (el rojo
+ * sobre negro no llega a 4.5:1 a este tamaño); relleno: blanco sobre rojo = 5:1.
+ * El clip-path recortaría un contorno exterior, así que el foco va por dentro: anillo claro.
  */
-.contact-send {
-  display: flex;
+.inquiry__submit {
+  position: relative;
+  display: inline-flex;
   flex: 1;
+  max-inline-size: 17rem;
   align-items: center;
+  justify-content: space-between;
+  gap: 1.15em;
   min-block-size: 2.75rem;
-  padding-inline: var(--space-6);
-  border: 0;
-  border-radius: 0.5rem;
-  /* Filete rojo como sombra interior: el contorno queda libre para el foco global */
-  box-shadow: inset 0 0 0 1px var(--color-accent);
-  background-color: transparent;
-  color: var(--color-text);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-bold);
-  letter-spacing: var(--tracking-wide);
+  padding: 0.6em 0.95em 0.6em 1.05em;
+  font-family: var(--it-font-mono);
+  font-size: 0.8125em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
   text-transform: uppercase;
-  transition: 300ms ease-in-out;
+  color: var(--it-text-primary);
+  background-color: transparent;
+  border: 0;
+  border-radius: 0.35em;
+  /* Filete rojo como sombra interior (como en la tarjeta anterior) */
+  box-shadow: inset 0 0 0 1px var(--it-red);
+  cursor: pointer;
+  touch-action: manipulation;
+  outline: 2px solid transparent;
+  clip-path: polygon(
+    0% 0%,
+    calc(100% - 0.42em) 0%,
+    100% 0.42em,
+    100% 100%,
+    0.42em 100%,
+    0% calc(100% - 0.42em)
+  );
+  transition:
+    background-color 300ms ease-in-out,
+    color 300ms ease-in-out,
+    box-shadow 300ms ease-in-out,
+    transform 0.12s var(--it-ease);
+}
+
+.inquiry__submit-label {
+  position: relative;
+}
+
+/* Flecha roja; sobre el relleno rojo del hover pasa a blanco */
+.inquiry__submit-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28em;
+  color: var(--it-red);
+  transition: color 300ms ease-in-out;
+}
+
+.inquiry__submit-dash {
+  display: inline-block;
+  inline-size: 0.38em;
+  block-size: 0.09375em;
+  background-color: currentColor;
+  transition: inline-size 0.22s var(--it-ease);
+}
+
+.inquiry__submit-arrow {
+  display: block;
+  inline-size: 0.72em;
+  block-size: 0.72em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: transform 0.22s var(--it-ease);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .contact-send:hover {
-    background-color: var(--color-accent);
+  .inquiry__submit:hover {
+    background-color: var(--it-red);
     color: #ffffff;
     box-shadow: inset 2px 5px 10px rgb(5 5 5 / 0.6);
   }
 
-  .contact-instagram:hover {
-    color: var(--color-accent);
+  .inquiry__submit:hover .inquiry__submit-marker {
+    color: #ffffff;
+  }
+
+  .inquiry__submit:hover .inquiry__submit-dash {
+    inline-size: 0.62em;
+  }
+
+  .inquiry__submit:hover .inquiry__submit-arrow {
+    transform: translate(0.14em, -0.14em);
   }
 }
 
-/* Logo de Instagram: pozo cuadrado a la altura del botón */
-.contact-instagram {
-  display: grid;
-  place-items: center;
-  inline-size: 2.75rem;
-  border-radius: 0.5rem;
-  box-shadow: inset 2px 5px 10px rgb(5 5 5);
-  color: var(--color-text);
-  transition: 200ms ease;
+.inquiry__submit:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--it-text-primary);
+  outline-color: transparent;
 }
 
-.contact-send:active,
-.contact-instagram:active {
-  transform: scale(0.97);
+.inquiry__submit:focus-visible .inquiry__submit-arrow {
+  transform: translate(0.14em, -0.14em);
 }
 
-.contact-instagram svg {
-  inline-size: 1.25rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-}
-
-.contact-instagram .contact-instagram-dot {
-  fill: currentColor;
-  stroke: none;
+.inquiry__submit:active {
+  transform: translateY(0.08em);
 }
 
 /* Enviando: el botón se apaga un poco (sigue enfocable; un segundo clic no hace nada) */
-.contact-send[aria-disabled='true'] {
+.inquiry__submit[aria-disabled='true'] {
   opacity: 0.6;
   cursor: progress;
 }
 
-.contact-hint {
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
-  text-align: center;
+/* --- Resultado del envío ------------------------------------------------- */
+
+.contact-status:not(:empty) {
+  margin-block-start: 0.9em;
 }
 
-/* Resultado del envío: en blanco roto, para que se distinga de la nota en reposo */
-.contact-status[data-status='sent'] .contact-hint,
-.contact-status[data-status='error'] .contact-hint {
+.contact-hint {
   color: var(--color-text);
+  font-size: var(--text-xs);
+  text-align: center;
 }
 
 /* Si falla: el email a la vista con «Copiar», y el enlace que abre el correo */
@@ -544,7 +771,7 @@
   overflow-wrap: anywhere;
 }
 
-/* .text-toggle (styles.css) con un área táctil algo menor para caber en la tarjeta */
+/* .text-toggle (styles.css) con un área táctil algo menor para caber en el formulario */
 .contact-copy {
   min-block-size: 2rem;
   min-inline-size: 0;
@@ -557,18 +784,84 @@
   text-underline-offset: 0.3em;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .inquiry,
+  .inquiry *,
+  .inquiry *::before,
+  .inquiry *::after {
+    transition-duration: 0.01ms !important;
+  }
+
+  .inquiry:focus-within .inquiry__signal-mark,
+  .inquiry__submit:hover .inquiry__submit-arrow,
+  .inquiry__submit:focus-visible .inquiry__submit-arrow,
+  .inquiry__submit:active {
+    transform: none;
+  }
+}
+
 /*
- * Móviles bajos (iPhone SE y similares): el mismo diseño que en el resto de móviles (tarjeta
- * vertical 3:4, campos uno debajo de otro), a menor escala para que quepa en una pantalla. Todo
- * más pequeño salvo la letra de los campos (16 px: iOS no hace zoom al enfocar). La nota en
- * reposo bajo el botón se omite (el resultado del envío sí se ve).
+ * Móvil: título, texto y formulario caben en una pantalla sin scroll. El formulario se aprieta
+ * un poco y sus huecos y campos se ajustan al alto de la pantalla (svh). La letra de los campos
+ * se queda en 16 px (iOS no hace zoom al enfocar).
  */
+@media (max-width: 47.99rem) {
+  .contact {
+    padding-block: clamp(var(--space-3), 3svh, var(--space-6));
+  }
+
+  /* El texto bajo el título se omite en móvil: deja sitio al formulario */
+  .contact-text {
+    display: none;
+  }
+
+  .contact-intro {
+    gap: var(--space-3);
+  }
+
+  .inquiry {
+    font-size: 0.875rem;
+  }
+
+  .inquiry__header {
+    padding: 0.85em 1.15em;
+  }
+
+  .inquiry__meta-row {
+    margin-block-end: 0.6em;
+  }
+
+  .inquiry__body {
+    padding: 1em 1.15em;
+  }
+
+  .inquiry__fields {
+    gap: clamp(0.4em, 1.2svh, 0.85em);
+    margin-block-end: 0.9em;
+  }
+
+  .inquiry__input {
+    min-block-size: clamp(2.375rem, 5.6svh, 2.75rem);
+    padding-block: 0.4em;
+  }
+
+  .inquiry__input--textarea {
+    min-block-size: calc(2 * 1.45em + 0.8em + 2px);
+  }
+
+  .inquiry__submit {
+    min-block-size: clamp(2.375rem, 5.6svh, 2.75rem);
+  }
+
+  .inquiry__footer {
+    padding-block-start: 0.8em;
+  }
+}
+
+/* Móviles bajos (iPhone SE y similares): todo un poco más apretado todavía */
 @media (max-width: 47.99rem) and (max-height: 45rem) {
-  /* --card-h con las medidas reales de esta versión (menos aire, texto más pequeño): la tarjeta
-     llena el hueco sin dejar espacios grandes. Puede bajar hasta 14rem de ancho */
   .contact {
     --title-size: min(13vw, 5.5svh);
-    --card-h: calc(var(--contact-block) - 2 * var(--space-3) - 1.7 * var(--title-size) - 6rem);
     gap: var(--space-2);
     padding-block: var(--space-3);
   }
@@ -581,48 +874,24 @@
     gap: var(--space-2);
   }
 
-  .contact-card {
-    transform: scale(90%);
-    inline-size: min(100cqi - 2 * var(--space-4), max(14rem, var(--card-h) * 3 / 4), 25rem);
+  .inquiry__header {
+    padding-block: 0.7em;
   }
 
-  /* .contact delante: manda sobre la regla de tarjeta estrecha (@container card), que va después */
-  .contact .contact-form {
-    --form-gap: 0.375rem;
-    padding: var(--space-3);
+  .inquiry__meta-row {
+    margin-block-end: 0.45em;
   }
 
-  .field {
-    gap: var(--space-1);
+  .inquiry__body {
+    padding-block: 0.85em;
   }
 
-  .field-label,
-  .field-error,
-  .field-count {
-    font-size: 0.6875rem;
-    line-height: 1.2;
+  .inquiry__fields {
+    margin-block-end: 0.75em;
   }
 
-  .field-well {
-    padding: 2px;
-  }
-
-  .field-input {
-    min-block-size: 1.875rem;
-    line-height: 1.25;
-  }
-
-  .contact-send {
-    min-block-size: 2.5rem;
-  }
-
-  .contact-instagram {
-    inline-size: 2.5rem;
-  }
-
-  .contact-status[data-status='idle'],
-  .contact-status[data-status='sending'] {
-    display: none;
+  .inquiry__input--textarea {
+    max-block-size: 6rem;
   }
 }
 
@@ -633,29 +902,19 @@
     --title-size: min(13vw, 9svh);
   }
 
-  .contact-form-heading {
-    display: block;
+  .inquiry {
+    inline-size: min(100%, 28rem);
+    font-size: 1rem;
   }
-}
 
-/* Tarjeta estrecha: menos aire entre campos; más estrecha aún, sin el título rojo (repite el
-   de la sección) */
-@container card (max-width: 23.99rem) {
-  .contact-form {
-    --form-gap: var(--space-2);
-  }
-}
-
-@container card (max-width: 19.99rem) {
-  .contact-form-heading {
-    display: none;
+  .inquiry__input--textarea {
+    max-block-size: 12rem;
   }
 }
 
 /*
  * Escritorio: dos columnas iguales. A la izquierda, el título y el texto debajo, centrados en
- * vertical; a la derecha, la tarjeta centrada en su columna y en todo el alto de la sección
- * (el título va al lado, así que dispone de casi toda la pantalla). Hasta 28rem de ancho.
+ * vertical; a la derecha, el formulario centrado en su columna y en todo el alto de la sección.
  */
 @media (min-width: 64rem) {
   .contact {
@@ -666,7 +925,6 @@
       'intro form'
       '. form';
     column-gap: var(--space-16);
-    --card-h: calc(var(--contact-block) - 2 * var(--section-pad-block));
   }
 
   .contact-title {
@@ -699,8 +957,9 @@
     grid-area: form;
   }
 
-  .contact-card {
-    inline-size: min(100cqi, max(16rem, var(--card-h) * 3 / 4), 28rem);
+  /* Escritorio: sobra alto, el mensaje empieza con cuatro líneas */
+  .inquiry__input--textarea {
+    min-block-size: calc(4 * 1.45em + 1em + 2px);
   }
 }
 

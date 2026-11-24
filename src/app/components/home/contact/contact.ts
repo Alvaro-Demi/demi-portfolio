@@ -33,15 +33,12 @@ const EMPTY: ContactMessage = { name: '', email: '', project: '', message: '', b
 })
 export class Contact {
   readonly email = input.required<string>();
-  /** Usuario de Instagram, sin la @. */
-  readonly instagram = input.required<string>();
   /** Opciones de «Tipo de proyecto» (los servicios del About). */
   readonly projectTypes = input.required<readonly string[]>();
   /** Número de sección: «08». */
   readonly chapter = input.required<string>();
 
   protected readonly maxMessage = MAX_MESSAGE;
-  protected readonly instagramUrl = computed(() => `https://www.instagram.com/${this.instagram()}/`);
 
   private readonly model = signal<ContactMessage>({ ...EMPTY });
 
@@ -69,6 +66,7 @@ export class Contact {
   private readonly contactService = inject(ContactForm);
   private readonly injector = inject(Injector);
   private readonly statusText = viewChild<ElementRef<HTMLElement>>('statusText');
+  private readonly messageBox = viewChild<ElementRef<HTMLTextAreaElement>>('messageBox');
   private copiedTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
@@ -95,6 +93,8 @@ export class Contact {
         }
         this.status.set('sent');
         this.contactForm().reset({ ...EMPTY });
+        // Vacío, el mensaje vuelve a su alto inicial
+        afterNextRender(() => this.autoGrow(), { injector: this.injector });
       } catch {
         // El mensaje se conserva: el enlace de respaldo lo lleva al correo tal cual.
         this.status.set('error');
@@ -121,6 +121,17 @@ export class Contact {
     this.copied.set(true);
     clearTimeout(this.copiedTimer);
     this.copiedTimer = setTimeout(() => this.copied.set(false), COPIED_MS);
+  }
+
+  /**
+   * El mensaje crece con el texto: se mide su contenido y se le da ese alto (más los bordes).
+   * El mínimo (dos líneas) y el máximo (luego hace scroll) los pone el CSS.
+   */
+  protected autoGrow(): void {
+    const box = this.messageBox()?.nativeElement;
+    if (!box) return;
+    box.style.blockSize = 'auto';
+    box.style.blockSize = `${box.scrollHeight + box.offsetHeight - box.clientHeight}px`;
   }
 
   /** Lleva el foco al resultado: teclado y lector de pantalla siguen desde ahí. */

@@ -12,7 +12,6 @@ import { SocialMedia } from '../../components/home/social-media/social-media';
 import {
   ABOUT_PHOTO,
   CONTACT_EMAIL,
-  INSTAGRAM_HANDLE,
   HERO_PHOTO,
   INTERLUDE_SEQUENCE,
   PHOTO_STORIES,
@@ -50,6 +49,5 @@ export class Home {
   protected readonly portraitsIntro = PORTRAITS_INTRO;
   protected readonly aboutPhoto = ABOUT_PHOTO;
   protected readonly contactEmail = CONTACT_EMAIL;
-  protected readonly instagram = INSTAGRAM_HANDLE;
   protected readonly services = SERVICES;
 }
