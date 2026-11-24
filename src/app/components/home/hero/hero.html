@@ -12,7 +12,13 @@
   </div>
 
   <!-- data-header-edge: el header se vuelve sólido cuando este bloque llega a él -->
+  <!-- El titular va primero en el código; en escritorio la línea de etiquetas se pinta encima -->
   <div class="hero-content" data-header-edge>
+    <h1 id="hero-title" class="hero-title">
+      <span class="hero-brand">DEMI</span>
+      <app-word-cycle class="hero-concept" [intro]="workIntro" [words]="workTypes" />
+    </h1>
+
     <div class="hero-meta">
       <!-- Móvil y tablet: una línea por parte. Escritorio: seguidas (el espacio va dentro del span) -->
       <p class="hero-roles">
@@ -22,12 +28,5 @@
         Ver trabajo <span aria-hidden="true">↓</span>
       </a>
     </div>
-
-    <h1 id="hero-title" class="hero-title">
-      <span class="hero-brand">DEMI</span>
-      <span class="hero-concept" lang="en">
-        PHOTO <span class="hero-slash" aria-hidden="true">/</span> FILM
-      </span>
-    </h1>
   </div>
 </section>

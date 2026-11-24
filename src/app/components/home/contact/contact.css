@@ -214,6 +214,111 @@
   cursor: pointer;
 }
 
+/* Sin select personalizable (Firefox, Safari): la lista nativa, al menos oscura. Chrome pinta
+   la lista con el fondo del select, que es transparente: sin esto saldría blanca */
+.field-select option {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+/*
+ * Chrome y Edge (135+): select personalizable. Sigue siendo un <select> nativo (teclado,
+ * lector de pantalla, formulario), pero la lista se diseña entera: superficie oscura con el
+ * hundido de los pozos, radio de la web, opción activa con marca roja y chevrón que gira al
+ * abrir.
+ */
+@supports (appearance: base-select) {
+  .field-select,
+  .field-select::picker(select) {
+    appearance: base-select;
+  }
+
+  .field-select {
+    display: flex;
+    align-items: center;
+    padding-inline-end: 0.75em;
+    background: none;
+  }
+
+  /* El chevrón pasa a ser el icono del propio select: gira al abrir la lista */
+  .field-select::picker-icon {
+    content: '';
+    inline-size: 0.75rem;
+    block-size: 0.5rem;
+    margin-inline-start: auto;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239a958f' stroke-width='1.5'/%3E%3C/svg%3E")
+      no-repeat center / contain;
+    transition: rotate var(--duration-base) var(--ease-out);
+  }
+
+  .field-select:open::picker-icon {
+    rotate: 180deg;
+  }
+
+  /* La lista: bajo el campo (o encima, si abajo no cabe). Con muchas opciones no se sale de
+     la pantalla: se desplaza por dentro con una barra fina */
+  .field-select::picker(select) {
+    max-block-size: min(18rem, 45svh);
+    margin-block: var(--space-3);
+    padding: var(--space-2);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-text-muted) transparent;
+    border: 1px solid var(--color-line);
+    border-radius: 0.5rem;
+    background-color: var(--color-surface);
+    box-shadow: 0 1rem 2rem rgb(0 0 0 / 0.6);
+    color: var(--color-text);
+    /* Entrada: aparece desde un poco más arriba */
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      translate var(--duration-base) var(--ease-out),
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
+  }
+
+  @starting-style {
+    .field-select:open::picker(select) {
+      opacity: 0;
+      translate: 0 -0.5rem;
+    }
+  }
+
+  .field-select option {
+    gap: var(--space-3);
+    min-block-size: 2.75rem;
+    padding-inline: var(--space-3);
+    border-radius: 0.375rem;
+    background: none;
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+
+  .field-select option:hover,
+  .field-select option:focus-visible {
+    background-color: var(--color-line);
+  }
+
+  /* Teclado: además del fondo, contorno rojo por dentro (el gris solo no llega a 3:1) */
+  .field-select option:focus-visible {
+    outline: 1px solid var(--color-accent);
+    outline-offset: -1px;
+    box-shadow: none;
+  }
+
+  /* Opción elegida: marca roja a la izquierda en lugar del ✓ del sistema */
+  .field-select option::checkmark {
+    content: '';
+    order: -1;
+    inline-size: 0.75rem;
+    block-size: 2px;
+    background-color: transparent;
+  }
+
+  .field-select option:checked::checkmark {
+    background-color: var(--color-accent);
+  }
+}
+
 /* Mensaje: la pieza elástica. Ocupa el alto que sobra; como mínimo, sus 2 filas */
 .field-message {
   display: flex;
@@ -227,6 +332,40 @@
 
 .field-textarea {
   resize: none;
+}
+
+/*
+ * Barra de desplazamiento del mensaje (aparece con textos largos): un filete fino y redondeado,
+ * sin flechas ni carril claro. Gris en reposo; roja con el foco, a juego con el anillo del pozo.
+ * Chrome, Edge y Safari: ::-webkit-scrollbar (si se usara scrollbar-color, Chrome lo
+ * preferiría y volvería a dibujar las flechas). Firefox: las propiedades estándar.
+ */
+.field-textarea::-webkit-scrollbar {
+  inline-size: 0.375rem;
+}
+
+.field-textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.field-textarea::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background-color: var(--color-text-muted);
+}
+
+.field-textarea:focus::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .field-textarea {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-text-muted) transparent;
+  }
+
+  .field-textarea:focus {
+    scrollbar-color: var(--color-accent) transparent;
+  }
 }
 
 .field-meta {
