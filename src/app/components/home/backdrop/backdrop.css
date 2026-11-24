@@ -73,6 +73,92 @@
   opacity: calc(var(--backdrop-p) * 0.66);
 }
 
+/* --- Enfoque con el ratón (solo escritorio con ratón) --------------------------
+ * La foto se ve desenfocada y el ratón es el recuadro de enfoque de una cámara: dentro
+ * del rectángulo 4:3 se ve nítida. Tamaño, proporción e inercia: constantes FOCUS_* en
+ * backdrop.ts. Las variables --hole-* (rectángulo nítido) y --focus-open las escribe
+ * backdrop.ts. Al bajar, el rectángulo crece hasta la pantalla entera (--focus-open de 0 a 1)
+ * y después entra el desenfoque final (--backdrop-p de 0 a 1).
+ */
+.backdrop-defocus,
+.backdrop-focus {
+  display: none;
+}
+
+@media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
+  /*
+   * Capa desenfocada encima de la nítida, con un hueco del tamaño del recuadro: la máscara
+   * es "todo" menos el rectángulo (mask-composite: exclude).
+   */
+  .backdrop-defocus {
+    display: block;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+    mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+    -webkit-mask-size: 100% 100%, var(--hole-w, 0) var(--hole-h, 0);
+    mask-size: 100% 100%, var(--hole-w, 0) var(--hole-h, 0);
+    -webkit-mask-position: 0 0, var(--hole-x, 0) var(--hole-y, 0);
+    mask-position: 0 0, var(--hole-x, 0) var(--hole-y, 0);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  /* Cuánto desenfoque: sube o baja el blur. Se agranda un poco para no dejar bordes claros */
+  .backdrop-defocus img {
+    object-fit: cover;
+    object-position: var(--focus, 50% 50%);
+    filter: blur(2px);
+    scale: 1;
+  }
+
+  /* El marco: cuatro esquinas, como el recuadro de autoenfoque del visor */
+  .backdrop-focus {
+    --corner: 1.25rem; /* largo de cada esquina */
+    --stroke: 2px; /* grosor */
+
+    display: block;
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    /* Mismo rectángulo que el hueco nítido: al bajar crece con él hasta los bordes */
+    inline-size: var(--hole-w, 0);
+    block-size: var(--hole-h, 0);
+    transform: translate(var(--hole-x, 0), var(--hole-y, 0));
+    /* Se va apagando mientras se abre; abierto del todo ya no se ve */
+    opacity: calc(1 - var(--focus-open, 0));
+  }
+
+  .backdrop-focus-frame {
+    --c: var(--color-text);
+
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(var(--c) 0 0) 0 0 / var(--corner) var(--stroke),
+      linear-gradient(var(--c) 0 0) 0 0 / var(--stroke) var(--corner),
+      linear-gradient(var(--c) 0 0) 100% 0 / var(--corner) var(--stroke),
+      linear-gradient(var(--c) 0 0) 100% 0 / var(--stroke) var(--corner),
+      linear-gradient(var(--c) 0 0) 0 100% / var(--corner) var(--stroke),
+      linear-gradient(var(--c) 0 0) 0 100% / var(--stroke) var(--corner),
+      linear-gradient(var(--c) 0 0) 100% 100% / var(--corner) var(--stroke),
+      linear-gradient(var(--c) 0 0) 100% 100% / var(--stroke) var(--corner);
+    background-repeat: no-repeat;
+    /* Buscando el foco (ratón en movimiento): algo más grande y en blanco */
+    scale: 1.06;
+    transition: scale var(--duration-base) var(--ease-out);
+  }
+
+  /* Enfoque bloqueado (ratón quieto): se ajusta a su tamaño y se pone rojo */
+  :host(.is-locked) .backdrop-focus-frame {
+    --c: var(--color-accent);
+    scale: 1;
+  }
+}
+
 /*
  * Móvil: el hero tiene su propia foto en bloque y el titular sobre negro; aquí no se ve la
  * versión nítida. El fondo desenfocado aparece con un fundido al bajar.
