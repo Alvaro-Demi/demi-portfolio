@@ -1,6 +1,7 @@
 import { NgOptimizedImage } from '@angular/common';
 import { afterNextRender, Component, DestroyRef, ElementRef, inject, input } from '@angular/core';
 import { Photo } from '../../../models/photo';
+import { HERO_SIZES } from '../../../shared/image-loader';
 
 /** Scroll (en pantallas) en el que el fondo termina de desenfocarse y oscurecerse. */
 const TRANSITION_SCREENS = 0.85;
@@ -49,7 +50,7 @@ const FOCUS_OPEN_PHASE = 0.4;
         alt=""
         fill
         priority
-        sizes="(max-aspect-ratio: 1/1) 210vw, 100vw"
+        [sizes]="sizes"
         [style.--focus]="photo().focus ?? null"
         [style.--focus-mobile]="photo().mobile?.focus ?? null"
       />
@@ -83,6 +84,9 @@ const FOCUS_OPEN_PHASE = 0.4;
 })
 export class Backdrop {
   readonly photo = input.required<Photo>();
+
+  /** El mismo `sizes` que el hero: así comparten la descarga de la foto. */
+  protected readonly sizes = HERO_SIZES;
 
   constructor() {
     const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;

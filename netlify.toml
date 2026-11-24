@@ -1,0 +1,52 @@
+# Despliegue en Netlify. Netlify lee este archivo al construir: no hace falta configurar nada en su panel.
+# Ojo con el plan gratuito: cada publicación en producción (push a main) gasta 15 de los 300
+# créditos del mes. Las vistas previas de otras ramas son gratis.
+
+[build]
+  command = "npm run build"
+  publish = "dist/mi-web/browser"
+
+[build.environment]
+  # Angular 22 necesita Node ^22.22.3
+  NODE_VERSION = "22"
+
+# --- Caché en el navegador -------------------------------------------------------
+# Quien vuelve (o la rueda de Reels cuando vuelve a montar un bucle) no descarga otra vez.
+# Sin Cache-Control en /*: cada archivo recibe una sola regla de caché.
+
+# JS y CSS llevan un hash en el nombre (outputHashing: all): si cambian, cambia el nombre.
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Fotos y vídeos: 30 días. Si sustituyes una foto manteniendo su id, quien ya la vio puede
+# seguir viendo la antigua hasta entonces (para forzarlo, publícala con otro id).
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/videos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# --- Seguridad básica, en todas las respuestas -----------------------------------
+# X-Frame-Options: ninguna otra web puede mostrar DEMI dentro de un iframe (DEMI sí inserta YouTube).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"

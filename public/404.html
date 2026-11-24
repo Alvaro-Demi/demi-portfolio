@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>Página no encontrada — DEMI</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <!-- Página autónoma (Netlify la sirve en las rutas que no existen): no depende de Angular -->
+    <style>
+      @font-face {
+        font-family: 'League Gothic';
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/league-gothic-latin.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Schibsted Grotesk';
+        font-weight: 400 700;
+        font-display: swap;
+        src: url('/fonts/schibsted-grotesk-latin.woff2') format('woff2');
+      }
+
+      :root {
+        color-scheme: dark;
+      }
+
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        display: grid;
+        place-content: center;
+        min-block-size: 100svh;
+        padding: 1.5rem clamp(1rem, 0.5rem + 2.5vw, 3rem);
+        background-color: #0a0a0a;
+        color: #f2ede6;
+        font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, system-ui, sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      main {
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      /* Etiqueta como las de las secciones: línea roja + texto en mayúsculas */
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #9a958f;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: '';
+        inline-size: 2rem;
+        block-size: 1px;
+        background-color: #e10600;
+      }
+
+      h1 {
+        font-family: 'League Gothic', 'Arial Narrow', sans-serif;
+        font-size: clamp(5rem, 28vw, 14rem);
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        line-height: 0.85;
+        text-transform: uppercase;
+      }
+
+      p {
+        max-inline-size: 34ch;
+        color: #9a958f;
+      }
+
+      /* Blanco con subrayado rojo (el rojo sobre negro no llega a 4.5:1 en texto pequeño) */
+      a {
+        justify-self: start;
+        padding-block: 0.5rem;
+        color: #f2ede6;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        text-decoration: underline;
+        text-decoration-color: #e10600;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.45em;
+      }
+
+      a:focus-visible {
+        outline: 2px solid #e10600;
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Error 404</p>
+      <h1>Fuera de plano</h1>
+      <p>Esta página no existe o ha cambiado de sitio.</p>
+      <a href="/">Volver al inicio <span aria-hidden="true">→</span></a>
+    </main>
+  </body>
+</html>

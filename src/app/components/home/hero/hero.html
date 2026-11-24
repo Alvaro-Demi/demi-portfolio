@@ -5,7 +5,7 @@
       [alt]="photo().alt"
       fill
       priority
-      sizes="(max-aspect-ratio: 1/1) 210vw, 100vw"
+      [sizes]="sizes"
       [style.--focus]="photo().focus ?? null"
       [style.--focus-mobile]="photo().mobile?.focus ?? null"
     />

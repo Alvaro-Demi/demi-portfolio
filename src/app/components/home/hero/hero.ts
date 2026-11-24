@@ -2,6 +2,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Photo } from '../../../models/photo';
+import { HERO_SIZES } from '../../../shared/image-loader';
 import { WordCycle } from '../word-cycle/word-cycle';
 
 @Component({
@@ -12,6 +13,8 @@ import { WordCycle } from '../word-cycle/word-cycle';
 })
 export class Hero {
   readonly photo = input.required<Photo>();
+
+  protected readonly sizes = HERO_SIZES;
 
   protected readonly workIntro = 'Podemos trabajar juntos en';
   protected readonly workTypes = [

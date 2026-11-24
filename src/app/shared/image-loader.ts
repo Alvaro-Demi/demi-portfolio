@@ -28,5 +28,15 @@ function snap(width: number): number {
 export const photoLoader: ImageLoader = ({ src, width }) =>
   src.endsWith('.svg') ? src : `images/photos/${src}-${snap(width ?? FALLBACK_WIDTH)}.webp`;
 
+/**
+ * `sizes` de la foto del hero. La usan el hero y el fondo fijo (app-backdrop): con el mismo valor
+ * el navegador la descarga una sola vez.
+ * En vertical la foto se recorta y se ve más ancha que la pantalla (hasta ~2× su ancho). En
+ * móviles de densidad 3x basta la variante de 1600 px (499 → 144 KB, sin diferencia visible);
+ * en 2x (tablets, algunos móviles) se mantiene la de 2400, porque la de 1080 se notaría.
+ */
+export const HERO_SIZES =
+  '(max-aspect-ratio: 1/1) and (min-resolution: 2.5dppx) 120vw, (max-aspect-ratio: 1/1) 210vw, 100vw';
+
 /** Limita el `srcset` automático a los anchos que existen para todas las fotos. */
 export const photoImageConfig: ImageConfig = { breakpoints: [...PHOTO_WIDTHS] };
