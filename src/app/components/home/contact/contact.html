@@ -1,12 +1,17 @@
 <section id="contact" class="contact screen" aria-labelledby="contact-title">
-  <div class="contact-heading" appReveal>
-    <p class="eyebrow">{{ chapter() }} — <span lang="en">Contact</span></p>
-    <h2 id="contact-title" class="contact-title"><span class="contact-qmark">¿</span>QUIERES PLASMAR TU IDEA?</h2>
-  </div>
+  <!-- Título y texto juntos: en escritorio, el texto mide lo mismo que el título -->
+  <div class="contact-intro">
+    <div class="contact-heading" appReveal>
+      <p class="eyebrow">{{ chapter() }} — <span lang="en">Contact</span></p>
+      <h2 id="contact-title" class="contact-title"><span class="contact-qmark">¿</span>QUIERES PLASMAR TU IDEA?</h2>
+    </div>
 
-  <p class="contact-text" appReveal>
-    Te ayudo con lo que sea que tengas en mente. Ponte en contacto conmigo sin compromiso.
-  </p>
+    <!-- Cada frase en su línea -->
+    <p class="contact-text" appReveal>
+      <span class="contact-line">Te ayudo a que tu idea salga tal y como habias imaginado.</span>
+      <span class="contact-line">Ponte en contacto conmigo sin compromiso.</span>
+    </p>
+  </div>
 
   <div class="contact-actions" appReveal [revealDelay]="120">
     <!--
@@ -33,26 +38,34 @@
           <!-- Nombre, email y tipo de proyecto, uno debajo del otro -->
           <div class="field-row">
             <div class="field">
-              <label class="field-label" for="contact-name">Nombre</label>
+              <!-- El error va en la línea de la etiqueta: no alarga la tarjeta -->
+              <div class="field-head">
+                <label class="field-label" for="contact-name">Nombre</label>
+                @if (name.touched() && name.invalid()) {
+                  <p class="field-error" id="contact-name-error">{{ name.errors()[0]?.message }}</p>
+                }
+              </div>
               <div class="field-well" [class.is-invalid]="name.touched() && name.invalid()">
                 <input
                   id="contact-name"
                   class="field-input"
                   type="text"
                   autocomplete="name"
-                  placeholder="¿Cómo te llamas?"
+                  placeholder="Tu nombre"
                   [formField]="contactForm.name"
                   [attr.aria-invalid]="name.touched() && name.invalid()"
                   [attr.aria-describedby]="name.touched() && name.invalid() ? 'contact-name-error' : null"
                 />
               </div>
-              @if (name.touched() && name.invalid()) {
-                <p class="field-error" id="contact-name-error">{{ name.errors()[0]?.message }}</p>
-              }
             </div>
 
             <div class="field">
-              <label class="field-label" for="contact-email">Email</label>
+              <div class="field-head">
+                <label class="field-label" for="contact-email">Email</label>
+                @if (mail.touched() && mail.invalid()) {
+                  <p class="field-error" id="contact-email-error">{{ mail.errors()[0]?.message }}</p>
+                }
+              </div>
               <div class="field-well" [class.is-invalid]="mail.touched() && mail.invalid()">
                 <input
                   id="contact-email"
@@ -60,15 +73,12 @@
                   type="email"
                   inputmode="email"
                   autocomplete="email"
-                  placeholder="Para poder responderte"
+                  placeholder="Tu email"
                   [formField]="contactForm.email"
                   [attr.aria-invalid]="mail.touched() && mail.invalid()"
                   [attr.aria-describedby]="mail.touched() && mail.invalid() ? 'contact-email-error' : null"
                 />
               </div>
-              @if (mail.touched() && mail.invalid()) {
-                <p class="field-error" id="contact-email-error">{{ mail.errors()[0]?.message }}</p>
-              }
             </div>
 
             <div class="field">
@@ -85,9 +95,19 @@
             </div>
           </div>
 
-          <!-- El mensaje es la parte elástica: crece o se encoge para que todo quepa en pantalla -->
+          <!-- El mensaje es la parte elástica: ocupa el alto que sobra en la tarjeta -->
           <div class="field field-message">
-            <label class="field-label" for="contact-message">Mensaje</label>
+            <!-- Etiqueta, error y contador en una línea -->
+            <div class="field-head">
+              <label class="field-label" for="contact-message">Mensaje</label>
+              @if (message.touched() && message.invalid()) {
+                <p class="field-error" id="contact-message-error">{{ message.errors()[0]?.message }}</p>
+              }
+              <!-- Contador solo visual: el límite ya lo anuncia el mensaje de error -->
+              <span class="field-count" [class.is-over]="message.value().length > maxMessage" aria-hidden="true"
+                >{{ message.value().length }} / {{ maxMessage }}</span
+              >
+            </div>
             <div class="field-well field-well-message" [class.is-invalid]="message.touched() && message.invalid()">
               <textarea
                 id="contact-message"
@@ -98,15 +118,6 @@
                 [attr.aria-invalid]="message.touched() && message.invalid()"
                 [attr.aria-describedby]="message.touched() && message.invalid() ? 'contact-message-error' : null"
               ></textarea>
-            </div>
-            <div class="field-meta">
-              @if (message.touched() && message.invalid()) {
-                <p class="field-error" id="contact-message-error">{{ message.errors()[0]?.message }}</p>
-              }
-              <!-- Contador solo visual: el límite ya lo anuncia el mensaje de error -->
-              <span class="field-count" [class.is-over]="message.value().length > maxMessage" aria-hidden="true"
-                >{{ message.value().length }} / {{ maxMessage }}</span
-              >
             </div>
           </div>
 
@@ -137,15 +148,18 @@
                 <p class="contact-hint" #statusText tabindex="-1">Mensaje enviado. Te respondo pronto.</p>
               }
               @case ('error') {
+                <!-- Dos líneas: el aviso, y el email con sus dos acciones -->
                 <div class="contact-fallback" #statusText tabindex="-1">
-                  <p class="contact-hint">No se ha podido enviar. Escríbeme directamente:</p>
+                  <p class="contact-hint">No se ha podido enviar. Escríbeme a:</p>
                   <p class="contact-fallback-row">
                     <span class="contact-fallback-email">{{ email() }}</span>
                     <button type="button" class="text-toggle contact-copy" (click)="copyEmail()">
                       {{ copied() ? 'Copiado' : 'Copiar' }}<span class="visually-hidden"> el email</span>
                     </button>
+                    <a class="contact-fallback-link" [href]="mailtoLink()">
+                      Abrir en mi correo<span class="visually-hidden"> con el mensaje ya escrito</span>
+                    </a>
                   </p>
-                  <a class="contact-fallback-link" [href]="mailtoLink()">Abrir en mi correo con el mensaje</a>
                 </div>
               }
               @default {
