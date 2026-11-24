@@ -703,3 +703,14 @@
     inline-size: min(100cqi, max(16rem, var(--card-h) * 3 / 4), 28rem);
   }
 }
+
+/*
+ * Escritorio en vertical (iPad Pro 13" y similares): la pantalla es alta pero solo un poco más
+ * ancha que el corte de escritorio. El título, que crece con el alto (18svh), llegaba a 12rem,
+ * no cabía en su media columna y se partía en 4 líneas pegadas a la tarjeta. Aquí manda el ancho.
+ */
+@media (min-width: 64rem) and (orientation: portrait) {
+  .contact-title {
+    font-size: min(12rem, 11vw);
+  }
+}
