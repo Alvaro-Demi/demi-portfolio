@@ -33,6 +33,16 @@
     <!-- Ambas fuentes aparecen en la primera pantalla (DEMI y la navegación) -->
     <link rel="preload" href="/fonts/league-gothic-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Foto del hero (LCP): se pide ya, sin esperar a que arranque Angular.
+         Debe coincidir con lo que pinta el hero: id de la foto (home.data.ts), anchos (PHOTO_WIDTHS)
+         y sizes (HERO_SIZES, en shared/image-loader.ts). Si no coincide, se descargaría dos veces. -->
+    <link
+      rel="preload"
+      as="image"
+      fetchpriority="high"
+      imagesrcset="images/photos/hero-640.webp 640w, images/photos/hero-1080.webp 1080w, images/photos/hero-1600.webp 1600w, images/photos/hero-2400.webp 2400w"
+      imagesizes="(max-aspect-ratio: 1/1) and (min-resolution: 2.5dppx) 120vw, (max-aspect-ratio: 1/1) 210vw, 100vw"
+    />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   </head>

@@ -363,3 +363,12 @@ a {
     clip-path: none !important;
   }
 }
+
+/* Etiqueta de Netlify (plan gratuito): se mantiene visible, en gris a juego con la web.
+   La inyecta Netlify en un iframe; solo se le aplica un filtro desde fuera. */
+#nl-badge-frame {
+  filter: grayscale(1);
+  opacity: 0;
+
+
+}

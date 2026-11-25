@@ -138,6 +138,12 @@
   text-transform: uppercase;
 }
 
+/* Franjas 2 en adelante: el mismo texto, pintado desde CSS (ver video-ribbon.html) */
+.rib-title[data-text]::before,
+.rib-meta[data-text]::before {
+  content: attr(data-text);
+}
+
 .rib-meta {
   margin-block-start: 0.4em;
   font-size: max(0.75rem, calc(var(--rib-u) * 0.045));

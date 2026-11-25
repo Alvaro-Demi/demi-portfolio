@@ -32,9 +32,15 @@
                 loading="eager"
                 draggable="false"
               />
+              <!-- El texto real va solo en la primera franja; las demás lo pintan desde CSS
+                   (data-text): así el texto de la tarjeta coincide con su etiqueta, sin repetirse -->
               <span class="rib-text">
-                <span class="rib-title">{{ heading(entry) }}</span>
-                <span class="rib-meta">{{ meta(entry) }}</span>
+                @if (k === 0) {
+                  <span class="rib-title">{{ heading(entry) }}</span>&ngsp;<span class="rib-meta">{{ meta(entry) }}</span>
+                } @else {
+                  <span class="rib-title" [attr.data-text]="heading(entry)"></span>
+                  <span class="rib-meta" [attr.data-text]="meta(entry)"></span>
+                }
               </span>
               @if (videos()[card.index]) {
                 <!-- Se reproduce aquí, en la tele -->

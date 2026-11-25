@@ -30,7 +30,7 @@ const FOCUS_OPEN_PHASE = 0.4;
  * fondo del resto de secciones.
  *
  * Para no recalcular un desenfoque a pantalla completa en cada frame, hay dos capas: la foto
- * nítida y otra ya desenfocada (pequeña: total, está borrosa). El scroll solo cambia
+ * nítida y otra ya desenfocada (el mismo fichero: no hay segunda descarga). El scroll solo cambia
  * opacidades y una escala, escritas en una variable CSS (--backdrop-p, de 0 a 1).
  * Es decorativo: la foto ya está descrita en el hero.
  *
@@ -60,7 +60,8 @@ const FOCUS_OPEN_PHASE = 0.4;
           [ngSrc]="photo().src"
           alt=""
           fill
-          sizes="33vw"
+          loading="eager"
+          [sizes]="sizes"
           [style.--focus]="photo().focus ?? null"
           [style.--focus-mobile]="photo().mobile?.focus ?? null"
         />
@@ -70,7 +71,8 @@ const FOCUS_OPEN_PHASE = 0.4;
         [ngSrc]="photo().src"
         alt=""
         fill
-        sizes="16vw"
+        loading="eager"
+        [sizes]="sizes"
         [style.--focus]="photo().focus ?? null"
         [style.--focus-mobile]="photo().mobile?.focus ?? null"
       />
@@ -85,7 +87,11 @@ const FOCUS_OPEN_PHASE = 0.4;
 export class Backdrop {
   readonly photo = input.required<Photo>();
 
-  /** El mismo `sizes` que el hero: así comparten la descarga de la foto. */
+  /**
+   * El mismo `sizes` que el hero en las tres capas (y carga inmediata: con `lazy`, Angular añade
+   * `sizes="auto"` y el navegador elegiría otra variante): todas piden el mismo fichero y la
+   * foto se descarga una sola vez.
+   */
   protected readonly sizes = HERO_SIZES;
 
   constructor() {

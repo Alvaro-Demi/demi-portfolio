@@ -218,6 +218,9 @@
 /* --- Pie: contador, pausa e indicación --------------------------------------- */
 
 .reel-footer {
+  /* Por encima del escenario: ninguna tarjeta de la rueda puede quedar sobre «Pausar» */
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;

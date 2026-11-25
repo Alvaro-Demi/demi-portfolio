@@ -53,8 +53,8 @@
         </svg>
       </span>
       <span class="reel-text" aria-hidden="true">
-        <span class="reel-title">{{ s.reel.title }}</span>
-        <span class="reel-meta">{{ meta(s.reel) }}</span>
+        <!-- &ngsp;: un espacio entre título y meta, para que el texto visible coincida con la etiqueta -->
+        <span class="reel-title">{{ s.reel.title }}</span>&ngsp;<span class="reel-meta">{{ meta(s.reel) }}</span>
       </span>
       <span class="reel-go" aria-hidden="true">
         <svg viewBox="0 0 16 16" width="16" height="16" focusable="false">
